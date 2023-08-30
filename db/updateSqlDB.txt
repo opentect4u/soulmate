@@ -1,0 +1,9 @@
+<----------- 30-08-2023 ----->
+ALTER TABLE `td_user_education` ADD `edu_in_dtls` TEXT NULL DEFAULT NULL AFTER `citizen`, ADD `collage` VARCHAR(100) NULL DEFAULT NULL AFTER `edu_in_dtls`, ADD `occup_in_dtls` TEXT NULL DEFAULT NULL AFTER `collage`, ADD `org_name` VARCHAR(100) NULL DEFAULT NULL AFTER `occup_in_dtls`, ADD `anual_inc` VARCHAR(50) NULL DEFAULT NULL AFTER `org_name`;
+
+ALTER TABLE `td_user_p_dtls` DROP `physical_status`;
+
+ALTER TABLE `td_user_p_dtls` CHANGE `about_my_family` `about_my_family` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL;
+
+ALTER TABLE `td_user_p_dtls` ADD `weight` VARCHAR(25) NULL DEFAULT NULL AFTER `height`;
+<----------- End ----->

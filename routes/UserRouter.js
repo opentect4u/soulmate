@@ -3,7 +3,7 @@ const express = require("express"),
   dateFormat = require("dateformat"),
   request = require("request"),
   bcrypt = require("bcrypt"),
-  { db_Insert, db_Select } = require("../module/MasterModule"),
+  { db_Insert, db_Select, EncryptDataToSend } = require("../module/MasterModule"),
   location = require("../location.json");
 
 UserRouter.get("/planet_position", async (req, res) => {
@@ -34,27 +34,27 @@ UserRouter.post("/user_profile", async (req, res) => {
         ? `u_name = '${req_data.user}', location_id = '${
             req_data.location_id
           }', 
-        latt_long = '${req_data.reg_birth_loca}', dob = '${dateFormat(
-            req_data.reg_birth_date,
+        latt_long = '${req_data.field_birth_loca}', dob = '${dateFormat(
+            req_data.field_birth_date,
             "yyyy-mm-dd HH:MM:ss"
           )}', 
-        ac_for = '${req_data.reg_who_creat_profile}', religion = '${
-            req_data.reg_ur_religion
+        ac_for = '${req_data.field_who_creat_profile}', religion = '${
+            req_data.field_ur_religion
           }', 
           caste_id = '${req_data.reg_cust_id}',
-        mother_tong = '${req_data.reg_mother_tong}', modified_by = '${
+        mother_tong = '${req_data.field_mother_tong}', modified_by = '${
             req_data.reg_name
           }', modified_dt = '${datetime}'`
         : "(u_name, phone_no, email_id, location_id, latt_long, dob, ac_for, religion,  mother_tong, created_by, created_dt)",
-    values = `('${req_data.user}', '${req_data.reg_mobile}', '${
-      req_data.reg_email_id
+    values = `('${req_data.user}', '${req_data.field_mobile}', '${
+      req_data.field_email_id
     }', '${req_data.location_id}',
-        '${req_data.reg_birth_loca}', '${dateFormat(
-      req_data.reg_birth_date,
+        '${req_data.field_birth_loca}', '${dateFormat(
+      req_data.field_birth_date,
       "yyyy-mm-dd HH:MM:ss"
-    )}', '${req_data.reg_who_creat_profile}',
-        '${req_data.reg_ur_religion}', '${
-      req_data.reg_mother_tong
+    )}', '${req_data.field_who_creat_profile}',
+        '${req_data.field_ur_religion}', '${
+      req_data.field_mother_tong
     }', '${req_data.reg_name}', '${datetime}')`,
     whr = req_data.id > 0 ? `id= '${req_data.id}'` : null,
     flag = req_data.id > 0 ? 1 : 0;
@@ -62,11 +62,11 @@ UserRouter.post("/user_profile", async (req, res) => {
   if (req_data.id > 0) {
   } else {
     if (res_dt.suc > 0) {
-      var pass = bcrypt.hashSync(req_data.reg_pass, 10);
+      var pass = bcrypt.hashSync(req_data.field_pass, 10);
       var table_name = `md_user_login`,
         fields =
           "(profile_id , user_name, user_id, email_id, password, pay_status, created_by, created_dt)";
-      (values = `('${res_dt.lastId.insertId}', '${req_data.user}', '${req_data.reg_mobile}', '${req_data.reg_email_id}', '${pass}', 'N', '${req_data.user}', '${datetime}')`),
+      (values = `('${res_dt.lastId.insertId}', '${req_data.user}', '${req_data.field_mobile}', '${req_data.field_email_id}', '${pass}', 'N', '${req_data.user}', '${datetime}')`),
         (whr = null),
         (flag = 0);
       var log_dt = await db_Insert(table_name, fields, values, whr, flag);
@@ -98,13 +98,13 @@ UserRouter.post("/user_caste", async (req, res) => {
   var table_name = "td_user_profile",
     fields =
       req_data.user_id > 0
-        ? `caste_id = '${req_data.reg_cast}', oth_comm_marry_flag = '${
-            req_data.reg_willing_marry_other_commun ? "Y" : "N"
+        ? `caste_id = '${req_data.field_cast}', oth_comm_marry_flag = '${
+            req_data.field_willing_marry_other_commun ? "Y" : "N"
           }', 
          modified_by = '${req_data.user}', modified_dt = '${datetime}'`
         : "(caste_id, oth_comm_marry_flag, created_by, created_dt)",
-    values = `('${req_data.reg_cast}', '${
-      req_data.reg_willing_marry_other_commun ? "Y" : "N"
+    values = `('${req_data.field_cast}', '${
+      req_data.field_willing_marry_other_commun ? "Y" : "N"
     }', '${req_data.user}', '${datetime}')`,
     whr = req_data.user_id > 0 ? `id= '${req_data.user_id}'` : null,
     flag = req_data.user_id > 0 ? 1 : 0;
@@ -123,9 +123,9 @@ UserRouter.post("/user_personal_details", async (req, res) => {
   var table_name = "td_user_p_dtls",
     fields =
       req_data.id > 0
-        ? `marital_status = '${req_data.reg_marital_status}', height = '${req_data.reg_height}', 
-        family_status = '${req_data.reg_family_status}', family_type = '${req_data.reg_family_type}', 
-        family_values = '${req_data.reg_family_value}', disability_flag = '${req_data.reg_disability}', 
+        ? `marital_status = '${req_data.field_marital_status}', height = '${req_data.field_height}', 
+        family_status = '${req_data.field_family_status}', family_type = '${req_data.field_family_type}', 
+        family_values = '${req_data.field_family_value}', disability_flag = '${req_data.field_disability}', 
         body_type = '${req_data.reg_body_type}',  physical_status = '${req_data.reg_physical_status}',
         drinking_habbits = '${req_data.reg_drinking_habbits}',  age = '${req_data.reg_age}',
         eating_habbits = '${req_data.reg_eat_habbits}',   smoking_habbits = '${req_data.reg_smoke_habbits}',
@@ -133,8 +133,8 @@ UserRouter.post("/user_personal_details", async (req, res) => {
         father_occupation = '${req_data.reg_father_occupation}',   mother_occupation = '${req_data.reg_mother_occupation}',
        family_location = '${req_data.reg_family_location}', about_my_family ='${req_data.about_my_family}', modified_by = '${req_data.reg_name}', modified_dt = '${datetime}'`
         : "(user_id, marital_status, height, family_status, family_type, family_values, disability_flag, body_type,physical_status,drinking_habbits,age,eating_habbits,smoking_habbits,no_sister,no_brother,father_occupation,mother_occupation,family_location,about_my_family created_by, created_dt)",
-    values = `('${req_data.user_id}', '${req_data.reg_marital_status}', '${req_data.reg_height}', '${req_data.reg_family_status}',
-        '${req_data.reg_family_type}', '${req_data.reg_family_value}', '${req_data.reg_disability}',
+    values = `('${req_data.user_id}', '${req_data.field_marital_status}', '${req_data.field_height}', '${req_data.field_family_status}',
+        '${req_data.field_family_type}', '${req_data.field_family_value}', '${req_data.field_disability}',
         '${req_data.reg_body_type}, '${req_data.reg_physical_status}', '${req_data.reg_eat_habbits}',
         '${req_data.reg_age}', '${req_data.reg_eat_habbits}', '${req_data.reg_smoke_habbits}', 
         '${req_data.reg_no_sister}',  '${req_data.reg_no_brother}', '${req_data.reg_father_occupation}',
@@ -157,15 +157,15 @@ UserRouter.post("/user_professional", async (req, res) => {
   var table_name = "td_user_education",
     fields =
       req_data.id > 0
-        ? `heigh_education = '${req_data.reg_highest_education}', emp_type = '${req_data.reg_employed}', 
-        occup = '${req_data.reg_Occupation}', income = '${req_data.reg_Annual_Income}', 
-        work_location = '${req_data.reg_Work_Locatio}', state = '${req_data.reg_State}', 
-        city = '${req_data.reg_City}', ancis_org = '${req_data.reg_Ancestral_Origin}',  country = '${req_data.reg_country}',
+        ? `heigh_education = '${req_data.field_highest_education}', emp_type = '${req_data.field_employed}', 
+        occup = '${req_data.field_Occupation}', income = '${req_data.field_Annual_Income}', 
+        work_location = '${req_data.field_Work_Locatio}', state = '${req_data.field_State}', 
+        city = '${req_data.field_City}', ancis_org = '${req_data.reg_Ancestral_Origin}',  country = '${req_data.field_Country}',
         citizen = '${req_data.reg_citizen}', modified_by = '${req_data.reg_name}', modified_dt = '${datetime}'`
         : "(user_id, heigh_education, emp_type, occup, income, work_location, state, city, country, created_by, created_dt)",
-    values = `('${req_data.user_id}', '${req_data.reg_highest_education}', '${req_data.reg_employed}', '${req_data.reg_Occupation}',
-        '${req_data.reg_Annual_Income}', '${req_data.reg_Work_Locatio}', '${req_data.reg_State}', '${req_data.reg_City}',
-        '${req_data.reg_Country}', '${req_data.user}', '${datetime}')`,
+    values = `('${req_data.user_id}', '${req_data.field_highest_education}', '${req_data.field_employed}', '${req_data.field_Occupation}',
+        '${req_data.field_Annual_Income}', '${req_data.field_Work_Locatio}', '${req_data.field_State}', '${req_data.field_City}',
+        '${req_data.field_Country}', '${req_data.user}', '${datetime}')`,
     whr = req_data.id > 0 ? `id= '${req_data.id}'` : null,
     flag = req_data.id > 0 ? 1 : 0;
   var res_dt = await db_Insert(table_name, fields, values, whr, flag);
@@ -183,7 +183,7 @@ UserRouter.post("/user_about", async (req, res) => {
   var table_name = "td_user_profile",
     fields =
       req_data.user_id > 0
-        ? `about_us = '${req_data.reg_About_us}', modified_by = '${req_data.user}', modified_dt = '${datetime}'`
+        ? `about_us = '${req_data.field_About_us}', modified_by = '${req_data.user}', modified_dt = '${datetime}'`
         : null,
     values = null,
     whr = `id= '${req_data.user_id}'`,
@@ -294,14 +294,17 @@ UserRouter.get("/user_prof_2", async (req, res) => {
 });
 
 // UserRouter.get('/user_prof_3', async (req,res) => {
-UserRouter.get("/user_basic_family", async (req, res) => {
+UserRouter.get("/user_basic_info", async (req, res) => {
   var data = req.query;
-  var select =
-      "user_id, marital_status, height, family_status, family_type, family_values, disability_flag, body_type,  physical status, drinking_habbits , age , eating_habbits, smoking_habbits, no_sister, no_brother, father_occupation, mother_occupation, family_location, about_my_family",
-    table_name = "td_user_p_dtls",
-    whr = data.id > 0 ? `id=${id}` : null,
+  // var select =
+  //     "user_id, marital_status, height, family_status, family_type, family_values, disability_flag, body_type,  physical status, drinking_habbits , age , eating_habbits, smoking_habbits, no_sister, no_brother, father_occupation, mother_occupation, family_location, about_my_family",
+  //   table_name = "td_user_p_dtls",
+  var select = "a.id, b.id user_id, a.marital_status,a.height,a.weight,a.family_status,a.family_values,a.family_type,a.disability_flag,a.body_type,a.drinking_habbits,a.age,a.age,a.eating_habbits,a.smoking_habbits,a.no_sister,a.no_brother,a.father_occupation,a.mother_occupation,a.family_location,a.about_my_family,b.u_name,b.ac_for,b.mother_tong mother_tong_id, d.lang_name mother_tong, b.about_us, c.caste_name, b.caste_id, b.religion, b.oth_comm_marry_flag",
+  table_name = "td_user_p_dtls a LEFT JOIN td_user_profile b ON a.user_id=b.id LEFT JOIN md_caste_list c ON b.caste_id=c.id LEFT JOIN md_language d ON b.mother_tong=d.id",
+    whr = data.user_id > 0 ? `a.user_id=${data.user_id}` : null,
     order = null;
   var res_dt = await db_Select(select, table_name, whr, order);
+  res_dt = await EncryptDataToSend(res_dt)
   res.send(res_dt);
 });
 
@@ -309,11 +312,12 @@ UserRouter.get("/user_basic_family", async (req, res) => {
 UserRouter.get("/user_groom_loc", async (req, res) => {
   var data = req.query;
   var select =
-      "user_id, heigh_education, emp_type, occup, income, work_location, state, city, ancis_org, country, citizen",
+      "*",
     table_name = "td_user_education",
-    whr = data.id > 0 ? `id=${id}` : null,
+    whr = data.user_id > 0 ? `user_id=${data.user_id}` : null,
     order = null;
   var res_dt = await db_Select(select, table_name, whr, order);
+  res_dt = await EncryptDataToSend(res_dt)
   res.send(res_dt);
 });
 
@@ -321,11 +325,12 @@ UserRouter.get("/user_groom_loc", async (req, res) => {
 UserRouter.get("/user_hobbies", async (req, res) => {
   var data = req.query;
   var select =
-      "user_id, hobbies_interest, sports, spoken_lang, fav_music, movie",
+      "id, user_id, hobbies_interest, sports, spoken_lang, fav_music, movie",
     table_name = "td_user_hobbies",
-    whr = data.id > 0 ? `id=${id}` : null,
+    whr = data.user_id > 0 ? `user_id=${data.user_id}` : null,
     order = null;
   var res_dt = await db_Select(select, table_name, whr, order);
+  res_dt = await EncryptDataToSend(res_dt)
   res.send(res_dt);
 });
 
