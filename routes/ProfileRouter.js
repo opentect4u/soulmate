@@ -42,6 +42,10 @@ ProfileRouter.get("/user_basic_info", async (req, res) => {
 ProfileRouter.post('/user_basic_info', async (req, res) => {
     var data = req.body,
         datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+    data = Buffer.from(data.data, "base64").toString();
+    data = JSON.parse(data);
+
     var table_name = 'td_user_profile',
         fields = data.user_id > 0 ? `u_name = '${data.field_name}', ac_for = '${data.field_who_creat_profile}', mother_tong = '${data.field_mother_tong}', modified_by = '${data.user}', modified_dt = '${datetime}'` : '(u_name, ac_for, mother_tong, created_by, created_dt)',
         values = `('${data.field_name}', '${data.field_who_creat_profile}', '${data.field_mother_tong}', '${data.user}', '${datetime}')`,
@@ -70,6 +74,10 @@ ProfileRouter.post('/user_basic_info', async (req, res) => {
 ProfileRouter.post('/user_groom_loc', async (req, res) => {
     var data = req.body,
         datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+    data = Buffer.from(data.data, "base64").toString();
+    data = JSON.parse(data);
+
     var select = 'id',
         table_name = 'td_user_education',
         whr = `user_id = ${data.user_id}`,
@@ -89,6 +97,10 @@ ProfileRouter.post('/user_groom_loc', async (req, res) => {
 ProfileRouter.post('/user_prof_info', async (req, res) => {
     var data = req.body,
         datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+    data = Buffer.from(data.data, "base64").toString();
+    data = JSON.parse(data);
+
     var select = 'id',
         table_name = 'td_user_education',
         whr = `user_id = ${data.user_id}`,
@@ -108,6 +120,10 @@ ProfileRouter.post('/user_prof_info', async (req, res) => {
 ProfileRouter.post('/family_dtls', async (req, res) => {
     var data = req.body,
         datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+    data = Buffer.from(data.data, "base64").toString();
+    data = JSON.parse(data);
+
     var select = 'id',
         table_name = 'td_user_p_dtls',
         whr = `user_id = ${data.user_id}`,
@@ -127,6 +143,10 @@ ProfileRouter.post('/family_dtls', async (req, res) => {
 ProfileRouter.post('/about_family', async (req, res) => {
     var data = req.body,
         datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+    data = Buffer.from(data.data, "base64").toString();
+    data = JSON.parse(data);
+
     var select = 'id',
         table_name = 'td_user_p_dtls',
         whr = `user_id = ${data.user_id}`,
