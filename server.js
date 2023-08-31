@@ -9,6 +9,7 @@ const express = require("express"),
 
 const { db_Insert } = require("./module/MasterModule");
 const { MasterRouter, getNakhatra } = require("./routes/MasterRouter");
+const { ProfileRouter } = require("./routes/ProfileRouter");
 const { rashiRouter } = require("./routes/RasiRouter");
 const { UserRouter } = require("./routes/UserRouter");
 
@@ -205,6 +206,7 @@ app.get("/", async (req, res) => {
 
 app.use("/user", UserRouter);
 app.use("/master", MasterRouter);
+app.use('/profile', ProfileRouter)
 app.use(rashiRouter);
 
 app.listen(port, (err) => {

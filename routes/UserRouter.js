@@ -27,35 +27,30 @@ UserRouter.post("/user_profile", async (req, res) => {
   req_data = Buffer.from(req_data.data, "base64").toString();
   // console.log(JSON.parse(dt));
   req_data = JSON.parse(req_data);
-    console.log(req_data);
+  console.log(req_data);
   var table_name = "td_user_profile",
     fields =
       req_data.id > 0
-        ? `u_name = '${req_data.user}', location_id = '${
-            req_data.location_id
-          }', 
+        ? `u_name = '${req_data.user}', location_id = '${req_data.location_id
+        }', 
         latt_long = '${req_data.field_birth_loca}', dob = '${dateFormat(
-            req_data.field_birth_date,
-            "yyyy-mm-dd HH:MM:ss"
-          )}', 
-        ac_for = '${req_data.field_who_creat_profile}', religion = '${
-            req_data.field_ur_religion
-          }', 
+          req_data.field_birth_date,
+          "yyyy-mm-dd HH:MM:ss"
+        )}', 
+        ac_for = '${req_data.field_who_creat_profile}', religion = '${req_data.field_ur_religion
+        }', 
           caste_id = '${req_data.reg_cust_id}',
-        mother_tong = '${req_data.field_mother_tong}', modified_by = '${
-            req_data.reg_name
-          }', modified_dt = '${datetime}'`
+        mother_tong = '${req_data.field_mother_tong}', modified_by = '${req_data.reg_name
+        }', modified_dt = '${datetime}'`
         : "(u_name, phone_no, email_id, location_id, latt_long, dob, ac_for, religion,  mother_tong, created_by, created_dt)",
-    values = `('${req_data.user}', '${req_data.field_mobile}', '${
-      req_data.field_email_id
-    }', '${req_data.location_id}',
+    values = `('${req_data.user}', '${req_data.field_mobile}', '${req_data.field_email_id
+      }', '${req_data.location_id}',
         '${req_data.field_birth_loca}', '${dateFormat(
-      req_data.field_birth_date,
-      "yyyy-mm-dd HH:MM:ss"
-    )}', '${req_data.field_who_creat_profile}',
-        '${req_data.field_ur_religion}', '${
-      req_data.field_mother_tong
-    }', '${req_data.reg_name}', '${datetime}')`,
+        req_data.field_birth_date,
+        "yyyy-mm-dd HH:MM:ss"
+      )}', '${req_data.field_who_creat_profile}',
+        '${req_data.field_ur_religion}', '${req_data.field_mother_tong
+      }', '${req_data.reg_name}', '${datetime}')`,
     whr = req_data.id > 0 ? `id= '${req_data.id}'` : null,
     flag = req_data.id > 0 ? 1 : 0;
   var res_dt = await db_Insert(table_name, fields, values, whr, flag);
@@ -79,9 +74,9 @@ UserRouter.post("/user_profile", async (req, res) => {
 UserRouter.post("/user_caste", async (req, res) => {
   var req_data = req.body,
     datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-  req_data = Buffer.from(req_data.data, "base64").toString();
-  // console.log(JSON.parse(dt));
-  req_data = JSON.parse(req_data);
+  // req_data = Buffer.from(req_data.data, "base64").toString();
+  // // console.log(JSON.parse(dt));
+  // req_data = JSON.parse(req_data);
   //   console.log(req_data);
   //   var table_name = "td_user_caste",
   //     fields =
@@ -98,14 +93,12 @@ UserRouter.post("/user_caste", async (req, res) => {
   var table_name = "td_user_profile",
     fields =
       req_data.user_id > 0
-        ? `caste_id = '${req_data.field_cast}', oth_comm_marry_flag = '${
-            req_data.field_willing_marry_other_commun ? "Y" : "N"
-          }', 
+        ? `religion = '${req_data.field_ur_religion}', caste_id = '${req_data.field_cast}', oth_comm_marry_flag = '${req_data.field_willing_marry_other_commun ? "Y" : "N"
+        }', 
          modified_by = '${req_data.user}', modified_dt = '${datetime}'`
         : "(caste_id, oth_comm_marry_flag, created_by, created_dt)",
-    values = `('${req_data.field_cast}', '${
-      req_data.field_willing_marry_other_commun ? "Y" : "N"
-    }', '${req_data.user}', '${datetime}')`,
+    values = `('${req_data.field_cast}', '${req_data.field_willing_marry_other_commun ? "Y" : "N"
+      }', '${req_data.user}', '${datetime}')`,
     whr = req_data.user_id > 0 ? `id= '${req_data.user_id}'` : null,
     flag = req_data.user_id > 0 ? 1 : 0;
   var res_dt = await db_Insert(table_name, fields, values, whr, flag);
@@ -139,7 +132,7 @@ UserRouter.post("/user_personal_details", async (req, res) => {
         '${req_data.reg_age}', '${req_data.reg_eat_habbits}', '${req_data.reg_smoke_habbits}', 
         '${req_data.reg_no_sister}',  '${req_data.reg_no_brother}', '${req_data.reg_father_occupation}',
         '${req_data.reg_mother_occupation}', '${req_data.reg_family_location}', '${req_data.about_my_family}',
-        '${req_data.user}', '${datetime}')`, 
+        '${req_data.user}', '${datetime}')`,
     whr = req_data.id > 0 ? `id= '${req_data.id}'` : null,
     flag = req_data.id > 0 ? 1 : 0;
   var res_dt = await db_Insert(table_name, fields, values, whr, flag);
@@ -200,7 +193,7 @@ UserRouter.post("/user_hobbies", async (req, res) => {
   // console.log(JSON.parse(dt));
   req_data = JSON.parse(req_data);
   console.log(req_data);
-// console.log("/user_hobbies");
+  // console.log("/user_hobbies");
   var table_name = "td_user_hobbies",
     fields =
       req_data.id > 0
@@ -219,9 +212,9 @@ UserRouter.post("/user_hobbies", async (req, res) => {
 // UserRouter.post('/user_prof_7', async (req, res) => {
 UserRouter.post("/user_prof_info", async (req, res) => {
   var req_data = req.body,
-  
+
     datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-    console.log(req_data);
+  console.log(req_data);
   req_data = Buffer.from(req_data.data, "base64").toString();
   // console.log(JSON.parse(dt));
   req_data = JSON.parse(req_data);
@@ -266,7 +259,7 @@ UserRouter.post("/user_religion", async (req, res) => {
 UserRouter.get("/user_profile", async (req, res) => {
   var data = req.query;
   var select =
-      "a.u_name, a.phone_no, a.email_id, a.location_id, a.latt_long, a.dob, a.ac_for, a.religion, a.about_us, a.mother_tong mother_tong_id, d.lang_name mother_tong, b.caste_id, (SELECT c.caste_name FROM md_caste_list c WHERE b.caste_id=c.id) caste_name",
+    "a.u_name, a.phone_no, a.email_id, a.location_id, a.latt_long, a.dob, a.ac_for, a.religion, a.about_us, a.mother_tong mother_tong_id, d.lang_name mother_tong, b.caste_id, (SELECT c.caste_name FROM md_caste_list c WHERE b.caste_id=c.id) caste_name",
     table_name =
       "td_user_profile a LEFT JOIN td_user_caste b ON a.id=b.user_id LEFT JOIN md_language d ON a.mother_tong=d.id",
     whr = data.id > 0 ? `a.id=${data.id}` : null,
@@ -275,7 +268,7 @@ UserRouter.get("/user_profile", async (req, res) => {
   var location_name =
     res_dt.suc > 0 && res_dt.msg.length > 0
       ? location[location.findIndex((dt) => dt.id == res_dt.msg[0].location_id)]
-          .name
+        .name
       : null;
   res_dt.suc > 0 ? (res_dt.msg[0]["location_name"] = location_name) : "";
   res.send(res_dt);
@@ -285,7 +278,7 @@ UserRouter.get("/user_profile", async (req, res) => {
 UserRouter.get("/user_prof_2", async (req, res) => {
   var data = req.query;
   var select =
-      "user_id, caste_id, sub_caste_id, gothram_id, oth_comm_marry_flag",
+    "user_id, caste_id, sub_caste_id, gothram_id, oth_comm_marry_flag",
     table_name = "td_user_caste",
     whr = data.id > 0 ? `id=${id}` : null,
     order = null;
@@ -293,52 +286,11 @@ UserRouter.get("/user_prof_2", async (req, res) => {
   res.send(res_dt);
 });
 
-// UserRouter.get('/user_prof_3', async (req,res) => {
-UserRouter.get("/user_basic_info", async (req, res) => {
-  var data = req.query;
-  // var select =
-  //     "user_id, marital_status, height, family_status, family_type, family_values, disability_flag, body_type,  physical status, drinking_habbits , age , eating_habbits, smoking_habbits, no_sister, no_brother, father_occupation, mother_occupation, family_location, about_my_family",
-  //   table_name = "td_user_p_dtls",
-  var select = "a.id, b.id user_id, a.marital_status,a.height,a.weight,a.family_status,a.family_values,a.family_type,a.disability_flag,a.body_type,a.drinking_habbits,a.age,a.age,a.eating_habbits,a.smoking_habbits,a.no_sister,a.no_brother,a.father_occupation,a.mother_occupation,a.family_location,a.about_my_family,b.u_name,b.ac_for,b.mother_tong mother_tong_id, d.lang_name mother_tong, b.about_us, c.caste_name, b.caste_id, b.religion, b.oth_comm_marry_flag",
-  table_name = "td_user_p_dtls a LEFT JOIN td_user_profile b ON a.user_id=b.id LEFT JOIN md_caste_list c ON b.caste_id=c.id LEFT JOIN md_language d ON b.mother_tong=d.id",
-    whr = data.user_id > 0 ? `a.user_id=${data.user_id}` : null,
-    order = null;
-  var res_dt = await db_Select(select, table_name, whr, order);
-  res_dt = await EncryptDataToSend(res_dt)
-  res.send(res_dt);
-});
-
-// UserRouter.get('/user_prof_4', async (req,res) => {
-UserRouter.get("/user_groom_loc", async (req, res) => {
-  var data = req.query;
-  var select =
-      "*",
-    table_name = "td_user_education",
-    whr = data.user_id > 0 ? `user_id=${data.user_id}` : null,
-    order = null;
-  var res_dt = await db_Select(select, table_name, whr, order);
-  res_dt = await EncryptDataToSend(res_dt)
-  res.send(res_dt);
-});
-
-// UserRouter.get('/user_prof_6', async (req,res) => {
-UserRouter.get("/user_hobbies", async (req, res) => {
-  var data = req.query;
-  var select =
-      "id, user_id, hobbies_interest, sports, spoken_lang, fav_music, movie",
-    table_name = "td_user_hobbies",
-    whr = data.user_id > 0 ? `user_id=${data.user_id}` : null,
-    order = null;
-  var res_dt = await db_Select(select, table_name, whr, order);
-  res_dt = await EncryptDataToSend(res_dt)
-  res.send(res_dt);
-});
-
 // UserRouter.get('/user_prof_7', async (req,res) => {
 UserRouter.get("/user_prof_info", async (req, res) => {
   var data = req.query;
   var select =
-      "user_id, education, college, occupation, organization, edu_in_dt, emp_in, occup_in_dt, annual_income",
+    "user_id, education, college, occupation, organization, edu_in_dt, emp_in, occup_in_dt, annual_income",
     table_name = "td_user_professional",
     whr = data.id > 0 ? `id=${id}` : null,
     order = null;
@@ -364,7 +316,7 @@ UserRouter.post("/login", async (req, res) => {
   data = JSON.parse(data);
   console.log(data);
   var select =
-      "id, user_id, user_name , email_id user_email,  password,  last_login, active_flag",
+    "id, user_id, user_name , email_id user_email,  password,  last_login, active_flag",
     table_name = "md_user_login",
     whr = `user_id = '${data.user_id}' AND active_flag ="Y" `,
     order = null;

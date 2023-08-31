@@ -7,3 +7,6 @@ ALTER TABLE `td_user_p_dtls` CHANGE `about_my_family` `about_my_family` TEXT CHA
 
 ALTER TABLE `td_user_p_dtls` ADD `weight` VARCHAR(25) NULL DEFAULT NULL AFTER `height`;
 <----------- End ----->
+
+<----------- 31-08-2023 ----->
+ALTER TABLE `td_user_education` DROP `anual_inc`;
