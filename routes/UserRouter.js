@@ -262,7 +262,7 @@ UserRouter.get("/user_profile", async (req, res) => {
     "a.u_name, a.phone_no, a.email_id, a.location_id, a.latt_long, a.dob, a.ac_for, a.religion, a.about_us, a.mother_tong mother_tong_id, d.lang_name mother_tong, b.caste_id, (SELECT c.caste_name FROM md_caste_list c WHERE b.caste_id=c.id) caste_name",
     table_name =
       "td_user_profile a LEFT JOIN td_user_caste b ON a.id=b.user_id LEFT JOIN md_language d ON a.mother_tong=d.id",
-    whr = data.id > 0 ? `a.id=${data.id}` : null,
+    whr = data.user_id > 0 ? `a.id=${data.user_id}` : null,
     order = null;
   var res_dt = await db_Select(select, table_name, whr, order);
   var location_name =
@@ -271,6 +271,7 @@ UserRouter.get("/user_profile", async (req, res) => {
         .name
       : null;
   res_dt.suc > 0 ? (res_dt.msg[0]["location_name"] = location_name) : "";
+  res_dt = await EncryptDataToSend(res_dt)
   res.send(res_dt);
 });
 
@@ -306,6 +307,17 @@ UserRouter.get("/user_religion", async (req, res) => {
     whr = data.id > 0 ? `id=${id}` : null,
     order = null;
   var res_dt = await db_Select(select, table_name, whr, order);
+  res.send(res_dt);
+});
+
+UserRouter.get("/user_partner_pref", async (req, res) => {
+  var data = req.query;
+  var select = "id, user_id, age_frm, age_to, maritual_status, mother_tounge, religion, location",
+  table_name = "td_user_partner_pref",
+  whr = data.user_id > 0 ? `id=${data.user_id}` : null,
+  order = null;
+  var res_dt = await db_Select(select, table_name, whr, order);
+  res_dt = await EncryptDataToSend(res_dt)
   res.send(res_dt);
 });
 
