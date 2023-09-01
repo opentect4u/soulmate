@@ -25,7 +25,7 @@ PartnerRouter.post("/update_partner", async (req, res) =>{
      
     var select = 'id',
     table_name = 'td_user_partner_pref',
-    whr = `user_id = ${data.user_id}`
+    whr = `user_id = ${data.user_id}`,                                                                                                                                                                               
     order = null;
     var dt = await db_Select(select, table_name, whr, order)
     console.log(dt);
@@ -33,9 +33,9 @@ PartnerRouter.post("/update_partner", async (req, res) =>{
     var table_name = "td_user_partner_pref",
     fields = dt.suc > 0 && dt.msg.length > 0 ? `age_frm = '${data.age_frm}', age_to = '${data.age_to}', 
     marital_status = '${data.marital_status}', mother_tounge = '${data.mother_tounge}', religion = '${data.religion}',
-    location = '${data.location}',  modified_by = '${data.user}', modified_dt = '${datetime}'` : '(user_id, age_frm, age_to, marital_status, mother_tounge, religion, location)',
+    location = '${data.location}',  modified_by = '${data.user}', modified_dt = '${datetime}'` : '(user_id, age_frm, age_to, marital_status, mother_tounge, religion, location,  created_by, created_dt)',
     values = `('${data.user_id}', '${data.age_frm}', '${data.age_to}', '${data.marital_status}', '${data.mother_tounge}',
-    '${data.religion}', '${data.location}')`,
+    '${data.religion}', '${data.location}', '${data.user}', '${datetime}')`,
     whr = dt.suc > 0 && dt.msg.length > 0 ? `user_id = ${data.user_id}` : null,
     flag = dt.suc > 0 && dt.msg.length > 0 ? 1 : 0;
     var res_dt = await db_Insert(table_name, fields, values, whr, flag);

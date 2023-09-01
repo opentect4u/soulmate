@@ -31,7 +31,8 @@ UserRouter.post("/user_profile", async (req, res) => {
   var table_name = "td_user_profile",
     fields =
       req_data.id > 0
-        ? `u_name = '${req_data.user}', location_id = '${req_data.location_id
+        ? `u_name = '${req_data.user}',
+         location_id = '${req_data.location_id
         }', 
         latt_long = '${req_data.field_birth_loca}', dob = '${dateFormat(
           req_data.field_birth_date,
