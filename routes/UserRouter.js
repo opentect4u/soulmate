@@ -39,18 +39,18 @@ UserRouter.post("/user_profile", async (req, res) => {
           "yyyy-mm-dd HH:MM:ss"
         )}', 
         ac_for = '${req_data.field_who_creat_profile}', religion = '${req_data.field_ur_religion
-        }', 
+        }', gender = '${req_data.field_gender}',
           caste_id = '${req_data.reg_cust_id}',
         mother_tong = '${req_data.field_mother_tong}', modified_by = '${req_data.reg_name
         }', modified_dt = '${datetime}'`
-        : "(u_name, phone_no, email_id, location_id, latt_long, dob, ac_for, religion,  mother_tong, created_by, created_dt)",
+        : "(u_name, phone_no, email_id, location_id, latt_long, dob, ac_for, religion, gender, mother_tong, created_by, created_dt)",
     values = `('${req_data.user}', '${req_data.field_mobile}', '${req_data.field_email_id
       }', '${req_data.location_id}',
         '${req_data.field_birth_loca}', '${dateFormat(
         req_data.field_birth_date,
         "yyyy-mm-dd HH:MM:ss"
       )}', '${req_data.field_who_creat_profile}',
-        '${req_data.field_ur_religion}', '${req_data.field_mother_tong
+        '${req_data.field_ur_religion}', '${req_data.field_gender}', '${req_data.field_mother_tong
       }', '${req_data.reg_name}', '${datetime}')`,
     whr = req_data.id > 0 ? `id= '${req_data.id}'` : null,
     flag = req_data.id > 0 ? 1 : 0;
