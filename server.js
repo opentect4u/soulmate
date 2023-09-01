@@ -12,6 +12,7 @@ const { MasterRouter, getNakhatra } = require("./routes/MasterRouter");
 const { ProfileRouter } = require("./routes/ProfileRouter");
 const { rashiRouter } = require("./routes/RasiRouter");
 const { UserRouter } = require("./routes/UserRouter");
+const { PartnerRouter } = require("./routes/PartnerRouter");
 
 dotenv.config();
 // USING CORS //
@@ -45,7 +46,7 @@ setInterval(() => {
               (60 * 60 * 1000)
           );
           if (timeDiff >= 1) {
-            console.log("time excided");
+            // console.log("time excided");
             var options = {
               method: "POST",
               url: process.env.GENERATE_TOKEN_API,
@@ -73,13 +74,11 @@ setInterval(() => {
                   "utf8",
                   (err) => {
                     if (err) throw err;
-                    console.log("File has been saved!");
+                    // console.log("File has been saved!");
                   }
                 );
               }
             });
-          } else {
-            console.log("time remains");
           }
         } else {
           var options = {
@@ -109,7 +108,7 @@ setInterval(() => {
                 "utf8",
                 (err) => {
                   if (err) throw err;
-                  console.log("File has been saved!");
+                  // console.log("File has been saved!");
                 }
               );
             }
@@ -128,7 +127,7 @@ app.use((req, res, next) => {
   var api_key = req.headers.api_key,
     api_secret = req.headers.api_secret;
   // console.log(req.headers.referer);
-  console.log(req.path);
+  // console.log(req.path);
   // if (req.path.split('/')[1] != 'err') {
   if (req.path != "/") {
     if (req.path.split("/")[1] == "uploads") {
@@ -208,6 +207,7 @@ app.use("/user", UserRouter);
 app.use("/master", MasterRouter);
 app.use('/profile', ProfileRouter)
 app.use(rashiRouter);
+app.use('/partner', PartnerRouter);
 
 app.listen(port, (err) => {
   if (err) throw new Error(err);

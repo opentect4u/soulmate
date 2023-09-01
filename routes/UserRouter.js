@@ -310,16 +310,6 @@ UserRouter.get("/user_religion", async (req, res) => {
   res.send(res_dt);
 });
 
-UserRouter.get("/user_partner_pref", async (req, res) => {
-  var data = req.query;
-  var select = "id, user_id, age_frm, age_to, maritual_status, mother_tounge, religion, location",
-  table_name = "td_user_partner_pref",
-  whr = data.user_id > 0 ? `id=${data.user_id}` : null,
-  order = null;
-  var res_dt = await db_Select(select, table_name, whr, order);
-  res_dt = await EncryptDataToSend(res_dt)
-  res.send(res_dt);
-});
 
 UserRouter.post("/login", async (req, res) => {
   var data = req.body,
