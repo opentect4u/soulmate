@@ -20,8 +20,8 @@ ProfileRouter.get("/user_groom_loc", async (req, res) => {
     var data = req.query;
     var select =
         "a.*, b.edu_name education_name, c.occu_name, d.income income_name",
-        table_name = "td_user_education a, md_education b, md_occupation c, md_income d",
-        whr = data.user_id > 0 ? `a.heigh_education=b.id AND a.occup=c.id AND a.income=d.id AND a.user_id=${data.user_id}` : `a.heigh_education=b.id AND a.occup=c.id AND a.income=d.id`,
+        table_name = "td_user_education a LEFT JOIN md_education b ON a.heigh_education=b.id LEFT JOIN  md_occupation c ON a.occup=c.id  LEFT JOIN md_income d ON a.income=d.id",
+        whr = data.user_id > 0 ? `a.user_id=${data.user_id}` : null,
         order = null;
     var res_dt = await db_Select(select, table_name, whr, order);
     res_dt = await EncryptDataToSend(res_dt)
