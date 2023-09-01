@@ -47,8 +47,9 @@ ProfileRouter.post('/user_basic_info', async (req, res) => {
     data = JSON.parse(data);
 
     var table_name = 'td_user_profile',
-        fields = data.user_id > 0 ? `u_name = '${data.field_name}', ac_for = '${data.field_who_creat_profile}', mother_tong = '${data.field_mother_tong}', modified_by = '${data.user}', modified_dt = '${datetime}'` : '(u_name, phone_no, ac_for, mother_tong, created_by, created_dt)',
-        values = `('${data.field_name}', '${data.field_mobile}', '${data.field_who_creat_profile}', '${data.field_mother_tong}', '${data.field_gender}', '${data.user}', '${datetime}')`,
+        fields = data.user_id > 0 ? `u_name = '${data.field_name}', ac_for = '${data.field_who_creat_profile}', mother_tong = '${data.field_mother_tong}', modified_by = '${data.user}', modified_dt = '${datetime}'` : 
+        '(u_name, phone_no, ac_for, mother_tong, created_by, created_dt)',
+        values = `('${data.field_name}', '${data.field_mobile}', '${data.field_who_creat_profile}', '${data.field_mother_tong}', '${data.user}', '${datetime}')`,
         whr = data.user_id > 0 ? `id = ${data.user_id}` : null,
         flag = data.user_id > 0 ? 1 : 0;
     var res_dt = await db_Insert(table_name, fields, values, whr, flag)
