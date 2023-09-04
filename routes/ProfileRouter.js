@@ -170,6 +170,7 @@ ProfileRouter.post('/user_hobbies', async (req, res) => {
 
     data = Buffer.from(data.data, "base64").toString();
     data = JSON.parse(data);
+    // console.log(data);
 
     var hobbies_tb_data = [
         {field_name: "hobbies_interest", table_name: "td_user_hobbies_int", input_field: "field_Hobbies_Interests"},
@@ -180,19 +181,21 @@ ProfileRouter.post('/user_hobbies', async (req, res) => {
     ]
 
     for(let dt of hobbies_tb_data){
-        var select = 'id',
-            table_name = `${dt.table_name}`,
-            whr = `user_id = ${data.user_id}`,
-            order = null;
-        var chk_dt = await db_Select(select, table_name, whr, order)
-
-        var table_name = `${dt.table_name}`,
-            fields = chk_dt.suc > 0 && chk_dt.msg.length > 0 ? `${dt.field_name} = '${data[dt.input_field]}', modified_by = '${data.user}', modified_dt = '${datetime}'` :
-                `(user_id, ${dt.field_name}, created_by, created_dt)`,
-            values = `('${data.user_id}', '${data[dt.input_field]}', '${data.user}', '${datetime}')`,
-            whr = chk_dt.suc > 0 && chk_dt.msg.length > 0 ? `id = ${chk_dt.msg[0].id}` : null,
-            flag = chk_dt.suc > 0 && chk_dt.msg.length > 0 ? 1 : 0;
-        res_dt = await db_Insert(table_name, fields, values, whr, flag)
+        for(let hdt of data[dt.input_field]){
+            var select = 'id',
+                table_name = `${dt.table_name}`,
+                whr = `user_id = ${data.user_id} AND ${dt.field_name} = '${hdt}'`,
+                order = null;
+            var chk_dt = await db_Select(select, table_name, whr, order)
+    
+            var table_name = `${dt.table_name}`,
+                fields = chk_dt.suc > 0 && chk_dt.msg.length > 0 ? `${dt.field_name} = '${hdt}', modified_by = '${data.user}', modified_dt = '${datetime}'` :
+                    `(user_id, ${dt.field_name}, created_by, created_dt)`,
+                values = `('${data.user_id}', '${hdt}', '${data.user}', '${datetime}')`,
+                whr = chk_dt.suc > 0 && chk_dt.msg.length > 0 ? `id = ${chk_dt.msg[0].id}` : null,
+                flag = chk_dt.suc > 0 && chk_dt.msg.length > 0 ? 1 : 0;
+            res_dt = await db_Insert(table_name, fields, values, whr, flag)
+        }
     }
     res.send(res_dt)
 })
