@@ -164,4 +164,37 @@ ProfileRouter.post('/about_family', async (req, res) => {
     res.send(res_dt)
 })
 
+ProfileRouter.post('/user_hobbies', async (req, res) => {
+    var data = req.body,
+        datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss"), res_dt;
+
+    data = Buffer.from(data.data, "base64").toString();
+    data = JSON.parse(data);
+
+    var hobbies_tb_data = [
+        {field_name: "hobbies_interest", table_name: "td_user_hobbies_int", input_field: "field_Hobbies_Interests"},
+        {field_name: "music_name", table_name: "td_user_hobbies_music", input_field: "field_Music"},
+        {field_name: "sports_name", table_name: "td_user_hobbies_sports", input_field: "field_Sports"},
+        {field_name: "movie_name", table_name: "td_user_hobbies_movies", input_field: "field_Preferred_Movies"},
+        {field_name: "lang_name", table_name: "td_user_hobbies_lang", input_field: "field_Spoken_Languages"},
+    ]
+
+    for(let dt of hobbies_tb_data){
+        var select = 'id',
+            table_name = `${dt.table_name}`,
+            whr = `user_id = ${data.user_id}`,
+            order = null;
+        var chk_dt = await db_Select(select, table_name, whr, order)
+
+        var table_name = `${dt.table_name}`,
+            fields = chk_dt.suc > 0 && chk_dt.msg.length > 0 ? `${dt.field_name} = '${data[dt.input_field]}', modified_by = '${data.user}', modified_dt = '${datetime}'` :
+                `(user_id, ${dt.field_name}, created_by, created_dt)`,
+            values = `('${data.user_id}', '${data[dt.input_field]}', '${data.user}', '${datetime}')`,
+            whr = chk_dt.suc > 0 && chk_dt.msg.length > 0 ? `id = ${chk_dt.msg[0].id}` : null,
+            flag = chk_dt.suc > 0 && chk_dt.msg.length > 0 ? 1 : 0;
+        res_dt = await db_Insert(table_name, fields, values, whr, flag)
+    }
+    res.send(res_dt)
+})
+
 module.exports = { ProfileRouter }

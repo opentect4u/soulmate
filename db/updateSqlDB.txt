@@ -10,3 +10,15 @@ ALTER TABLE `td_user_p_dtls` ADD `weight` VARCHAR(25) NULL DEFAULT NULL AFTER `h
 
 <----------- 31-08-2023 ----->
 ALTER TABLE `td_user_education` DROP `anual_inc`;
+<----------- End ----->
+
+<----------- 31-08-2023 ----->
+CREATE TABLE `soul_mate`.`td_user_hobbies_int` (`id` INT(11) NOT NULL AUTO_INCREMENT , `user_id` INT(11) NOT NULL , `hobbies_interest` VARCHAR(100) NULL DEFAULT NULL , `created_by` VARCHAR(50) NULL DEFAULT NULL , `created_dt` DATETIME NULL DEFAULT NULL , `modified_by` VARCHAR(50) NULL DEFAULT NULL , `modified_dt` DATETIME NULL DEFAULT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+
+CREATE TABLE `soul_mate`.`td_user_hobbies_movies` (`id` INT(11) NOT NULL AUTO_INCREMENT , `user_id` INT(11) NOT NULL , `movie_name` VARCHAR(100) NOT NULL , `created_by` VARCHAR(50) NULL DEFAULT NULL , `created_dt` DATETIME NULL DEFAULT NULL , `modified_by` VARCHAR(50) NULL DEFAULT NULL , `modified_dt` DATETIME NULL DEFAULT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+
+CREATE TABLE `soul_mate`.`td_user_hobbies_sports` (`id` INT(11) NOT NULL AUTO_INCREMENT , `user_id` INT(11) NOT NULL , `sports_name` VARCHAR(100) NOT NULL , `created_by` VARCHAR(50) NULL DEFAULT NULL , `created_dt` DATETIME NULL DEFAULT NULL , `modified_by` VARCHAR(50) NULL DEFAULT NULL , `modified_dt` DATETIME NULL DEFAULT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+
+CREATE TABLE `soul_mate`.`td_user_hobbies_music` (`id` INT(11) NOT NULL AUTO_INCREMENT , `user_id` INT(11) NOT NULL , `music_name` VARCHAR(100) NOT NULL , `created_by` VARCHAR(50) NULL DEFAULT NULL , `created_dt` DATETIME NULL DEFAULT NULL , `modified_by` VARCHAR(50) NULL DEFAULT NULL , `modified_dt` DATETIME NULL DEFAULT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+
+CREATE TABLE `soul_mate`.`td_user_hobbies_lang` (`id` INT(11) NOT NULL AUTO_INCREMENT , `user_id` INT(11) NOT NULL , `lang_name` VARCHAR(100) NOT NULL , `created_by` VARCHAR(50) NULL DEFAULT NULL , `created_dt` DATETIME NULL DEFAULT NULL , `modified_by` VARCHAR(50) NULL DEFAULT NULL , `modified_dt` DATETIME NULL DEFAULT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;

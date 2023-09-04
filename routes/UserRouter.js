@@ -24,9 +24,9 @@ UserRouter.post("/user_profile", async (req, res) => {
   var req_data = req.body,
     datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
   // console.log(Buffer.from(req_data.data, 'base64').toString());
-  // req_data = Buffer.from(req_data.data, "base64").toString();
+  req_data = Buffer.from(req_data.data, "base64").toString();
   // console.log(JSON.parse(dt));
-  // req_data = JSON.parse(req_data);
+  req_data = JSON.parse(req_data);
   console.log(req_data);
   var table_name = "td_user_profile",
     fields =
@@ -110,9 +110,9 @@ UserRouter.post("/user_personal_details", async (req, res) => {
   // UserRouter.post("/user_basic_family", async (req, res) => {
   var req_data = req.body,
     datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-  req_data = Buffer.from(req_data.data, "base64").toString();
+  // req_data = Buffer.from(req_data.data, "base64").toString();
   // console.log(JSON.parse(dt));
-  req_data = JSON.parse(req_data);
+  // req_data = JSON.parse(req_data);
   console.log(req_data);
   var table_name = "td_user_p_dtls",
     fields =
@@ -120,19 +120,10 @@ UserRouter.post("/user_personal_details", async (req, res) => {
         ? `marital_status = '${req_data.field_marital_status}', height = '${req_data.field_height}', 
         family_status = '${req_data.field_family_status}', family_type = '${req_data.field_family_type}', 
         family_values = '${req_data.field_family_value}', disability_flag = '${req_data.field_disability}', 
-        body_type = '${req_data.reg_body_type}',  physical_status = '${req_data.reg_physical_status}',
-        drinking_habbits = '${req_data.reg_drinking_habbits}',  age = '${req_data.reg_age}',
-        eating_habbits = '${req_data.reg_eat_habbits}',   smoking_habbits = '${req_data.reg_smoke_habbits}',
-        no_sister = '${req_data.reg_no_sister}',   no_brother = '${req_data.reg_no_brother}',
-        father_occupation = '${req_data.reg_father_occupation}',   mother_occupation = '${req_data.reg_mother_occupation}',
-       family_location = '${req_data.reg_family_location}', about_my_family ='${req_data.about_my_family}', modified_by = '${req_data.reg_name}', modified_dt = '${datetime}'`
-        : "(user_id, marital_status, height, family_status, family_type, family_values, disability_flag, body_type,physical_status,drinking_habbits,age,eating_habbits,smoking_habbits,no_sister,no_brother,father_occupation,mother_occupation,family_location,about_my_family created_by, created_dt)",
+      modified_by = '${req_data.reg_name}', modified_dt = '${datetime}'`
+        : "(user_id, marital_status, height, family_status, family_type, family_values, disability_flag, created_by, created_dt)",
     values = `('${req_data.user_id}', '${req_data.field_marital_status}', '${req_data.field_height}', '${req_data.field_family_status}',
         '${req_data.field_family_type}', '${req_data.field_family_value}', '${req_data.field_disability}',
-        '${req_data.reg_body_type}, '${req_data.reg_physical_status}', '${req_data.reg_eat_habbits}',
-        '${req_data.reg_age}', '${req_data.reg_eat_habbits}', '${req_data.reg_smoke_habbits}', 
-        '${req_data.reg_no_sister}',  '${req_data.reg_no_brother}', '${req_data.reg_father_occupation}',
-        '${req_data.reg_mother_occupation}', '${req_data.reg_family_location}', '${req_data.about_my_family}',
         '${req_data.user}', '${datetime}')`,
     whr = req_data.id > 0 ? `id= '${req_data.id}'` : null,
     flag = req_data.id > 0 ? 1 : 0;
@@ -186,29 +177,29 @@ UserRouter.post("/user_about", async (req, res) => {
   res.send(res_dt);
 });
 
-UserRouter.post("/user_hobbies", async (req, res) => {
-  // UserRouter.post("/user_hobbies", async (req, res) => {
-  var req_data = req.body,
-    datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-  req_data = Buffer.from(req_data.data, "base64").toString();
-  // console.log(JSON.parse(dt));
-  req_data = JSON.parse(req_data);
-  console.log(req_data);
-  // console.log("/user_hobbies");
-  var table_name = "td_user_hobbies",
-    fields =
-      req_data.id > 0
-        ? `hobbies_interest = '${req_data.edit_Hobbies_Interests}', sports = '${req_data.edit_Sports}' ,
-        spoken_lang = '${req_data.edit_Spoken_Languages}', fav_music = '${req_data.edit_Music}',  movie = '${req_data.edit_Preferred_Movies}' , modified_by = '${req_data.user}', modified_dt = '${datetime}'`
-        : "(user_id, hobbies_interest, sports, fav_reads, spoken_lang, fav_music, fav_cuisine, movie, created_by, created_dt)",
-    values = `('${req_data.user_id}', '${req_data.edit_Hobbies_Interests}', '${req_data.edit_Sports}', 
-         '${req_data.edit_Spoken_Languages}','${req_data.edit_Music}', 
-        '${req_data.edit_Preferred_Movies}',  '${req_data.user}', '${datetime}')`,
-    whr = req_data.id > 0 ? `id= '${req_data.id}'` : null,
-    flag = req_data.id > 0 ? 1 : 0;
-  var res_dt = await db_Insert(table_name, fields, values, whr, flag);
-  res.send(res_dt);
-});
+// UserRouter.post("/user_hobbies", async (req, res) => {
+//   // UserRouter.post("/user_hobbies", async (req, res) => {
+//   var req_data = req.body,
+//     datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+//   req_data = Buffer.from(req_data.data, "base64").toString();
+//   // console.log(JSON.parse(dt));
+//   req_data = JSON.parse(req_data);
+//   console.log(req_data);
+//   // console.log("/user_hobbies");
+//   var table_name = "td_user_hobbies",
+//     fields =
+//       req_data.id > 0
+//         ? `hobbies_interest = '${req_data.edit_Hobbies_Interests}', sports = '${req_data.edit_Sports}' ,
+//         spoken_lang = '${req_data.edit_Spoken_Languages}', fav_music = '${req_data.edit_Music}',  movie = '${req_data.edit_Preferred_Movies}' , modified_by = '${req_data.user}', modified_dt = '${datetime}'`
+//         : "(user_id, hobbies_interest, sports, fav_reads, spoken_lang, fav_music, fav_cuisine, movie, created_by, created_dt)",
+//     values = `('${req_data.user_id}', '${req_data.edit_Hobbies_Interests}', '${req_data.edit_Sports}', 
+//          '${req_data.edit_Spoken_Languages}','${req_data.edit_Music}', 
+//         '${req_data.edit_Preferred_Movies}',  '${req_data.user}', '${datetime}')`,
+//     whr = req_data.id > 0 ? `id= '${req_data.id}'` : null,
+//     flag = req_data.id > 0 ? 1 : 0;
+//   var res_dt = await db_Insert(table_name, fields, values, whr, flag);
+//   res.send(res_dt);
+// });
 
 // UserRouter.post('/user_prof_7', async (req, res) => {
 UserRouter.post("/user_prof_info", async (req, res) => {
