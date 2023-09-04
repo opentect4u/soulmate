@@ -170,9 +170,9 @@ ProfileRouter.get("/user_hobbies", async (req, res) => {
         res_dt = await db_Select(select, table_name, whr, order);
         res_dt.suc > 0 ? hobbie_data[dt.input_field] = res_dt.msg : ''
     }
-    
+    res_dt = {suc: 1, msg: hobbie_data}
     res_dt = await EncryptDataToSend(res_dt)
-    res.send(hobbie_data);
+    res.send(res_dt);
 });
 
 ProfileRouter.post('/user_hobbies', async (req, res) => {
