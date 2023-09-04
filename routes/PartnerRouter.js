@@ -31,15 +31,16 @@ PartnerRouter.post("/update_partner", async (req, res) =>{
     console.log(dt);
 
     var table_name = "td_user_partner_pref",
-    fields = dt.suc > 0 && dt.msg.length > 0 ? `age_frm = '${data.age_frm}', age_to = '${data.age_to}', 
-    marital_status = '${data.marital_status}', mother_tounge = '${data.mother_tounge}', religion = '${data.religion}',
-    location = '${data.location}',  modified_by = '${data.user}', modified_dt = '${datetime}'` : '(user_id, age_frm, age_to, marital_status, mother_tounge, religion, location,  created_by, created_dt)',
-    values = `('${data.user_id}', '${data.age_frm}', '${data.age_to}', '${data.marital_status}', '${data.mother_tounge}',
-    '${data.religion}', '${data.location}', '${data.user}', '${datetime}')`,
+    fields = dt.suc > 0 && dt.msg.length > 0 ? `age_frm = '${data.field_frm_age}', age_to = '${data.field_to_age}', 
+    marital_status = '${data.field_marital_status}', mother_tounge = '${data.field_mother_tong}', religion = '${data.field_ur_religion}',
+    location = '${data.field_Country}',  modified_by = '${data.user}', modified_dt = '${datetime}'` : '(user_id, age_frm, age_to, marital_status, mother_tounge, religion, location,  created_by, created_dt)',
+    values = `('${data.user_id}', '${data.field_frm_age}', '${data.field_to_age}', '${data.field_marital_status}', '${data.field_mother_tong}',
+    '${data.field_ur_religion}', '${data.field_Country}', '${data.user}', '${datetime}')`,
     whr = dt.suc > 0 && dt.msg.length > 0 ? `user_id = ${data.user_id}` : null,
     flag = dt.suc > 0 && dt.msg.length > 0 ? 1 : 0;
     var res_dt = await db_Insert(table_name, fields, values, whr, flag);
     res.send(res_dt);
 })
+
 
 module.exports = {PartnerRouter}
