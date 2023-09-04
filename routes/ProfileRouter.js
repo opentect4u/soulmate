@@ -4,18 +4,6 @@ const express = require('express'),
 
 const { db_Select, EncryptDataToSend, db_Insert } = require('../module/MasterModule');
 
-ProfileRouter.get("/user_hobbies", async (req, res) => {
-    var data = req.query;
-    var select =
-        "id, user_id, hobbies_interest, sports, spoken_lang, fav_music, movie",
-        table_name = "td_user_hobbies",
-        whr = data.user_id > 0 ? `user_id=${data.user_id}` : null,
-        order = null;
-    var res_dt = await db_Select(select, table_name, whr, order);
-    res_dt = await EncryptDataToSend(res_dt)
-    res.send(res_dt);
-});
-
 ProfileRouter.get("/user_groom_loc", async (req, res) => {
     var data = req.query;
     var select =
@@ -163,6 +151,29 @@ ProfileRouter.post('/about_family', async (req, res) => {
     var res_dt = await db_Insert(table_name, fields, values, whr, flag)
     res.send(res_dt)
 })
+
+ProfileRouter.get("/user_hobbies", async (req, res) => {
+    var data = req.query, hobbie_data = {}, res_dt;
+    var hobbies_tb_data = [
+        {field_name: "id, hobbies_interest", table_name: "td_user_hobbies_int", input_field: "field_Hobbies_Interests"},
+        {field_name: "id, music_name", table_name: "td_user_hobbies_music", input_field: "field_Music"},
+        {field_name: "id, sports_name", table_name: "td_user_hobbies_sports", input_field: "field_Sports"},
+        {field_name: "id, movie_name", table_name: "td_user_hobbies_movies", input_field: "field_Preferred_Movies"},
+        {field_name: "id, lang_name", table_name: "td_user_hobbies_lang", input_field: "field_Spoken_Languages"},
+    ]
+
+    for(let dt of hobbies_tb_data){
+        var select = `${dt.field_name}`,
+            table_name = `${dt.table_name}`,
+            whr = data.user_id > 0 ? `user_id=${data.user_id}` : null,
+            order = null;
+        res_dt = await db_Select(select, table_name, whr, order);
+        res_dt.suc > 0 ? hobbie_data[dt.input_field] = res_dt.msg : ''
+    }
+    
+    res_dt = await EncryptDataToSend(res_dt)
+    res.send(hobbie_data);
+});
 
 ProfileRouter.post('/user_hobbies', async (req, res) => {
     var data = req.body,
