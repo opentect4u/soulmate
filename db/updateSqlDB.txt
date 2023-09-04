@@ -22,3 +22,53 @@ CREATE TABLE `soul_mate`.`td_user_hobbies_sports` (`id` INT(11) NOT NULL AUTO_IN
 CREATE TABLE `soul_mate`.`td_user_hobbies_music` (`id` INT(11) NOT NULL AUTO_INCREMENT , `user_id` INT(11) NOT NULL , `music_name` VARCHAR(100) NOT NULL , `created_by` VARCHAR(50) NULL DEFAULT NULL , `created_dt` DATETIME NULL DEFAULT NULL , `modified_by` VARCHAR(50) NULL DEFAULT NULL , `modified_dt` DATETIME NULL DEFAULT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
 
 CREATE TABLE `soul_mate`.`td_user_hobbies_lang` (`id` INT(11) NOT NULL AUTO_INCREMENT , `user_id` INT(11) NOT NULL , `lang_name` VARCHAR(100) NOT NULL , `created_by` VARCHAR(50) NULL DEFAULT NULL , `created_dt` DATETIME NULL DEFAULT NULL , `modified_by` VARCHAR(50) NULL DEFAULT NULL , `modified_dt` DATETIME NULL DEFAULT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+
+
+
+CREATE TABLE `td_user_partner_pref` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `age_frm` int(11) DEFAULT NULL,
+  `age_to` int(11) DEFAULT NULL,
+  `marital_status` enum('Y','N') DEFAULT NULL,
+  `mother_tounge` int(11) DEFAULT NULL,
+  `religion` varchar(50) DEFAULT NULL,
+  `location` int(11) DEFAULT NULL,
+  `created_by` varchar(50) DEFAULT NULL,
+  `created_dt` datetime DEFAULT NULL,
+  `modified_by` varchar(50) DEFAULT NULL,
+  `modified_dt` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `td_user_partner_pref`
+--
+
+INSERT INTO `td_user_partner_pref` (`id`, `user_id`, `age_frm`, `age_to`, `marital_status`, `mother_tounge`, `religion`, `location`, `created_by`, `created_dt`, `modified_by`, `modified_dt`) VALUES
+(1, 1, 16, 20, 'Y', 1, 'Hindu', 1, NULL, NULL, 'undefined', '2023-08-31 19:10:56'),
+(2, 2, 15, 20, 'Y', 2, 'Muslim', 4, 'undefined', '2023-09-01 11:12:15', NULL, NULL),
+(3, 4, 12, 30, 'Y', 4, 'Hindu', 2, 'test', '2023-09-04 12:06:00', NULL, NULL),
+(5, 28, 25, 35, 'Y', 5, 'Hindu', 1, 'test', '2023-09-04 12:06:00', NULL, NULL),
+(6, 20, 26, 30, 'Y', 3, 'Hindu', 3, 'test1', '2023-09-04 12:06:00', NULL, NULL),
+(7, 13, 12, 30, 'Y', 4, 'Hindu', 2, 'test', '2023-09-04 17:35:51', NULL, NULL),
+(8, 17, 20, 30, 'Y', 1, 'Hindu', 3, 'test', '2023-09-04 17:47:44', NULL, NULL);
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `td_user_partner_pref`
+--
+ALTER TABLE `td_user_partner_pref`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `td_user_partner_pref`
+--
+ALTER TABLE `td_user_partner_pref`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;

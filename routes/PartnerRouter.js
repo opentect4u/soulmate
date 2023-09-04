@@ -1,17 +1,23 @@
 const express = require('express'),
    PartnerRouter = express.Router(),
    dateFormat = require('dateformat'),
-   request = require("request");
+   request = require("request"),
+   location = require("../location.json");
 
 const { db_Select, EncryptDataToSend, db_Insert} = require('../module/MasterModule');
 
 PartnerRouter.get("/partner_pref", async (req, res) => {
     var data = req.query;
-    var select = "id, user_id, age_frm, age_to, marital_status, mother_tounge, religion, location",
-    table_name = "td_user_partner_pref",
-    whr = data.user_id > 0 ? `user_id=${data.user_id}` : null,
+    var select = "a.id, a.user_id, a.age_frm, a.age_to, a.marital_status, a.mother_tounge mother_tounge_id, b.lang_name mother_tounge, a.religion, a.location location_id",
+    table_name = "td_user_partner_pref a LEFT JOIN md_language b ON a.mother_tounge=b.id",
+    whr = data.user_id > 0 ? `a.user_id=${data.user_id}` : null,
     order = null;
     var res_dt = await db_Select(select, table_name, whr, order);
+    var location_name =
+    res_dt.suc > 0 && res_dt.msg.length > 0
+      ? location[location.findIndex((dt) => dt.id == res_dt.msg[0].location_id)].name
+      : null;
+  res_dt.suc > 0 ? (res_dt.msg[0]["location_name"] = location_name) : "";
     res_dt = await EncryptDataToSend(res_dt)
     res.send(res_dt);
   });
