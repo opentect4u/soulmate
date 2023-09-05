@@ -72,3 +72,11 @@ ALTER TABLE `td_user_partner_pref`
 --
 ALTER TABLE `td_user_partner_pref`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+  <----------- End ----->
+
+<----------- 05-09-2023 ----->
+DROP TABLE `soul_mate`.`td_user_professional`
+DROP TABLE `soul_mate`.`td_user_religion`
+DROP TABLE `soul_mate`.`td_user_caste`
+DROP TABLE `soul_mate`.`td_user_hobbies`

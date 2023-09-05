@@ -5,6 +5,7 @@ const express = require('express'),
    location = require("../location.json");
 
 const { db_Select, EncryptDataToSend, db_Insert} = require('../module/MasterModule');
+const { user_groom_loc, user_basic_info, user_hobbies } = require('../module/ProfileModule');
 
 PartnerRouter.get("/partner_pref", async (req, res) => {
     var data = req.query;
@@ -48,5 +49,14 @@ PartnerRouter.post("/update_partner", async (req, res) =>{
     res.send(res_dt);
 })
 
+PartnerRouter.get("/partner_match", async (req, res) => {
+  var data = req.query;
+  var groom_loc = await user_groom_loc(data);
+  var basic_info = await user_basic_info(data);
+  var hobbies = await user_hobbies(data);
+  var result_partner = {
+    
+  }
+})
 
 module.exports = {PartnerRouter}

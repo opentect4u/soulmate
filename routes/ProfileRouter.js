@@ -3,26 +3,27 @@ const express = require('express'),
     dateFormat = require("dateformat");
 
 const { db_Select, EncryptDataToSend, db_Insert } = require('../module/MasterModule');
+const { user_groom_loc, user_basic_info, user_hobbies } = require('../module/ProfileModule');
 
 ProfileRouter.get("/user_groom_loc", async (req, res) => {
     var data = req.query;
-    var select =
-        "a.*, b.edu_name education_name, c.occu_name, d.income income_name",
-        table_name = "td_user_education a LEFT JOIN md_education b ON a.heigh_education=b.id LEFT JOIN  md_occupation c ON a.occup=c.id  LEFT JOIN md_income d ON a.income=d.id",
-        whr = data.user_id > 0 ? `a.user_id=${data.user_id}` : null,
-        order = null;
-    var res_dt = await db_Select(select, table_name, whr, order);
+    // var select =
+    //     "a.*, b.edu_name education_name, c.occu_name, d.income income_name",
+    //     table_name = "td_user_education a LEFT JOIN md_education b ON a.heigh_education=b.id LEFT JOIN  md_occupation c ON a.occup=c.id  LEFT JOIN md_income d ON a.income=d.id",
+    //     whr = data.user_id > 0 ? `a.user_id=${data.user_id}` : null,
+    //     order = null;
+    var res_dt = await user_groom_loc(data)
     res_dt = await EncryptDataToSend(res_dt)
     res.send(res_dt);
 });
 
 ProfileRouter.get("/user_basic_info", async (req, res) => {
     var data = req.query;
-    var select = "a.id, b.id user_id, b.dob, b.phone_no, a.marital_status,a.height,a.weight,a.family_status,a.family_values,a.family_type,a.disability_flag,a.body_type,a.drinking_habbits,a.age,b.gender, a.age,a.eating_habbits,a.smoking_habbits,a.no_sister,a.no_brother,a.father_occupation,a.mother_occupation,a.family_location,a.about_my_family,b.u_name,b.ac_for,b.mother_tong mother_tong_id, d.lang_name mother_tong, b.about_us, c.caste_name, b.caste_id, b.religion, b.oth_comm_marry_flag",
-        table_name = "td_user_p_dtls a LEFT JOIN td_user_profile b ON a.user_id=b.id LEFT JOIN md_caste_list c ON b.caste_id=c.id LEFT JOIN md_language d ON b.mother_tong=d.id",
-        whr = data.user_id > 0 ? `a.user_id=${data.user_id}` : null,
-        order = null;
-    var res_dt = await db_Select(select, table_name, whr, order);
+    // var select = "a.id, b.id user_id, b.dob, b.phone_no, a.marital_status,a.height,a.weight,a.family_status,a.family_values,a.family_type,a.disability_flag,a.body_type,a.drinking_habbits,a.age,b.gender, a.age,a.eating_habbits,a.smoking_habbits,a.no_sister,a.no_brother,a.father_occupation,a.mother_occupation,a.family_location,a.about_my_family,b.u_name,b.ac_for,b.mother_tong mother_tong_id, d.lang_name mother_tong, b.about_us, c.caste_name, b.caste_id, b.religion, b.oth_comm_marry_flag",
+    //     table_name = "td_user_p_dtls a LEFT JOIN td_user_profile b ON a.user_id=b.id LEFT JOIN md_caste_list c ON b.caste_id=c.id LEFT JOIN md_language d ON b.mother_tong=d.id",
+    //     whr = data.user_id > 0 ? `a.user_id=${data.user_id}` : null,
+    //     order = null;
+    var res_dt = await user_basic_info(data)
     res_dt = await EncryptDataToSend(res_dt)
     res.send(res_dt);
 });
@@ -163,11 +164,11 @@ ProfileRouter.get("/user_hobbies", async (req, res) => {
     ]
 
     for(let dt of hobbies_tb_data){
-        var select = `${dt.field_name}`,
-            table_name = `${dt.table_name}`,
-            whr = data.user_id > 0 ? `user_id=${data.user_id}` : null,
-            order = null;
-        res_dt = await db_Select(select, table_name, whr, order);
+        // var select = `${dt.field_name}`,
+        //     table_name = `${dt.table_name}`,
+        //     whr = data.user_id > 0 ? `user_id=${data.user_id}` : null,
+        //     order = null;
+        res_dt = await user_hobbies(data)
         res_dt.suc > 0 ? hobbie_data[dt.input_field] = res_dt.msg : ''
     }
     res_dt = {suc: 1, msg: hobbie_data}
