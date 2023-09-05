@@ -55,8 +55,17 @@ PartnerRouter.get("/partner_match", async (req, res) => {
   var basic_info = await user_basic_info(data);
   var hobbies = await user_hobbies(data);
   var result_partner = {
-    
+    groom_location : {
+      "value" : groom_loc.msg
+    },
+    basic_information : {
+      "value" : basic_info.msg
+    },
+    hobbies : {
+      "value" :  hobbies.msg
+    }
   }
+  res.send(result_partner)
 })
 
 module.exports = {PartnerRouter}

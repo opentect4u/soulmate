@@ -62,15 +62,15 @@ rashiRouter.get("/planet_position", async (req, res) => {
       nakhatra_name = await getNakhatra(data.data.planet_position[i].degree,data.data.planet_position[i].position)
       console.log(nakhatra_name);
       var planet = {
-                "planet_name" : data.data.planet_position[i].name,
-                "position" : data.data.planet_position[i].position,
-                "degree" : data.data.planet_position[i].degree,
-                "rashi_name" : data.data.planet_position[i].rasi.name,
-                "lord_name" : data.data.planet_position[i].rasi.lord.name,
-                "verdic_name" : data.data.planet_position[i].rasi.lord.vedic_name,
-                "nakhatra_name" : nakhatra_name.msg[0].nakhatra,
-                "from_deg" : nakhatra_name.msg[0].from_deg,
-                "to_deg" : nakhatra_name.msg[0].to_deg
+                "planet_name" : data.data.planet_position[i]?.name,
+                "position" : data.data.planet_position[i]?.position,
+                "degree" : data.data.planet_position[i]?.degree,
+                "rashi_name" : data.data.planet_position[i]?.rasi.name,
+                "lord_name" : data.data.planet_position[i]?.rasi.lord.name,
+                "verdic_name" : data.data.planet_position[i]?.rasi.lord.vedic_name,
+                "nakhatra_name" : nakhatra_name.msg[0]?.nakhatra,
+                "from_deg" : nakhatra_name.msg[0]?.from_deg,
+                "to_deg" : nakhatra_name.msg[0]?.to_deg
              }
       arr.push(planet)   
  }
