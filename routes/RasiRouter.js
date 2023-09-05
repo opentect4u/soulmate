@@ -3,7 +3,8 @@ const express = require("express"),
       request = require('request'),
       fs = require('fs'),
       path = require('path'),
-      accessToken = require('../accessToken.json');
+      accessToken = require('../accessToken.json'),
+      location = require("../location.json");
 
  const {getNakhatra} = require('./MasterRouter')   
 
@@ -60,7 +61,7 @@ rashiRouter.get("/planet_position", async (req, res) => {
  var arr =[]
  for(i=0; i<data.data.planet_position.length; i++){
       nakhatra_name = await getNakhatra(data.data.planet_position[i].degree,data.data.planet_position[i].position)
-      console.log(nakhatra_name);
+    //   console.log(nakhatra_name);
       var planet = {
                 "planet_name" : data.data.planet_position[i]?.name,
                 "position" : data.data.planet_position[i]?.position,
