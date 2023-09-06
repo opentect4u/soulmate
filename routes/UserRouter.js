@@ -314,7 +314,7 @@ UserRouter.post("/login", async (req, res) => {
   data = JSON.parse(data);
   console.log(data);
   var select =
-    "id, user_id, user_name , email_id user_email,  password,  last_login, active_flag",
+    "id user_id, user_id id, user_name , email_id user_email,  password,  last_login, active_flag",
     table_name = "md_user_login",
     whr = `user_id = '${data.user_id}' AND active_flag ="Y" `,
     order = null;
