@@ -33,7 +33,7 @@ var ayanamsa = 1,
             var arr = []
             for (i = 0; i < data.data.planet_position.length; i++) {
                 nakhatra_name = await getNakhatra(data.data.planet_position[i].degree, data.data.planet_position[i].position)
-                console.log(nakhatra_name);
+                // console.log(nakhatra_name);
                 var planet = {
                     "planet_name": data.data.planet_position[i].name,
                     "position": data.data.planet_position[i].position,

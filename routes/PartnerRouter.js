@@ -35,7 +35,7 @@ PartnerRouter.post("/update_partner", async (req, res) =>{
     whr = `user_id = ${data.user_id}`,                                                                                                                                                                               
     order = null;
     var dt = await db_Select(select, table_name, whr, order)
-    console.log(dt);
+    // console.log(dt);
 
     var table_name = "td_user_partner_pref",
     fields = dt.suc > 0 && dt.msg.length > 0 ? `age_frm = '${data.field_frm_age}', age_to = '${data.field_to_age}', 
@@ -50,30 +50,41 @@ PartnerRouter.post("/update_partner", async (req, res) =>{
 })
 
 PartnerRouter.get("/partner_match", async (req, res) => {
+  var result = []
   var data = req.query;
-  var select = "id" ,
-  table_name = "td_user_profile",
+  var select = "id,user_id,age_frm,age_to,marital_status,mother_tounge,religion,location",
+  table_name = "td_user_partner_pref",
+  whr = data.user_id > 0 ? `user_id=${data.user_id}` : null,
+  order = null;
+  
+  var select = "a.id",
+  table_name = "td_user_profile a LEFT JOIN  td_user_partner_pref b ON a.id=b.user_id",
   whr = data.user_id > 0 ? `user_id=${data.user_id}` : null,
   order = null;
   var res_dt = await db_Select(select, table_name, whr, order);
-
-  result=[]
-  var groom_loc = await user_groom_loc(data);
-  var basic_info = await user_basic_info(data);
-  var hobbies = await user_hobbies(data);
-  var result_partner = {
-    groom_location : {
-      "value" : groom_loc.msg
-    },
-    basic_information : {
-      "value" : basic_info.msg
-    },
-    hobbies : {
-      "value" :  hobbies.msg
+  // console.log(res_dt);
+  for (i = 0; i< res_dt.msg.length; i++){
+    var groom_loc = await user_groom_loc({user_id:res_dt.msg[i].id});
+    // console.log(groom_loc);
+    var basic_info = await user_basic_info({user_id:res_dt.msg[i].id});
+    var hobbies = await user_hobbies({user_id:res_dt.msg[i].id});
+    var result_partner = {
+      groom_location : {
+        "value" : groom_loc.msg
+      },
+      basic_information : {
+        "value" : basic_info.msg
+      },
+      hobbies : {
+        "value" :  hobbies.msg
+      }
     }
+    result.push(result_partner)
   }
-  // res.send(result_partner)
-  res.send(res_dt)
+ 
+ 
+  // res.send(res_dt)
+  res.send(result)
 })
 
 module.exports = {PartnerRouter}

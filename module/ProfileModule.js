@@ -37,7 +37,7 @@ const user_basic_info = (data) => {
         whr = data.user_id > 0 ? `a.user_id=${data.user_id}` : null,
         order = null;
     var res_dt = await db_Select(select, table_name, whr, order);
-    console.log(res_dt);
+    // console.log(res_dt);
     resolve(res_dt)
   })
 }
