@@ -51,6 +51,13 @@ PartnerRouter.post("/update_partner", async (req, res) =>{
 
 PartnerRouter.get("/partner_match", async (req, res) => {
   var data = req.query;
+  var select = "id" ,
+  table_name = "td_user_profile",
+  whr = data.user_id > 0 ? `user_id=${data.user_id}` : null,
+  order = null;
+  var res_dt = await db_Select(select, table_name, whr, order);
+
+  result=[]
   var groom_loc = await user_groom_loc(data);
   var basic_info = await user_basic_info(data);
   var hobbies = await user_hobbies(data);
@@ -65,7 +72,8 @@ PartnerRouter.get("/partner_match", async (req, res) => {
       "value" :  hobbies.msg
     }
   }
-  res.send(result_partner)
+  // res.send(result_partner)
+  res.send(res_dt)
 })
 
 module.exports = {PartnerRouter}
