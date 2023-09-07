@@ -66,9 +66,9 @@ UserRouter.post("/user_profile", async (req, res) => {
       var table_name = `md_user_login`,
         fields =
           "(profile_id , user_name, user_id, email_id, password, pay_status, created_by, created_dt)";
-      (values = `('${res_dt.lastId.insertId}', '${req_data.user}', '${req_data.field_mobile}', '${req_data.field_email_id}', '${pass}', 'N', '${req_data.user}', '${datetime}')`),
-        (whr = null),
-        (flag = 0);
+      values = `('${res_dt.lastId.insertId}', '${req_data.user}', '${req_data.field_mobile}', '${req_data.field_email_id}', '${pass}', 'N', '${req_data.user}', '${datetime}')`,
+        whr = null,
+        flag = 0;
       var log_dt = await db_Insert(table_name, fields, values, whr, flag);
     }
   }
