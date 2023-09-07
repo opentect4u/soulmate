@@ -60,8 +60,8 @@ UserRouter.post("/user_profile", async (req, res) => {
   if (req_data.id > 0) {
   } else {
     if (res_dt.suc > 0) {
-      // var file_name = await kundali(res_dt.lastId.insertId, req_data.field_birth_loca, req_data.field_birth_date)
-      // file_name ? await db_Insert('td_user_profile', `kundali_file_name='${file_name}'`, null, `id=${res_dt.lastId.insertId}`, 1) : ''
+      var file_name = await kundali(res_dt.lastId.insertId, req_data.field_birth_loca, req_data.field_birth_date)
+      file_name ? await db_Insert('td_user_profile', `kundali_file_name='${file_name}'`, null, `id=${res_dt.lastId.insertId}`, 1) : ''
       var pass = bcrypt.hashSync(req_data.field_pass, 10);
       var table_name = `md_user_login`,
         fields =

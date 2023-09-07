@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Wedding and match making Website API",
   "main": "server.js",
+  "nodemonConfig":{
+    "ignore":["*.json"]
+  },
   "scripts": {
     "test": "nodemon server"
   },
