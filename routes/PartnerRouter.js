@@ -67,12 +67,11 @@ PartnerRouter.get("/partner_match", async (req, res) => {
     var res_dt = await db_Select(select, table_name, whr, order);
     console.log(res_dt);
     if(res_dt.suc > 0 && res_dt.msg.length > 0){
-      for (i = 0; i< res_dt.msg.length; i++){
-        console.log(res_dt.msg[i]);
-        var groom_loc = await user_groom_loc({user_id:res_dt.msg[i].id});
+      for(let rdt of res_dt.msg){
+        var groom_loc = await user_groom_loc({user_id:rdt?.id});
         // console.log(groom_loc);
-        var basic_info = await user_basic_info({user_id:res_dt.msg[i].id});
-        var hobbies = await user_hobbies({user_id:res_dt.msg[i].id});
+        var basic_info = await user_basic_info({user_id:rdt?.id});
+        var hobbies = await user_hobbies({user_id:rdt?.id});
         var result_partner = {
           groom_location : {
             "value" : groom_loc.msg
