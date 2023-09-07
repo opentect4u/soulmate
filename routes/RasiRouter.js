@@ -150,7 +150,6 @@ const kundali = (user_id, coordinates, datetime) => {
         }
 
         // res.send(response.body)
-
     });
     })
 }

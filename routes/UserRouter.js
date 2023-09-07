@@ -78,7 +78,7 @@ UserRouter.post("/user_profile", async (req, res) => {
 
 UserRouter.post("/user_caste", async (req, res) => {
   var req_data = req.body,
-    datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+  datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
   req_data = Buffer.from(req_data.data, "base64").toString();
   // // console.log(JSON.parse(dt));
   req_data = JSON.parse(req_data);
