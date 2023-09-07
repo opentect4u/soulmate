@@ -39,7 +39,7 @@ PartnerRouter.post("/update_partner", async (req, res) =>{
 
     var table_name = "td_user_partner_pref",
     fields = dt.suc > 0 && dt.msg.length > 0 ? `${data.field_frm_age > 0 ? `age_frm = '${data.field_frm_age}',` : ''} ${data.field_to_age > 0 ? `age_to = '${data.field_to_age}', ` : ''}
-    ${data.field_marital_status != '' ? `marital_status = '${data.field_marital_status}', ` : ''} ${data.field_mother_tong != '' ? `mother_tounge = '${data.field_mother_tong}', ` : ''} ${data.field_ur_religion ? `religion = '${data.field_ur_religion}', ` : ''}
+    ${data.field_marital_status != '' ? `marital_status = '${data.field_marital_status}', ` : ''} ${data.field_mother_tong != '' ? `mother_tounge = '${data.field_mother_tong}', ` : ''} ${data.field_ur_religion  ? `religion = '${data.field_ur_religion}', ` : ''}
     ${data.field_Country > 0 ? `location = '${data.field_Country}', ` : ''}  modified_by = '${data.user}', modified_dt = '${datetime}'` : '(user_id, age_frm, age_to, marital_status, mother_tounge, religion, location,  created_by, created_dt)',
     values = `('${data.user_id}', '${data.field_frm_age}', '${data.field_to_age}', '${data.field_marital_status}', '${data.field_mother_tong}',
     '${data.field_ur_religion}', '${data.field_Country}', '${data.user}', '${datetime}')`,
@@ -50,7 +50,7 @@ PartnerRouter.post("/update_partner", async (req, res) =>{
 })
 
 PartnerRouter.get("/partner_match", async (req, res) => {
-  var result = []
+  var result = [], result_dt;
   var data = req.query;
   var select = "a.id, a.user_id, a.age_frm, a.age_to, a.marital_status, a.mother_tounge, a.religion, a.location, b.gender",
   table_name = "td_user_partner_pref a, td_user_profile b",
@@ -65,32 +65,40 @@ PartnerRouter.get("/partner_match", async (req, res) => {
             ${pref_dt.msg[0].marital_status != '' ? `AND b.marital_status = '${pref_dt.msg[0].marital_status}'` : ''}  ${pref_dt.msg[0].mother_tounge > 0 ? `AND a.mother_tong = ${pref_dt.msg[0].mother_tounge}` : ''}  ${pref_dt.msg[0].religion != '' ? `AND a.religion = '${pref_dt.msg[0].religion}'` : ''}  ${pref_dt.msg[0].location > 0 ? `AND a.location_id = ${pref_dt.msg[0].location}` : ''}` 
     order = null;
     var res_dt = await db_Select(select, table_name, whr, order);
-    console.log(res_dt);
-    for (i = 0; i< res_dt.msg.length; i++){
-      var groom_loc = await user_groom_loc({user_id:res_dt.msg[i].id});
-      // console.log(groom_loc);
-      var basic_info = await user_basic_info({user_id:res_dt.msg[i].id});
-      var hobbies = await user_hobbies({user_id:res_dt.msg[i].id});
-      var result_partner = {
-        groom_location : {
-          "value" : groom_loc.msg
-        },
-        basic_information : {
-          "value" : basic_info.msg
-        },
-        hobbies : {
-          "value" :  hobbies.msg
+    // console.log(res_dt);
+    if(res_dt.suc > 0 && res_dt.msg.length > 0){
+      for (i = 0; i< res_dt.msg.length; i++){
+        var groom_loc = await user_groom_loc({user_id:res_dt.msg[i].id});
+        // console.log(groom_loc);
+        var basic_info = await user_basic_info({user_id:res_dt.msg[i].id});
+        var hobbies = await user_hobbies({user_id:res_dt.msg[i].id});
+        var result_partner = {
+          groom_location : {
+            "value" : groom_loc.msg
+          },
+          basic_information : {
+            "value" : basic_info.msg
+          },
+          hobbies : {
+            "value" :  hobbies.msg
+          }
         }
+        result.push(result_partner)
       }
-      result.push(result_partner)
+      result_dt = {suc: 1, msg: result}
+    }else{
+      result_dt = {suc: 1, msg: []}
     }
+    
+  }else{
+    result_dt = pref_dt
   }
   
  
  
   // res.send(res_dt)
   // res.send(result)
-  res.send(result)
+  res.send(result_dt)
 })
 
 module.exports = {PartnerRouter}
