@@ -68,6 +68,7 @@ PartnerRouter.get("/partner_match", async (req, res) => {
     console.log(res_dt);
     if(res_dt.suc > 0 && res_dt.msg.length > 0){
       for (i = 0; i< res_dt.msg.length; i++){
+        console.log(res_dt.msg[i]);
         var groom_loc = await user_groom_loc({user_id:res_dt.msg[i].id});
         // console.log(groom_loc);
         var basic_info = await user_basic_info({user_id:res_dt.msg[i].id});
