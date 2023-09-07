@@ -65,7 +65,7 @@ PartnerRouter.get("/partner_match", async (req, res) => {
             ${pref_dt.msg[0].marital_status != '' ? `AND b.marital_status = '${pref_dt.msg[0].marital_status}'` : ''}  ${pref_dt.msg[0].mother_tounge > 0 ? `AND a.mother_tong = ${pref_dt.msg[0].mother_tounge}` : ''}  ${pref_dt.msg[0].religion != '' ? `AND a.religion = '${pref_dt.msg[0].religion}'` : ''}  ${pref_dt.msg[0].location > 0 ? `AND a.location_id = ${pref_dt.msg[0].location}` : ''}` 
     order = null;
     var res_dt = await db_Select(select, table_name, whr, order);
-    // console.log(res_dt);
+    console.log(res_dt);
     if(res_dt.suc > 0 && res_dt.msg.length > 0){
       for (i = 0; i< res_dt.msg.length; i++){
         var groom_loc = await user_groom_loc({user_id:res_dt.msg[i].id});
