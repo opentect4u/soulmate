@@ -86,3 +86,21 @@ DROP TABLE `soul_mate`.`td_user_hobbies`
 <----------- 07-09-2023 ----->
 
 ALTER TABLE `td_user_partner_pref` CHANGE `age_frm` `age_frm` INT NULL DEFAULT '0', CHANGE `age_to` `age_to` INT NULL DEFAULT '0', CHANGE `mother_tounge` `mother_tounge` INT NULL DEFAULT '0', CHANGE `location` `location` INT NULL DEFAULT '0';
+
+  <----------- End ----->
+
+<----------- 08-09-2023 ----->
+
+UPDATE `md_nakhatra` SET `nakhatra` = 'Chitra' WHERE `md_nakhatra`.`nakhatra_id` = 14;
+UPDATE `md_nakhatra` SET `nakhatra` = 'krittika' WHERE `md_nakhatra`.`nakhatra_id` = 3;
+UPDATE `md_nakhatra` SET `nakhatra` = 'Punarbasu' WHERE `md_nakhatra`.`nakhatra_id` = 7;
+UPDATE `md_nakhatra` SET `nakhatra` = 'Purba Phalguni' WHERE `md_nakhatra`.`nakhatra_id` = 11;
+UPDATE `md_nakhatra` SET `nakhatra` = 'Visakha' WHERE `md_nakhatra`.`nakhatra_id` = 16;
+UPDATE `md_nakhatra` SET `nakhatra` = 'Purbasada' WHERE `md_nakhatra`.`nakhatra_id` = 20;
+UPDATE `md_nakhatra` SET `nakhatra` = 'Uttar Phalguni' WHERE `md_nakhatra`.`nakhatra_id` = 21;
+UPDATE `md_nakhatra` SET `nakhatra` = 'Shatabhisha' WHERE `md_nakhatra`.`nakhatra_id` = 24;
+UPDATE `md_nakhatra` SET `nakhatra` = 'Purbabhadra' WHERE `md_nakhatra`.`nakhatra_id` = 25;
+UPDATE `md_nakhatra` SET `nakhatra` = 'Uttarbhadrapada' WHERE `md_nakhatra`.`nakhatra_id` = 26;
+
+UPDATE `md_jotok_chakra` SET `marks` = '28' WHERE `md_jotok_chakra`.`id` = 930;
+ALTER TABLE `md_jotok_rashi` ADD `rashi_name_eng` VARCHAR(50) NULL DEFAULT NULL AFTER `id`;

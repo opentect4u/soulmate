@@ -154,4 +154,52 @@ const kundali = (user_id, coordinates, datetime) => {
     })
 }
 
+rashiRouter.get("/jotok", async (req, res) => {
+    var data =require('../raw_data/1-1999-05-04T16-55-00Z.json'),jotok;
+    console.log(data);
+    for (i=0; i< data.data.planet_position.length; i++){
+        nakhatra_name = await getNakhatra(data.data.planet_position[i].degree, data.data.planet_position[i].position)
+        console.log(nakhatra_name);
+        if(data.data.planet_position[i].name == 'Moon'){
+        jotok = {
+            "position" : data.data.planet_position[i]?.position,
+            "rashi": data.data.planet_position[i]?.rasi.name,
+            "degree": data.data.planet_position[i]?.degree,
+            "nakhatra_name" : nakhatra_name.msg[0]?.nakhatra,
+            
+        }
+       
+     }
+    }
+ 
+    var data_1 =require('../raw_data/2-1996-05-29T07-15-00Z.json'),jotok_1;
+    console.log(data);
+    for (i=0; i< data_1.data.planet_position.length; i++){
+        nakhatra_name = await getNakhatra(data_1.data.planet_position[i].degree, data_1.data.planet_position[i].position)
+        console.log(nakhatra_name);
+        if(data_1.data.planet_position[i].name == 'Moon'){
+        jotok_1 = {
+            "position" : data_1.data.planet_position[i]?.position,
+            "rashi": data_1.data.planet_position[i]?.rasi.name,
+            "degree": data_1.data.planet_position[i]?.degree,
+            "nakhatra_name" : nakhatra_name.msg[0]?.nakhatra,
+          
+        }
+       
+     }
+    }
+   res.send(jotok_1);
+})
+
+const jotok = (rashi, nakhatra) =>{
+    return new Promise(async (resolve, reject) => {
+    var select = 'a.id, a.marks',
+    table_name = 'md_jotok_chakra a , md_jotok_rashi b',
+    whr = `id`,
+    order = null;
+    var res_dt = db_Select(select, table_name, whr, order)
+    resolve(res_dt)
+    })
+}
+
 module.exports = { rashiRouter, kundali }
