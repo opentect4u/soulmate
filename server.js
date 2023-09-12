@@ -1,10 +1,18 @@
 const express = require("express"),
+ fileUpload = require("express-fileupload"),
   app = express(),
   cors = require("cors"),
   fs = require("fs"),
   dateFormat = require("dateformat"),
   dotenv = require("dotenv"),
   request = require("request"),
+  path = require('path');
+
+
+  const {filePayloadExists} = require('./middleware/filesPayloadExists');
+  const {fileSizeLimiter} = require('./middleware/fileSizeLimiter');
+  const {fileExtLimiter} = require('./middleware/fileExtLimiter');
+
   port = process.env.PORT || 3000;
 
 const { db_Insert } = require("./module/MasterModule");
@@ -208,6 +216,27 @@ app.use("/master", MasterRouter);
 app.use('/profile', ProfileRouter)
 app.use(rashiRouter);
 app.use('/partner', PartnerRouter);
+
+app.post('/upload', 
+fileUpload({ crereateParentPath: true }),
+filePayloadExists,
+fileExtLimiter(['.png','.jpg','.jpeg']),
+fileSizeLimiter,
+ ( req, res) => {
+      const files = req.files
+      console.log(files);
+
+    Object.keys(files).forEach(key => {
+     const filepath = path.join(__dirname, 'files', files[key].name)
+     files[key].mv(filepath, (err) => {
+      if (err) res.status(500).json({ status: 'error', 
+      message: err})
+     })
+    })
+
+      res.json({ status: 'success', message: Object.keys(files).toString()})
+ }
+)
 
 app.listen(port, (err) => {
   if (err) throw new Error(err);
