@@ -98,7 +98,7 @@ rashiRouter.get("/planet_position", async (req, res) => {
       if (chk_user.msg[0].kundali_file_name) {
         var data = require(`../raw_data/${chk_user.msg[0].kundali_file_name}`);
         var arr = [];
-        if (planet.status == "ok") {
+        if (data.status == "ok") {
           for (i = 0; i < data.data.planet_position.length; i++) {
             nakhatra_name = await getNakhatra(
               data.data.planet_position[i].degree,
@@ -197,41 +197,68 @@ const kundali = (user_id, coordinates, datetime) => {
 };
 
 // rashiRouter.get("/jotok", async (req, res) => {
-//     var data =require('../raw_data/1-1999-05-04T16-55-00Z.json'),jotok;
-//     console.log(data);
-//     for (i=0; i< data.data.planet_position.length; i++){
-//         nakhatra_name = await getNakhatra(data.data.planet_position[i].degree, data.data.planet_position[i].position)
-//         console.log(nakhatra_name);
-//         if(data.data.planet_position[i].name == 'Moon'){
-//         jotok = {
-//             "position" : data.data.planet_position[i]?.position,
-//             "rashi": data.data.planet_position[i]?.rasi.name,
-//             "degree": data.data.planet_position[i]?.degree,
-//             "nakhatra_name" : nakhatra_name.msg[0]?.nakhatra,
-
-//         }
-
-//      }
+//   var data = require("../raw_data/1-1999-05-04T16-55-00Z.json"),
+//     jotok;
+//   console.log(data);
+//   for (i = 0; i < data.data.planet_position.length; i++) {
+//     nakhatra_name = await getNakhatra(
+//       data.data.planet_position[i].degree,
+//       data.data.planet_position[i].position
+//     );
+//     console.log(nakhatra_name);
+//     if (data.data.planet_position[i].name == "Moon") {
+//       jotok = {
+//         position: data.data.planet_position[i]?.position,
+//         rashi: data.data.planet_position[i]?.rasi.name,
+//         degree: data.data.planet_position[i]?.degree,
+//         nakhatra_name: nakhatra_name.msg[0]?.nakhatra,
+//       };
 //     }
+//   }
 
-//     var data_1 =require('../raw_data/2-1996-05-29T07-15-00Z.json'),jotok_1;
-//     console.log(data);
-//     for (i=0; i< data_1.data.planet_position.length; i++){
-//         nakhatra_name = await getNakhatra(data_1.data.planet_position[i].degree, data_1.data.planet_position[i].position)
-//         console.log(nakhatra_name);
-//         if(data_1.data.planet_position[i].name == 'Moon'){
-//         jotok_1 = {
-//             "position" : data_1.data.planet_position[i]?.position,
-//             "rashi": data_1.data.planet_position[i]?.rasi.name,
-//             "degree": data_1.data.planet_position[i]?.degree,
-//             "nakhatra_name" : nakhatra_name.msg[0]?.nakhatra,
-
-//         }
-
-//      }
+//   var data_1 = require("../raw_data/2-1996-05-29T07-15-00Z.json"),
+//     jotok_1;
+//   console.log(data);
+//   for (i = 0; i < data_1.data.planet_position.length; i++) {
+//     nakhatra_name = await getNakhatra(
+//       data_1.data.planet_position[i].degree,
+//       data_1.data.planet_position[i].position
+//     );
+//     console.log(nakhatra_name);
+//     if (data_1.data.planet_position[i].name == "Moon") {
+//       jotok_1 = {
+//         position: data_1.data.planet_position[i]?.position,
+//         rashi: data_1.data.planet_position[i]?.rasi.name,
+//         degree: data_1.data.planet_position[i]?.degree,
+//         nakhatra_name: nakhatra_name.msg[0]?.nakhatra,
+//       };
 //     }
-//    res.send(jotok_1);
-// })
+//   }
+//   res.send(jotok_1);
+// });
+
+rashiRouter.get("/position", async (req, res) => {
+  var data = require("../raw_data/1-1999-05-04T16-55-00Z.json"),
+    planet;
+    var result = []
+  for (i = 0; i < data.data.planet_position.length; i++) {
+    var pos = 0
+       for ( i = 0; i< 12; i++){
+        pos++
+        console.log(pos);
+         if (data.data.planet_position[i].position == "pos") {
+      planet = {
+        "planet_name": data.data.planet_position[i].name
+      };
+      result.push(planet)
+      console.log(planet);
+    }
+       
+  }
+
+  }
+  res.send(result);
+});
 
 // THIS IS A TEST FUNCTION TO FIND ALL RASI RELATED DETAILS FROM ALL FILES PRESENT IN RAW DATA FOLDER //
 rashiRouter.get("/test", async (req, res) => {

@@ -5,41 +5,46 @@ const express = require("express"),
   dateFormat = require("dateformat"),
   request = require("request"),
   bcrypt = require("bcrypt"),
-  { db_Insert, db_Select, EncryptDataToSend } = require("../module/MasterModule"),
+  {
+    db_Insert,
+    db_Select,
+    EncryptDataToSend,
+  } = require("../module/MasterModule"),
   location = require("../location.json");
 
-UserRouter.get("/planet_position", async (req, res) => {
-  const location = require("../location.json");
-  // console.log(JSON.stringify(location));
-  // var str = 'SynergicSoleMate2023@'
-  // var enc_dt = Buffer.from(str, 'utf8').toString('base64')
-  // var decode = Buffer.from(enc_dt, 'base64').toString();
-  var res_dt = {
-    suc: 1,
-    msg: Buffer.from(JSON.stringify(location), "utf8").toString("base64"),
-  };
-  res.send(res_dt);
-});
+// UserRouter.get("/planet_position", async (req, res) => {
+//   const location = require("../location.json");
+//   // console.log(JSON.stringify(location));
+//   // var str = 'SynergicSoleMate2023@'
+//   // var enc_dt = Buffer.from(str, 'utf8').toString('base64')
+//   // var decode = Buffer.from(enc_dt, 'base64').toString();
+//   var res_dt = {
+//     suc: 1,
+//     msg: Buffer.from(JSON.stringify(location), "utf8").toString("base64"),
+//   };
+//   res.send(res_dt);
+// });
 
 UserRouter.post("/user_profile", async (req, res) => {
   // UserRouter.post("/user_profile", async (req, res) => {
   var req_data = req.body,
-    datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-  // console.log(Buffer.from(req_data.data, 'base64').toString());
+    datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss"),
+    BirthDate = new Date(req_data.field_birth_date).toISOString();
+  // console.log(`${date}T${time}Z`);
   req_data = Buffer.from(req_data.data, "base64").toString();
-  // // console.log(JSON.parse(dt));
+  // // // console.log(JSON.parse(dt));
   req_data = JSON.parse(req_data);
-  console.log(req_data);
+  // console.log(req_data);
   var table_name = "td_user_profile",
     fields =
       req_data.id > 0
         ? `u_name = '${req_data.user}',
          location_id = '${req_data.location_id
-        }', 
+        }',
         latt_long = '${req_data.field_birth_loca}', dob = '${dateFormat(
           req_data.field_birth_date,
           "yyyy-mm-dd HH:MM:ss"
-        )}', 
+        )}',
         ac_for = '${req_data.field_who_creat_profile}', religion = '${req_data.field_ur_religion
         }', gender = '${req_data.field_gender}',
           caste_id = '${req_data.reg_cust_id}',
@@ -60,8 +65,8 @@ UserRouter.post("/user_profile", async (req, res) => {
   if (req_data.id > 0) {
   } else {
     if (res_dt.suc > 0) {
-      var file_name = await kundali(res_dt.lastId.insertId, req_data.field_birth_loca, req_data.field_birth_date)
-      file_name ? await db_Insert('td_user_profile', `kundali_file_name='${file_name}'`, null, `id=${res_dt.lastId.insertId}`, 1) : ''
+      var kundali_data = await kundali(res_dt.lastId.insertId, req_data.field_birth_loca, BirthDate)
+      kundali_data.file_name ? await db_Insert('td_user_profile', `kundali_file_name='${kundali_data.file_name}', rasi_id = '${kundali_data.rasi_id}', nakhatra_id = '${kundali_data.nakhatra_id}', jotok_rasi_id = '${kundali_data.jotok_rasi_id}'`, null, `id=${res_dt.lastId.insertId}`, 1) : ''
       var pass = bcrypt.hashSync(req_data.field_pass, 10);
       var table_name = `md_user_login`,
         fields =
@@ -78,7 +83,7 @@ UserRouter.post("/user_profile", async (req, res) => {
 
 UserRouter.post("/user_caste", async (req, res) => {
   var req_data = req.body,
-  datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+    datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
   req_data = Buffer.from(req_data.data, "base64").toString();
   // // console.log(JSON.parse(dt));
   req_data = JSON.parse(req_data);
@@ -98,12 +103,16 @@ UserRouter.post("/user_caste", async (req, res) => {
   var table_name = "td_user_profile",
     fields =
       req_data.user_id > 0
-        ? `religion = '${req_data.field_ur_religion}', caste_id = '${req_data.field_cast}', oth_comm_marry_flag = '${req_data.field_willing_marry_other_commun ? "Y" : "N"
-        }', 
+        ? `religion = '${req_data.field_ur_religion}', caste_id = '${
+            req_data.field_cast
+          }', oth_comm_marry_flag = '${
+            req_data.field_willing_marry_other_commun ? "Y" : "N"
+          }', 
          modified_by = '${req_data.user}', modified_dt = '${datetime}'`
         : "(caste_id, oth_comm_marry_flag, created_by, created_dt)",
-    values = `('${req_data.field_cast}', '${req_data.field_willing_marry_other_commun ? "Y" : "N"
-      }', '${req_data.user}', '${datetime}')`,
+    values = `('${req_data.field_cast}', '${
+      req_data.field_willing_marry_other_commun ? "Y" : "N"
+    }', '${req_data.user}', '${datetime}')`,
     whr = req_data.user_id > 0 ? `id= '${req_data.user_id}'` : null,
     flag = req_data.user_id > 0 ? 1 : 0;
   var res_dt = await db_Insert(table_name, fields, values, whr, flag);
@@ -196,8 +205,8 @@ UserRouter.post("/user_about", async (req, res) => {
 //         ? `hobbies_interest = '${req_data.edit_Hobbies_Interests}', sports = '${req_data.edit_Sports}' ,
 //         spoken_lang = '${req_data.edit_Spoken_Languages}', fav_music = '${req_data.edit_Music}',  movie = '${req_data.edit_Preferred_Movies}' , modified_by = '${req_data.user}', modified_dt = '${datetime}'`
 //         : "(user_id, hobbies_interest, sports, fav_reads, spoken_lang, fav_music, fav_cuisine, movie, created_by, created_dt)",
-//     values = `('${req_data.user_id}', '${req_data.edit_Hobbies_Interests}', '${req_data.edit_Sports}', 
-//          '${req_data.edit_Spoken_Languages}','${req_data.edit_Music}', 
+//     values = `('${req_data.user_id}', '${req_data.edit_Hobbies_Interests}', '${req_data.edit_Sports}',
+//          '${req_data.edit_Spoken_Languages}','${req_data.edit_Music}',
 //         '${req_data.edit_Preferred_Movies}',  '${req_data.user}', '${datetime}')`,
 //     whr = req_data.id > 0 ? `id= '${req_data.id}'` : null,
 //     flag = req_data.id > 0 ? 1 : 0;
@@ -217,11 +226,11 @@ UserRouter.post("/user_about", async (req, res) => {
 //   var table_name = "td_user_professional",
 //     fields =
 //       req_data.id > 0
-//         ? `education = '${req_data.edu}', college = '${req_data.colg}' , occupation = '${req_data.ocup}' , 
+//         ? `education = '${req_data.edu}', college = '${req_data.colg}' , occupation = '${req_data.ocup}' ,
 //         organization = '${req_data.org}', edu_in_dt = '${req_data.edu_in_dt}', emp_in = '${req_data.emp_in}', occup_in_dt = '${req_data.occup_in_dt}' , annual_income = '${req_data.ann_inc}', modified_by = '${req_data.user}', modified_dt = '${datetime}'`
 //         : "(user_id, education, college, occupation, organization, edu_in_dt, emp_in, occup_in_dt, annual_income, created_by, created_dt)",
-//     values = `('${req_data.user_id}', '${req_data.edu}', '${req_data.colg}', 
-//         '${req_data.ocup}', '${req_data.org}','${req_data.edu_in_dt}', 
+//     values = `('${req_data.user_id}', '${req_data.edu}', '${req_data.colg}',
+//         '${req_data.ocup}', '${req_data.org}','${req_data.edu_in_dt}',
 //         '${req_data.emp_in}', '${req_data.occup_in_dt}', '${req_data.occup_in_dt}', '${req_data.ann_inc}', '${req_data.user}', '${datetime}')`,
 //     whr = req_data.id > 0 ? `id= '${req_data.id}'` : null,
 //     flag = req_data.id > 0 ? 1 : 0;
@@ -239,11 +248,11 @@ UserRouter.post("/user_about", async (req, res) => {
 //   var table_name = "td_user_religion",
 //     fields =
 //       req_data.id > 0
-//         ? `religion = '${req_data.reg_religion}', gothram = '${req_data.reg_gothram}' , fav_reads = '${req_data.reg_reads}' , 
+//         ? `religion = '${req_data.reg_religion}', gothram = '${req_data.reg_gothram}' , fav_reads = '${req_data.reg_reads}' ,
 //         dosh = '${req_data.reg_dosh}', caste = '${req_data.reg_caste}', rashi = '${req_data.reg_rashi}', modified_by = '${req_data.user}', modified_dt = '${datetime}'`
 //         : "(user_id, religion, gothram, fav_reads, dosh, caste, rashi, created_by, created_dt)",
-//     values = `('${req_data.user_id}', '${req_data.reg_religion}', '${req_data.reg_gothram}', 
-//         '${req_data.reg_reads}', '${req_data.reg_dosh}','${req_data.reg_caste}', 
+//     values = `('${req_data.user_id}', '${req_data.reg_religion}', '${req_data.reg_gothram}',
+//         '${req_data.reg_reads}', '${req_data.reg_dosh}','${req_data.reg_caste}',
 //         '${req_data.reg_rashi}', '${req_data.user}', '${datetime}')`,
 //     whr = req_data.id > 0 ? `id= '${req_data.id}'` : null,
 //     flag = req_data.id > 0 ? 1 : 0;
@@ -306,7 +315,6 @@ UserRouter.post("/user_about", async (req, res) => {
 //   res.send(res_dt);
 // });
 
-
 UserRouter.post("/login", async (req, res) => {
   var data = req.body,
     result;
@@ -314,7 +322,7 @@ UserRouter.post("/login", async (req, res) => {
   data = JSON.parse(data);
   console.log(data);
   var select =
-    "id prof_id, user_id, profile_id id, user_name , email_id user_email,  password,  last_login, active_flag",
+      "id prof_id, user_id, profile_id id, user_name , email_id user_email,  password,  last_login, active_flag",
     table_name = "md_user_login",
     whr = `user_id = '${data.user_id}' AND active_flag ="Y" `,
     order = null;

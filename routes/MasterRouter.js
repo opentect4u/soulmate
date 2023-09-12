@@ -107,7 +107,7 @@ MasterRouter.get('/lang_list', async (req, res) => {
 
 const getNakhatra = (degree = null, pos = null) => {
  return new Promise(async (resolve, reject) => {
-    var select = 'a.id, a.from_deg, a.to_deg, b.nakhatra',
+    var select = 'a.id, a.from_deg, a.to_deg, a.nakhatra_id, b.nakhatra',
     table_name = 'md_pos_nakhatra a, md_nakhatra b'
     whr = `a.nakhatra_id = b. nakhatra_id AND a.from_deg<=${degree} AND a.to_deg>=${degree} AND a.pos=${pos};`,
     order = null;
@@ -116,4 +116,15 @@ const getNakhatra = (degree = null, pos = null) => {
  })
 }
 
-module.exports = {MasterRouter,getNakhatra}
+const getJotukRashiId = (rasi_name = null, nakhatra_name = null) => {
+  return new Promise(async (resolve, reject) => {
+    var select = "id",
+      table_name = "md_jotok_rashi",
+      whr = `rashi_name_eng LIKE "${rasi_name} ${nakhatra_name}%"`,
+      order = null;
+    var res_dt = db_Select(select, table_name, whr, order);
+    resolve(res_dt);
+  });
+};
+
+module.exports = { MasterRouter, getNakhatra, getJotukRashiId };
