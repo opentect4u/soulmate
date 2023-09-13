@@ -21,6 +21,7 @@ const { ProfileRouter } = require("./routes/ProfileRouter");
 const { rashiRouter } = require("./routes/RasiRouter");
 const { UserRouter } = require("./routes/UserRouter");
 const { PartnerRouter } = require("./routes/PartnerRouter");
+const { KycRouter } = require('./routes/KycRouter');
 
 dotenv.config();
 // USING CORS //
@@ -189,9 +190,44 @@ app.use((req, res, next) => {
   }
 });
 
+
+// data = [{
+//   "id": 1,
+//   "name": "Aadhaar Card"
+// },
+// {
+//   "id": 2,
+//   "name": "Passport"
+// },
+// {
+//   "id": 3,
+//   "name": " Voter ID card"
+// },
+// {
+//   "id": 4,
+//   "name": "Driving Licence"
+// },
+// {
+//   "id": 5,
+//   "name": " NREGA Card"
+// },
+// {
+//   "id": 6,
+//   "name": "PAN card"
+// },
+// {
+//   "id": 7,
+//   "name": "Photo ID Card"
+// }]
+
 app.get("/", async (req, res) => {
   // console.log('get request');
   // var data = require('./sample_data.json')
+// for (let dt of data){
+//   console.log(dt);
+//   await db_Insert('md_document', '(doc_type)', `('${dt.name}')`, null, 0)
+// }
+
   var arr = [];
   // res.send(data)
   // for(i=0; i<data.data.planet_position.length; i++){
@@ -216,6 +252,7 @@ app.use("/master", MasterRouter);
 app.use('/profile', ProfileRouter)
 app.use(rashiRouter);
 app.use('/partner', PartnerRouter);
+app.use('/kyc', KycRouter);
 
 app.post('/upload', 
 fileUpload({ crereateParentPath: true }),
