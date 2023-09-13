@@ -16,5 +16,13 @@ const express = require('express'),
     })
 
 
+    // KycRouter.post('/update_doc_list', async (req, res) => {
+    //     var data = req.body,
+    //     datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+    //     data = Buffer.from(data.data, "base64").toString();
+    //     data = JSON.parse(data);
+    // })
+
 
     module.exports = {KycRouter}

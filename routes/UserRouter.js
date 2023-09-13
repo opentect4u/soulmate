@@ -351,4 +351,41 @@ UserRouter.post("/login", async (req, res) => {
   res.send(result);
 });
 
+
+UserRouter.post('/update_pass', async (req, res) => {
+  var data = req.body, result;
+  data = Buffer.from(data.data, "base64").toString();
+  data = JSON.parse(data);
+  console.log(data);
+  var select = "id, user_id, password",
+table_name = "md_user_login",
+whr = `profile_id = '${data.user_id}'`,
+order = null;
+var res_dt = await db_Select(select, table_name, whr, order);
+if (res_dt.suc > 0) {
+  if (res_dt.msg.length > 0) {
+    if (await bcrypt.compare(data.old_pass, res_dt.msg[0].password)) {
+      var pass = bcrypt.hashSync(data.new_pass, 10);
+      var table_name = `md_user_login`,
+          fields = `password = '${pass}'`,
+          whr = `profile_id = ${data.user_id}` ,
+          flag = 1;
+          var forget_pass = await db_Insert(table_name, fields,  null,  whr, flag)
+          result = forget_pass
+    } else {
+      result = {
+        suc: 0,
+        msg: "Please provide your correct old password",
+        user_data: null,
+      };
+    }
+  } else {
+    result = { suc: 0, msg: "No data found", user_data: null };
+  }
+}else {
+  result = { suc: 0, msg: res_dt.msg };
+}
+res.send(result)
+})
+
 module.exports = { UserRouter };
