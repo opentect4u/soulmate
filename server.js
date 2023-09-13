@@ -261,7 +261,7 @@ fileExtLimiter(['.png','.jpg','.jpeg']),
 fileSizeLimiter,
  ( req, res) => {
       const files = req.files
-      console.log(files);
+      console.log(req.body);
 
     Object.keys(files).forEach(key => {
      const filepath = path.join(__dirname, 'files', files[key].name)
