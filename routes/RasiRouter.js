@@ -252,12 +252,29 @@ rashiRouter.get("/position", async (req, res) => {
     //   console.log(planet);
     // }
 
-    for(let dt of data.data.planet_position){
-      console.log(dt);
+    // for(let dt of data.data.planet_position){
+    //   console.log(dt);
       
-    }
-  res.json(data.data.planet_position);
+    // }
+    var position = data.data.planet_position.filter((dt) => dt.position == '1').length
+    console.log(position);
+   planet = {
+    planet_name : data.data.planet_position[position].name
+   };
+    result.push(planet)
+    console.log(result);
+  res.json(result);
 });
+
+
+rashiRouter.get("/planet_arrange", async (req, res) => {
+  var data = require("../raw_data/1-1999-05-04T16-55-00Z.json");
+  var index = data.data.planet_position.findIndex((dt) => dt.name == 'Ascendant')
+  // console.log(index);
+  position = data.data.planet_position[index].position
+  console.log(position);
+  res.send(data)
+})
 
 // THIS IS A TEST FUNCTION TO FIND ALL RASI RELATED DETAILS FROM ALL FILES PRESENT IN RAW DATA FOLDER //
 rashiRouter.get("/test", async (req, res) => {

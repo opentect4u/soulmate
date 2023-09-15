@@ -6,14 +6,15 @@ const express = require("express"),
   dateFormat = require("dateformat"),
   dotenv = require("dotenv"),
   request = require("request"),
-  path = require('path');
-
-
-  const {filePayloadExists} = require('./middleware/filesPayloadExists');
-  const {fileSizeLimiter} = require('./middleware/fileSizeLimiter');
-  const {fileExtLimiter} = require('./middleware/fileExtLimiter');
-
+  path = require('path'),
+  { google } = require('googleapis'),
   port = process.env.PORT || 3000;
+
+
+const {filePayloadExists} = require('./middleware/filesPayloadExists');
+const {fileSizeLimiter} = require('./middleware/fileSizeLimiter');
+const {fileExtLimiter} = require('./middleware/fileExtLimiter');
+
 
 const { db_Insert } = require("./module/MasterModule");
 const { MasterRouter, getNakhatra } = require("./routes/MasterRouter");
@@ -23,6 +24,8 @@ const { UserRouter } = require("./routes/UserRouter");
 const { PartnerRouter } = require("./routes/PartnerRouter");
 const { KycRouter } = require('./routes/KycRouter');
 
+
+
 dotenv.config();
 // USING CORS //
 app.use(cors());
@@ -31,7 +34,12 @@ app.use(express.json());
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: false }));
 
+// Enable file uploads with express-fileupload middleware
+app.use(fileUpload());
+
 app.use(express.static("uploads"));
+
+
 
 setInterval(() => {
   // console.log('Hi');
@@ -132,6 +140,51 @@ setInterval(() => {
   }
 }, 1000 * 60 * 3);
 
+setInterval(async () => {
+  try {
+    fs.readFile("./googleAccessToken.json", "utf8", async (err, jsonString) => {
+      if (err) {
+        console.log("Error reading file from disk:", err);
+        return;
+      }
+      try {
+        const gAccTokenFile = JSON.parse(jsonString);
+        // console.log((((new Date(gAccTokenFile.time))-(new Date().getTime()))/1000));
+        // console.log(dateFormat(tokenFile.created_dt, "yyyy-mm-dd"), dateFormat(new Date(), "yyyy-mm-dd"));
+        if ((((new Date(gAccTokenFile.time))-(new Date().getTime()))/1000) <= 10) {
+          console.log('here');
+          const OAuth2 = google.auth.OAuth2;
+
+          const oauth2Client = new OAuth2(
+            process.env.GOOGLE_CLIENT_ID,
+            process.env.GOOGLE_CLIENT_SECRET,
+            process.env.GOOGLE_REDIRECT_URL // Redirect URL
+          );
+        
+          oauth2Client.setCredentials({
+            refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
+          });
+
+          var accessToken = await oauth2Client.getAccessToken();
+          
+          fs.writeFile(
+            "./googleAccessToken.json",
+            JSON.stringify({time: accessToken.res.data.expiry_date, token: accessToken.res.data.access_token}),
+            "utf8",
+            (err) => {
+              if (err) throw err;
+            }
+          );
+        }
+      } catch (err) {
+        console.log("Error parsing JSON string:", err);
+      }
+    });
+  } catch (err) {
+    throw new Error(err);
+  }
+}, 1000 * 10)
+
 app.use((req, res, next) => {
   var api_key = req.headers.api_key,
     api_secret = req.headers.api_secret;
@@ -228,7 +281,7 @@ app.get("/", async (req, res) => {
 //   await db_Insert('md_document', '(doc_type)', `('${dt.name}')`, null, 0)
 // }
 
-  var arr = [];
+  // var arr = [];
   // res.send(data)
   // for(i=0; i<data.data.planet_position.length; i++){
   //     nakhatra_name = await getNakhatra(data.data.planet_position[i].degree,data.data.planet_position[i].position)
@@ -244,8 +297,16 @@ app.get("/", async (req, res) => {
   //     }
   //     arr.push(planet)
   // }
-  res.send(arr);
+  var sendEmailStatus = await SendUserEmail('sayantika@synergicsoftek.in')
+  res.send(sendEmailStatus)
+  // res.send(arr);
+  // res.send("I am a server")
 });
+
+const sendMail = require("./controllers/sendMail");
+const { SendUserEmail } = require("./module/EmailModule");
+
+app.get("/email", sendMail);
 
 app.use("/user", UserRouter);
 app.use("/master", MasterRouter);
@@ -253,6 +314,57 @@ app.use('/profile', ProfileRouter)
 app.use(rashiRouter);
 app.use('/partner', PartnerRouter);
 app.use('/kyc', KycRouter);
+
+
+
+
+// Set up a route to handle file uploads
+
+app.post('/multi_upload', (req, res) => {
+  var data = req.body
+  if (!req.files || Object.keys(req.files).length === 0){
+    return res.status(400).send('No files were uploaded...');
+  }
+
+  // Loop through uploaded files
+  for (let fileKey in req.files) {
+    const file = req.files[fileKey];
+    console.log(file);
+
+    // Move the file to a desired location (e.g., 'uploads' directory)
+    // const uploadPath = __dirname + '/uploads/' + file.name;
+    // console.log(uploadPath);
+    if(Array.isArray(file)){
+      for(let fl of file){
+         var uploadPath = path.join(__dirname, 'uploads', `${data.user_id}_${fl.name}`)
+         fl.mv(uploadPath, function (err)  {
+           if (err) {
+            return  res.status(500).send(err);
+           }else{
+            /* 
+            let fileName = `${data.user_id}_${fl.name}`
+            var sql = `INSERT INTO TD_USER_PROFILE_IMAGE (user_id, file_path) VALUES ('${data.user_id}', '${fileName}')`
+            */
+           }
+         });
+       }
+    }else{
+      var uploadPath = path.join(__dirname, 'uploads', `${data.user_id}_${file.name}`)
+      file.mv(uploadPath, function (err)  {
+        if (err) {
+        return  res.status(500).send(err);
+        }else{
+          /* 
+          let fileName = `${data.user_id}_${file.name}`
+          var sql = `INSERT INTO TD_USER_PROFILE_IMAGE (user_id, file_path) VALUES ('${data.user_id}', '${fileName}')`
+          */
+         }
+      });
+    }
+  }
+  res.send('Files uploaded successfully!');
+});
+
 
 app.post('/upload', 
 fileUpload({ crereateParentPath: true }),
@@ -274,6 +386,7 @@ fileSizeLimiter,
       res.json({ status: 'success', message: Object.keys(files).toString()})
  }
 )
+
 
 app.listen(port, (err) => {
   if (err) throw new Error(err);
