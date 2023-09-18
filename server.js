@@ -35,7 +35,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Enable file uploads with express-fileupload middleware
-app.use(fileUpload());
+// app.use(fileUpload());
 
 app.use(express.static("uploads"));
 
