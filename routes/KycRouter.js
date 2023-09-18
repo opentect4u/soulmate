@@ -62,5 +62,61 @@ const { db_Insert } = require('../module/MasterModule');
         // }
     })
 
+    KycRouter.post('/profile_pic', 
+    fileUpload({ crereateParentPath: true }), (req, res) => {
+        var data = req.body, res_dt;
+        datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+        if (!req.files || Object.keys(req.files).length === 0){
+          return res.status(400).send('No files were uploaded...');
+        }
+      
+        // Loop through uploaded files
+        for (let fileKey in req.files) {
+          const file = req.files[fileKey];
+          // console.log(file);
+      
+          // Move the file to a desired location (e.g., 'uploads' directory)
+          // const uploadPath = __dirname + '/uploads/' + file.name;
+          // console.log(uploadPath);
+          if(Array.isArray(file)){
+            for(let fl of file){
+               var uploadPath = path.join(__dirname, 'uploads', `${data.user_id}_${fl.name}`)
+               fl.mv(uploadPath, function (err)  {
+                 if (err) {
+                  return  res_dt = {suc:0, msg: err}// res.status(500).send(err);
+                 }else{
+                  let fileName = `${data.user_id}_${fl.name}`
+                  // var sql = `INSERT INTO TD_USER_PROFILE_IMAGE (user_id, file_path) VALUES ('${data.user_id}', '${fileName}')`
+                   var table_name = 'td_user_profile_image',
+                   fields = '(user_id, file_path, created_by, created_dt)',
+                   values = `('${data.user_id}','${fileName}', '${data.user}', '${datetime}')`,
+                          whr =  null ,
+                          flag =  0;
+                          res_dt = db_Insert(table_name, fields, values, whr, flag)
+                 }
+      
+       });
+             }
+          }else{
+            var uploadPath = path.join(__dirname, 'uploads', `${data.user_id}_${file.name}`)
+            file.mv(uploadPath, function (err)  {
+              if (err) {
+              return  res.status(500).send(err);
+              }else{
+                let fileName = `${data.user_id}_${file.name}`
+                // var sql = `INSERT INTO TD_USER_PROFILE_IMAGE (user_id, file_path) VALUES ('${data.user_id}', '${fileName}')`
+                var table_name = 'td_user_profile_image',
+                fields = '(user_id, file_path, created_by, created_dt)',
+                values = `('${data.user_id}','${fileName}', '${data.user}', '${datetime}')`,
+                       whr =  null ,
+                       flag =  0;
+                       res_dt = db_Insert(table_name, fields, values, whr, flag)
+               }
+            });
+          }
+        }
+        res.send({suc: 1, msg: 'Uploaded'});
+      });
+
 
     module.exports = {KycRouter}
