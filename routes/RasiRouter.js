@@ -239,14 +239,21 @@ const kundali = (user_id, coordinates, datetime) => {
 
 rashiRouter.get("/position", async (req, res) => {
   var data = require("../raw_data/1-1999-05-04T16-55-00Z.json");
-    var result  = [], planet = {};
-      var position = data.data.planet_position.filter((dt) => dt.position == '10').length
-      console.log(position);
-     planet = {
-      planet_name : data.data.planet_position[position].name
-     };
-     result.push(planet)
-     console.log(result);
+    var result  = [], planets = [];
+    for(let dt of data.data.planet_position){
+      planets.push(dt.position)
+    }
+    planets = [...new Set(planets)]
+    for(let dt of planets){
+      result.push({pos: dt, no_of_planet: data.data.planet_position.filter((pdt) => pdt.position == dt).length})
+    }
+    //   var position = data.data.planet_position.filter((dt) => dt.position == '10').length
+    //   console.log(position);
+    //  planet = {
+    //   planet_name : data.data.planet_position[position].name
+    //  };
+    //  result.push(planet)
+    //  console.log(result);
     res.json(result);
 });
 
