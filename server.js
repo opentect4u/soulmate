@@ -16,7 +16,7 @@ const {fileSizeLimiter} = require('./middleware/fileSizeLimiter');
 const {fileExtLimiter} = require('./middleware/fileExtLimiter');
 
 
-const { db_Insert } = require("./module/MasterModule");
+const { db_Insert, db_Select } = require("./module/MasterModule");
 const { MasterRouter, getNakhatra } = require("./routes/MasterRouter");
 const { ProfileRouter } = require("./routes/ProfileRouter");
 const { rashiRouter } = require("./routes/RasiRouter");
@@ -322,6 +322,7 @@ app.use('/kyc', KycRouter);
 
 app.post('/multi_upload', (req, res) => {
   var data = req.body
+  datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
   if (!req.files || Object.keys(req.files).length === 0){
     return res.status(400).send('No files were uploaded...');
   }
@@ -329,7 +330,7 @@ app.post('/multi_upload', (req, res) => {
   // Loop through uploaded files
   for (let fileKey in req.files) {
     const file = req.files[fileKey];
-    console.log(file);
+    // console.log(file);
 
     // Move the file to a desired location (e.g., 'uploads' directory)
     // const uploadPath = __dirname + '/uploads/' + file.name;
@@ -341,12 +342,17 @@ app.post('/multi_upload', (req, res) => {
            if (err) {
             return  res.status(500).send(err);
            }else{
-            /* 
             let fileName = `${data.user_id}_${fl.name}`
-            var sql = `INSERT INTO TD_USER_PROFILE_IMAGE (user_id, file_path) VALUES ('${data.user_id}', '${fileName}')`
-            */
+            // var sql = `INSERT INTO TD_USER_PROFILE_IMAGE (user_id, file_path) VALUES ('${data.user_id}', '${fileName}')`
+             var table_name = 'td_user_profile_image',
+             fields = '(user_id, file_path, created_by, created_dt)',
+             values = `('${data.user_id}','${fileName}', '${data.user}', '${datetime}')`,
+                    whr =  null ,
+                    flag =  0;
+                    res_dt = db_Insert(table_name, fields, values, whr, flag)
            }
-         });
+
+ });
        }
     }else{
       var uploadPath = path.join(__dirname, 'uploads', `${data.user_id}_${file.name}`)
@@ -354,10 +360,14 @@ app.post('/multi_upload', (req, res) => {
         if (err) {
         return  res.status(500).send(err);
         }else{
-          /* 
           let fileName = `${data.user_id}_${file.name}`
-          var sql = `INSERT INTO TD_USER_PROFILE_IMAGE (user_id, file_path) VALUES ('${data.user_id}', '${fileName}')`
-          */
+          // var sql = `INSERT INTO TD_USER_PROFILE_IMAGE (user_id, file_path) VALUES ('${data.user_id}', '${fileName}')`
+          var table_name = 'td_user_profile_image',
+          fields = '(user_id, file_path, created_by, created_dt)',
+          values = `('${data.user_id}','${fileName}', '${data.user}', '${datetime}')`,
+                 whr =  null ,
+                 flag =  0;
+                 res_dt = db_Insert(table_name, fields, values, whr, flag)
          }
       });
     }

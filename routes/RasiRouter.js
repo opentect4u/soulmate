@@ -240,30 +240,14 @@ const kundali = (user_id, coordinates, datetime) => {
 rashiRouter.get("/position", async (req, res) => {
   var data = require("../raw_data/1-1999-05-04T16-55-00Z.json");
     var result  = [], planet = {};
-    // for (i = 0; i < data.data.planet_position.length; i++) {
-    //   planet  = {};
-    //   planet[data.data.planet_position[i].position] = {
-    //     "position": data.data.planet_position[i].position,
-    //     "planet_name": data.data.planet_position[i]?.name
-    //    };
-    //    result.push(planet)
-       
-    //   // result.push(result1)
-    //   console.log(planet);
-    // }
-
-    // for(let dt of data.data.planet_position){
-    //   console.log(dt);
-      
-    // }
-    var position = data.data.planet_position.filter((dt) => dt.position == '1').length
-    console.log(position);
-   planet = {
-    planet_name : data.data.planet_position[position].name
-   };
-    result.push(planet)
-    console.log(result);
-  res.json(result);
+      var position = data.data.planet_position.filter((dt) => dt.position == '10').length
+      console.log(position);
+     planet = {
+      planet_name : data.data.planet_position[position].name
+     };
+     result.push(planet)
+     console.log(result);
+    res.json(result);
 });
 
 

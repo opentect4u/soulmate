@@ -112,3 +112,11 @@ ALTER TABLE `md_jotok_rashi` ADD `rashi_name_eng` VARCHAR(50) NULL DEFAULT NULL 
 
 CREATE TABLE `soul_mate`.`td_user_kyc_list` (`id` INT(11) NOT NULL AUTO_INCREMENT , `user_id` INT(11) NULL DEFAULT NULL , `doc_type` INT(11) NULL DEFAULT NULL , `file_path` TEXT NULL DEFAULT NULL , `created_by` VARCHAR(50) NULL DEFAULT NULL , `created_dt` DATETIME NULL DEFAULT NULL , `modified_by` VARCHAR(50) NULL DEFAULT NULL , `modified_dt` DATETIME NULL DEFAULT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
 ​
+
+<-----------------------END --------->
+
+<--------------18-09-2023 ---------------->
+
+DROP TABLE `soul_mate`.`td_user_profile_image`
+
+CREATE TABLE `soul_mate`.`td_user_profile_image` (`id` INT(11) NOT NULL AUTO_INCREMENT , `user_id` INT(11) NULL DEFAULT NULL , `file_path` TEXT NULL DEFAULT NULL , `created_by` VARCHAR(50) NULL DEFAULT 'admin@gmail.com' , `created_dt` DATETIME NULL DEFAULT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
