@@ -274,6 +274,9 @@ app.use((req, res, next) => {
 // }]
 
 app.get("/", async (req, res) => {
+  var data = [
+    
+  ]
   // console.log('get request');
   // var data = require('./sample_data.json')
 // for (let dt of data){
