@@ -16,6 +16,7 @@ PartnerRouter.get("/partner_pref", async (req, res) => {
     whr = data.user_id > 0 ? `a.user_id=${data.user_id}` : null,
     order = null;
     var res_dt = await db_Select(select, table_name, whr, order);
+    console.log('Location ', res_dt.msg[0].location_id, location.findIndex((dt) => dt.id == res_dt.msg[0].location_id));
     var location_name =
     res_dt.suc > 0 && res_dt.msg.length > 0
       ? (location.findIndex((dt) => dt.id == res_dt.msg[0].location_id) >= 0 ? location[location.findIndex((dt) => dt.id == res_dt.msg[0].location_id)]?.name : null) : null;
