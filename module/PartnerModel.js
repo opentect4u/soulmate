@@ -12,4 +12,15 @@ const partner_match = (dob) => {
     })
 }
 
-module.exports = {partner_match}
+const RashiMatch = (own_rashi, partner_rashi) => {
+    return new Promise(async (resolve, reject) => {
+        var select = `match_flag`,
+            table_name = `md_rashi_match_frndsp`,
+            whr = `frm_rashi_id = ${own_rashi} AND to_rashi_id = ${partner_rashi}`,
+            order = null;
+        var res_dt = await db_Select(select, table_name, whr, order)
+        resolve(res_dt)
+    })
+}
+
+module.exports = {partner_match, RashiMatch}
