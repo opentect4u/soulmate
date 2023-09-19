@@ -4,8 +4,10 @@ const express = require('express'),
    request = require("request"),
    location = require("../location.json");
 
+const { promises } = require('nodemailer/lib/xoauth2');
 const { db_Select, EncryptDataToSend, db_Insert} = require('../module/MasterModule');
 const { user_groom_loc, user_basic_info, user_hobbies } = require('../module/ProfileModule');
+const { partner_match } = require('../module/PartnerModel');
 
 PartnerRouter.get("/partner_pref", async (req, res) => {
     var data = req.query;
@@ -16,8 +18,7 @@ PartnerRouter.get("/partner_pref", async (req, res) => {
     var res_dt = await db_Select(select, table_name, whr, order);
     var location_name =
     res_dt.suc > 0 && res_dt.msg.length > 0
-      ? location[location.findIndex((dt) => dt.id == res_dt.msg[0].location_id)].name
-      : null;
+      ? (location.findIndex((dt) => dt.id == res_dt.msg[0].location_id) >= 0 ? location[location.findIndex((dt) => dt.id == res_dt.msg[0].location_id)]?.name : null) : null;
   res_dt.suc > 0 ? (res_dt.msg[0]["location_name"] = location_name) : "";
     res_dt = await EncryptDataToSend(res_dt)
     res.send(res_dt);
@@ -52,20 +53,24 @@ PartnerRouter.post("/update_partner", async (req, res) =>{
 PartnerRouter.get("/partner_match", async (req, res) => {
   var result = [], result_dt;
   var data = req.query;
-  var select = "a.id, a.user_id, a.age_frm, a.age_to, a.marital_status, a.mother_tounge, a.religion, a.location, b.gender",
+  var select = "a.id, a.user_id, a.age_frm, a.age_to, a.marital_status, a.mother_tounge, a.religion, a.location, b.gender, b.dob",
   table_name = "td_user_partner_pref a, td_user_profile b",
   whr = data.user_id > 0 ? `a.user_id=b.id AND a.user_id=${data.user_id}` : `a.user_id=b.id`,
   order = null;
   var pref_dt = await db_Select(select, table_name, whr, order);
 
   if(pref_dt.suc > 0 && pref_dt.msg.length > 0){
-    var select = "a.id",
+    var own_rashi = await partner_match(pref_dt.msg[0].dob)
+    own_rashi = own_rashi.suc > 0 ? (own_rashi.msg[0].length > 0 ? own_rashi.msg[0].rashi_id : 0) : 0
+
+    var select = "a.id, a.dob",
     table_name = "td_user_profile a LEFT JOIN  td_user_p_dtls b ON a.id=b.user_id",
     whr = `a.gender != '${pref_dt.msg[0].gender}' AND a.kundali_file_name IS NOT NULL ${pref_dt.msg[0].age_frm > 0 ? `AND DATE_FORMAT(from_days(datediff(now(), a.dob)), '%Y')+0 >= ${pref_dt.msg[0].age_frm} ` : ''} ${pref_dt.msg[0].age_to > 0 ? `AND DATE_FORMAT(from_days(datediff(now(), dob)), '%Y')+0 <= ${pref_dt.msg[0].age_to}` : '' }
             ${pref_dt.msg[0].marital_status != '' ? `AND b.marital_status = '${pref_dt.msg[0].marital_status}'` : ''}  ${pref_dt.msg[0].mother_tounge > 0 ? `AND a.mother_tong = ${pref_dt.msg[0].mother_tounge}` : ''}  ${pref_dt.msg[0].religion != '' ? `AND a.religion = '${pref_dt.msg[0].religion}'` : ''}  ${pref_dt.msg[0].location > 0 ? `AND a.location_id = ${pref_dt.msg[0].location}` : ''}` 
     order = null;
     var res_dt = await db_Select(select, table_name, whr, order);
-    console.log(res_dt);
+    // console.log(res_dt);
+
     if(res_dt.suc > 0 && res_dt.msg.length > 0){
       for(let rdt of res_dt.msg){
         var groom_loc = await user_groom_loc({user_id:rdt?.id});
