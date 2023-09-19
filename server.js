@@ -274,9 +274,24 @@ app.use((req, res, next) => {
 // }]
 
 app.get("/", async (req, res) => {
-  var data = [
-    
-  ]
+  var frm_number = [2, 4, 7]
+  var to_number = [
+    {num: 8, flag: 'VA'},
+    {num: 17, flag: 'VA'},
+    {num: 26, flag: 'VA'},
+    {num: 9, flag: 'VA'},
+    {num: 18, flag: 'VA'},
+    {num: 27, flag: 'VA'},
+    {num: 3, flag: 'MA'},
+    {num: 12, flag: 'MA'},
+    {num: 21, flag: 'MA'},
+    {num: 30, flag: 'MA'},
+  ];
+  for(let dt of frm_number){
+    for(tdt of to_number){
+      await db_Insert('md_frndsp_btwn_number', '(frm_number, to_number, frnd_flag)', `(${dt}, ${tdt.num}, '${tdt.flag}')`, null, 0)
+    }
+  }
   // console.log('get request');
   // var data = require('./sample_data.json')
 // for (let dt of data){
@@ -300,10 +315,10 @@ app.get("/", async (req, res) => {
   //     }
   //     arr.push(planet)
   // }
-  var sendEmailStatus = await SendUserEmail('sayantika@synergicsoftek.in')
-  res.send(sendEmailStatus)
+  // var sendEmailStatus = await SendUserEmail('sayantika@synergicsoftek.in')
+  // res.send(sendEmailStatus)
   // res.send(arr);
-  // res.send("I am a server")
+  res.send("I am a server")
 });
 
 const sendMail = require("./controllers/sendMail");

@@ -301,3 +301,4 @@ ALTER TABLE `md_sunshine_rashi`
 --
 ALTER TABLE `md_sunshine_rashi`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
