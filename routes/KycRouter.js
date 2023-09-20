@@ -80,7 +80,7 @@ const { db_Insert } = require('../module/MasterModule');
           // console.log(uploadPath);
           if(Array.isArray(file)){
             for(let fl of file){
-               var uploadPath = path.join(__dirname, 'uploads', `${data.user_id}_${fl.name}`)
+               var uploadPath = path.join('uploads', `${data.user_id}_${fl.name}`)
                fl.mv(uploadPath, function (err)  {
                  if (err) {
                   return  res_dt = {suc:0, msg: err}// res.status(500).send(err);
@@ -90,15 +90,15 @@ const { db_Insert } = require('../module/MasterModule');
                    var table_name = 'td_user_profile_image',
                    fields = '(user_id, file_path, created_by, created_dt)',
                    values = `('${data.user_id}','${fileName}', '${data.user}', '${datetime}')`,
-                          whr =  null ,
-                          flag =  0;
-                          res_dt = db_Insert(table_name, fields, values, whr, flag)
+                    whr =  null ,
+                    flag =  0;
+                    res_dt = db_Insert(table_name, fields, values, whr, flag)
                  }
       
        });
              }
           }else{
-            var uploadPath = path.join(__dirname, 'uploads', `${data.user_id}_${file.name}`)
+            var uploadPath = path.join('uploads', `${data.user_id}_${file.name}`)
             file.mv(uploadPath, function (err)  {
               if (err) {
               return  res.status(500).send(err);

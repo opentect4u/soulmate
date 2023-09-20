@@ -31,8 +31,8 @@ UserRouter.post("/user_profile", async (req, res) => {
     datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss"),
     BirthDate = new Date(req_data.field_birth_date).toISOString();
   // console.log(`${date}T${time}Z`);
-  // req_data = Buffer.from(req_data.data, "base64").toString();
-  // req_data = JSON.parse(req_data);
+  req_data = Buffer.from(req_data.data, "base64").toString();
+  req_data = JSON.parse(req_data);
 
   var table_name = "td_user_profile",
     fields =
@@ -122,10 +122,10 @@ UserRouter.post("/user_personal_details", async (req, res) => {
   // UserRouter.post("/user_basic_family", async (req, res) => {
   var req_data = req.body,
     datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
   req_data = Buffer.from(req_data.data, "base64").toString();
-  // console.log(JSON.parse(dt));
   req_data = JSON.parse(req_data);
-  console.log(req_data);
+  // console.log(req_data);
   var table_name = "td_user_p_dtls",
     fields =
       req_data.id > 0

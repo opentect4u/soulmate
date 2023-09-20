@@ -118,11 +118,13 @@ const getNakhatra = (degree = null, pos = null) => {
 
 const getJotukRashiId = (rasi_name = null, nakhatra_name = null) => {
   return new Promise(async (resolve, reject) => {
+    console.log(rasi_name, nakhatra_name);
     var select = "id",
       table_name = "md_jotok_rashi",
       whr = `rashi_name_eng LIKE "${rasi_name} ${nakhatra_name}%"`,
       order = null;
-    var res_dt = db_Select(select, table_name, whr, order);
+    var res_dt = await db_Select(select, table_name, whr, order);
+    console.log(res_dt);
     resolve(res_dt);
   });
 };
