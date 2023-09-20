@@ -276,17 +276,23 @@ app.use((req, res, next) => {
 app.get("/", async (req, res) => {
   var data = require('./raw_data/42-1999-05-04T11-20-00.000Z.json')
   var planet_data = data.data.planet_position
-  var asc_pos = planet_data.findIndex(dt => dt.name == 'Ascendant'), pos = []
+  var asc_pos = planet_data.findIndex(dt => dt.name == 'Ascendant'), planets = [], result = []
   console.log(planet_data[asc_pos].position);
   var arrRotate = true
   // while(arrRotate){
   //  if() 
   // }
   for(let dt of planet_data){
-    dt.position = dt.position > planet_data[asc_pos].position ? Math.abs(parseInt(dt.position-planet_data[asc_pos].position))+1 : (dt.position+planet_data[asc_pos].position)-1
+    dt.position = dt.position >= planet_data[asc_pos].position ? Math.abs(parseInt(dt.position-planet_data[asc_pos].position))+1 : (dt.position+planet_data[asc_pos].position)-1
+    planets.push(dt.position)
   }
 
-  res.send(data)
+  planets = [...new Set(planets)]
+  for(let dt of planets){
+    result.push({pos: dt, no_of_planet: planet_data.filter((pdt) => pdt.position == dt).length})
+  }
+
+  res.send(result)
   // var frm_number = [2, 4, 7]
   // var to_number = [
   //   {num: 8, flag: 'VA'},
