@@ -302,3 +302,9 @@ ALTER TABLE `md_sunshine_rashi`
 ALTER TABLE `md_sunshine_rashi`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
+
+  <-----------------------END --------->
+
+<--------------20-09-2023 ---------------->
+
+INSERT INTO `md_rashi_match_frndsp` (`id`, `frm_rashi_id`, `to_rashi_id`, `match_flag`, `created_by`, `created_dt`, `modified_by`, `modified_dt`) VALUES (NULL, '1', '6', 'VA', 'admin', NULL, NULL, NULL), (NULL, '1', '3', 'VA', 'admin', NULL, NULL, NULL), (NULL, '8', '6', 'VA', 'admin', NULL, NULL, NULL), (NULL, '8', '3', 'VA', 'admin', NULL, NULL, NULL);

@@ -7,7 +7,7 @@ const express = require('express'),
 const { promises } = require('nodemailer/lib/xoauth2');
 const { db_Select, EncryptDataToSend, db_Insert} = require('../module/MasterModule');
 const { user_groom_loc, user_basic_info, user_hobbies } = require('../module/ProfileModule');
-const { partner_match } = require('../module/PartnerModel');
+const { partner_match, RashiMatch, NumberMatchWithDate } = require('../module/PartnerModel');
 
 PartnerRouter.get("/partner_pref", async (req, res) => {
     var data = req.query;
@@ -16,7 +16,7 @@ PartnerRouter.get("/partner_pref", async (req, res) => {
     whr = data.user_id > 0 ? `a.user_id=${data.user_id}` : null,
     order = null;
     var res_dt = await db_Select(select, table_name, whr, order);
-    console.log('Location ', res_dt.msg[0].location_id, location.findIndex((dt) => dt.id == res_dt.msg[0].location_id));
+    // console.log('Location ', res_dt.msg[0].location_id, location.findIndex((dt) => dt.id == res_dt.msg[0].location_id));
     var location_name =
     res_dt.suc > 0 && res_dt.msg.length > 0
       ? (location.findIndex((dt) => dt.id == res_dt.msg[0].location_id) >= 0 ? location[location.findIndex((dt) => dt.id == res_dt.msg[0].location_id)]?.name : null) : null;
@@ -62,7 +62,7 @@ PartnerRouter.get("/partner_match", async (req, res) => {
 
   if(pref_dt.suc > 0 && pref_dt.msg.length > 0){
     var own_rashi = await partner_match(pref_dt.msg[0].dob)
-    own_rashi = own_rashi.suc > 0 ? (own_rashi.msg[0].length > 0 ? own_rashi.msg[0].rashi_id : 0) : 0
+    own_rashi = own_rashi.suc > 0 ? (own_rashi.msg.length > 0 ? own_rashi.msg[0].rashi_id : 0) : 0
 
     var select = "a.id, a.dob",
     table_name = "td_user_profile a LEFT JOIN  td_user_p_dtls b ON a.id=b.user_id",
@@ -77,6 +77,15 @@ PartnerRouter.get("/partner_match", async (req, res) => {
         var groom_loc = await user_groom_loc({user_id:rdt?.id});
         // console.log(groom_loc);
         var basic_info = await user_basic_info({user_id:rdt?.id});
+
+        var partner_rashi = await partner_match(basic_info.msg[0].dob)
+        // console.log('Partner', partner_rashi);
+        partner_rashi = partner_rashi.suc > 0 ? (partner_rashi.msg.length > 0 ? partner_rashi.msg[0].rashi_id : 0) : 0
+        var rashi_match = await RashiMatch(own_rashi, partner_rashi)
+        console.log('Match', rashi_match);
+        var number_match = await NumberMatchWithDate(dateFormat(pref_dt.msg[0].dob, 'dd'), dateFormat(basic_info.msg[0].dob, 'dd'))
+        console.log('Number', number_match);
+
         var hobbies = await user_hobbies({user_id:rdt?.id});
         var result_partner = {
           groom_location : {
