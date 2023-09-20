@@ -16,7 +16,7 @@ const {fileSizeLimiter} = require('./middleware/fileSizeLimiter');
 const {fileExtLimiter} = require('./middleware/fileExtLimiter');
 
 
-const { db_Insert, db_Select } = require("./module/MasterModule");
+const { db_Insert, db_Select, ElementoryField } = require("./module/MasterModule");
 const { MasterRouter, getNakhatra } = require("./routes/MasterRouter");
 const { ProfileRouter } = require("./routes/ProfileRouter");
 const { rashiRouter } = require("./routes/RasiRouter");
@@ -276,7 +276,7 @@ app.use((req, res, next) => {
 app.get("/", async (req, res) => {
   var data = require('./raw_data/42-1999-05-04T11-20-00.000Z.json')
   var planet_data = data.data.planet_position
-  var asc_pos = planet_data.findIndex(dt => dt.name == 'Ascendant'), planets = [], result = []
+  var asc_pos = planet_data.findIndex(dt => dt.name == 'Ascendant'), planets = [], result = [], elementVal = []
   console.log(planet_data[asc_pos].position);
   var arrRotate = true
   // while(arrRotate){
@@ -292,7 +292,17 @@ app.get("/", async (req, res) => {
     result.push({pos: dt, no_of_planet: planet_data.filter((pdt) => pdt.position == dt).length})
   }
 
-  res.send(result)
+  for(dt of ElementoryField){
+    var eleObj = {}, totPla=0
+    for(rdt of result){
+      if(dt.fields.includes(rdt.pos)){
+        totPla += rdt.no_of_planet
+      }
+    }
+    eleObj[dt.flag] = totPla
+    elementVal.push(eleObj)
+  }
+  res.send(elementVal)
   // var frm_number = [2, 4, 7]
   // var to_number = [
   //   {num: 8, flag: 'VA'},
