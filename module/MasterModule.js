@@ -86,4 +86,25 @@ const EncryptDataToSend = (data) => {
     })
 }
 
-module.exports = { db_Select, db_Insert, db_Delete, db_Check, EncryptDataToSend }
+var tot_match = 5
+const globalValues = {
+    tot_match: tot_match,
+    each_marks: 100/tot_match,
+    full_marks: 100/tot_match,
+    worst_marks: 0
+}
+
+const SunshineMatch = {
+    'G': globalValues.full_marks,
+    'M': globalValues.full_marks/2,
+    'VA': globalValues.worst_marks
+}
+
+const NumberMatch = {
+    'G': globalValues.full_marks,
+    'M': globalValues.full_marks/2,
+    'VA': globalValues.worst_marks,
+    'MA': (globalValues.full_marks/2)/2
+}
+
+module.exports = { db_Select, db_Insert, db_Delete, db_Check, EncryptDataToSend, globalValues, SunshineMatch, NumberMatch }

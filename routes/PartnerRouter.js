@@ -7,7 +7,7 @@ const express = require('express'),
 const { promises } = require('nodemailer/lib/xoauth2');
 const { db_Select, EncryptDataToSend, db_Insert} = require('../module/MasterModule');
 const { user_groom_loc, user_basic_info, user_hobbies } = require('../module/ProfileModule');
-const { partner_match, RashiMatch } = require('../module/PartnerModel');
+const { partner_match, RashiMatch, NumberMatchWithDate } = require('../module/PartnerModel');
 
 PartnerRouter.get("/partner_pref", async (req, res) => {
     var data = req.query;
@@ -79,10 +79,12 @@ PartnerRouter.get("/partner_match", async (req, res) => {
         var basic_info = await user_basic_info({user_id:rdt?.id});
 
         var partner_rashi = await partner_match(basic_info.msg[0].dob)
-        console.log('Partner', partner_rashi);
+        // console.log('Partner', partner_rashi);
         partner_rashi = partner_rashi.suc > 0 ? (partner_rashi.msg.length > 0 ? partner_rashi.msg[0].rashi_id : 0) : 0
         var rashi_match = await RashiMatch(own_rashi, partner_rashi)
         console.log('Match', rashi_match);
+        var number_match = await NumberMatchWithDate(dateFormat(pref_dt.msg[0].dob, 'dd'), dateFormat(basic_info.msg[0].dob, 'dd'))
+        console.log('Number', number_match);
 
         var hobbies = await user_hobbies({user_id:rdt?.id});
         var result_partner = {

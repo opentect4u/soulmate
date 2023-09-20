@@ -1,5 +1,5 @@
 const dateFormat = require('dateformat')
-const { db_Select } = require("./MasterModule");
+const { db_Select, SunshineMatch, NumberMatch } = require("./MasterModule");
 
 const partner_match = (dob) => {
     return new Promise(async (resolve, reject) => {
@@ -19,8 +19,41 @@ const RashiMatch = (own_rashi, partner_rashi) => {
             whr = `frm_rashi_id = ${own_rashi} AND to_rashi_id = ${partner_rashi}`,
             order = null;
         var res_dt = await db_Select(select, table_name, whr, order)
-        resolve(res_dt)
+        if(res_dt.suc > 0 && res_dt.msg.length > 0){
+            var marks = SunshineMatch[res_dt.msg[0].match_flag]
+            resolve(marks)
+        }else{
+            var select = `match_flag`,
+                table_name = `md_rashi_match_frndsp`,
+                whr = `frm_rashi_id = ${partner_rashi} AND to_rashi_id = ${own_rashi}`,
+                order = null;
+            var res_dt = await db_Select(select, table_name, whr, order)
+            var marks = SunshineMatch[res_dt.msg[0].match_flag]
+            resolve(marks)
+        }
     })
 }
 
-module.exports = {partner_match, RashiMatch}
+const NumberMatchWithDate = (ownDate, partnerDate) => {
+    return new Promise(async (resolve, reject) => {
+        var select = `frnd_flag`,
+            table_name = `md_frndsp_btwn_number`,
+            whr = `frm_number = ${ownDate} AND to_number = ${partnerDate}`,
+            order = null;
+        var res_dt = await db_Select(select, table_name, whr, order)
+        if(res_dt.suc > 0 && res_dt.msg.length > 0){
+            var marks = NumberMatch[res_dt.msg[0].frnd_flag]
+            resolve(marks)
+        }else{
+            var select = `frnd_flag`,
+                table_name = `md_frndsp_btwn_number`,
+                whr = `frm_number = ${partnerDate} AND to_number = ${ownDate}`,
+                order = null;
+            var res_dt = await db_Select(select, table_name, whr, order)
+            var marks = NumberMatch[res_dt.msg[0].frnd_flag]
+            resolve(marks)
+        }
+    })
+}
+
+module.exports = {partner_match, RashiMatch, NumberMatchWithDate}
