@@ -284,8 +284,8 @@ app.get("/", async (req, res) => {
   // }
   for(let dt of planet_data){
     dt.position = dt.position > planet_data[asc_pos].position ? Math.abs(parseInt(dt.position-planet_data[asc_pos].position))+1 : (dt.position+planet_data[asc_pos].position)-1
-    // pos.push({now_pos: dt.position})
   }
+
   res.send(data)
   // var frm_number = [2, 4, 7]
   // var to_number = [
