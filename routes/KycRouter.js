@@ -62,6 +62,16 @@ const { db_Insert } = require('../module/MasterModule');
         // }
     })
 
+    KycRouter.get('/get_profile_pic', async (req, res) => {
+      var data = req.query
+      var select = 'id, file_path', 
+      table_name = 'td_user_profile_image',
+      whr = data.id > 0 ? `id = ${id}` : null,
+      order = 'ORDER BY id';
+      var res_dt = await db_Select(select, table_name, whr, order)
+      res.send({suc: 1, msg: Buffer.from(JSON.stringify(res_dt.msg), 'utf8').toString('base64')})
+  })
+
     KycRouter.post('/profile_pic', 
     fileUpload({ crereateParentPath: true }), (req, res) => {
         var data = req.body, res_dt;
