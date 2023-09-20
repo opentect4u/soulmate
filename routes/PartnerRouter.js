@@ -7,7 +7,7 @@ const express = require('express'),
 const { promises } = require('nodemailer/lib/xoauth2');
 const { db_Select, EncryptDataToSend, db_Insert} = require('../module/MasterModule');
 const { user_groom_loc, user_basic_info, user_hobbies } = require('../module/ProfileModule');
-const { partner_match, RashiMatch, NumberMatchWithDate } = require('../module/PartnerModel');
+const { partner_match, RashiMatch, NumberMatchWithDate, JotokMatch } = require('../module/PartnerModel');
 
 PartnerRouter.get("/partner_pref", async (req, res) => {
     var data = req.query;
@@ -54,11 +54,12 @@ PartnerRouter.post("/update_partner", async (req, res) =>{
 PartnerRouter.get("/partner_match", async (req, res) => {
   var result = [], result_dt;
   var data = req.query;
-  var select = "a.id, a.user_id, a.age_frm, a.age_to, a.marital_status, a.mother_tounge, a.religion, a.location, b.gender, b.dob",
+  var select = "a.id, a.user_id, a.age_frm, a.age_to, a.marital_status, a.mother_tounge, a.religion, a.location, b.gender, b.dob, b.jotok_rasi_id",
   table_name = "td_user_partner_pref a, td_user_profile b",
   whr = data.user_id > 0 ? `a.user_id=b.id AND a.user_id=${data.user_id}` : `a.user_id=b.id`,
   order = null;
   var pref_dt = await db_Select(select, table_name, whr, order);
+  // console.log(pref_dt);
 
   if(pref_dt.suc > 0 && pref_dt.msg.length > 0){
     var own_rashi = await partner_match(pref_dt.msg[0].dob)
@@ -85,6 +86,10 @@ PartnerRouter.get("/partner_match", async (req, res) => {
         // console.log('Match', rashi_match);
         var number_match = await NumberMatchWithDate(dateFormat(pref_dt.msg[0].dob, 'dd'), dateFormat(basic_info.msg[0].dob, 'dd'))
         // console.log('Number', number_match);
+        var jotok_match = await JotokMatch(pref_dt.msg[0].jotok_rasi_id, basic_info.msg[0].jotok_rasi_id)
+        // console.log('Jotok', jotok_match);
+        var tot_match_marks = Math.round(rashi_match + number_match + jotok_match)
+        // console.log('Total Marks', Math.round(tot_match_marks));
 
         var hobbies = await user_hobbies({user_id:rdt?.id});
         var result_partner = {
@@ -96,7 +101,8 @@ PartnerRouter.get("/partner_match", async (req, res) => {
           },
           hobbies : {
             "value" :  hobbies.msg
-          }
+          },
+          astro_match_marks: tot_match_marks
         }
         result.push(result_partner)
       }
@@ -104,7 +110,6 @@ PartnerRouter.get("/partner_match", async (req, res) => {
     }else{
       result_dt = {suc: 1, msg: []}
     }
-    
   }else{
     result_dt = pref_dt
   }

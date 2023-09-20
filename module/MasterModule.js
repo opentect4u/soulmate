@@ -88,6 +88,7 @@ const EncryptDataToSend = (data) => {
 
 var tot_match = 5
 const globalValues = {
+    jotok_max: 38,
     tot_match: tot_match,
     each_marks: 100/tot_match,
     full_marks: 100/tot_match,

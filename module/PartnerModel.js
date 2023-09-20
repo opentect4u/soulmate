@@ -1,5 +1,5 @@
 const dateFormat = require('dateformat')
-const { db_Select, SunshineMatch, NumberMatch } = require("./MasterModule");
+const { db_Select, SunshineMatch, NumberMatch, globalValues } = require("./MasterModule");
 
 const partner_match = (dob) => {
     return new Promise(async (resolve, reject) => {
@@ -56,4 +56,28 @@ const NumberMatchWithDate = (ownDate, partnerDate) => {
     })
 }
 
-module.exports = {partner_match, RashiMatch, NumberMatchWithDate}
+const JotokMatch = (hus_rasi_id, wif_rasi_id) => {
+    return new Promise(async (resolve, reject) => {
+        var select = `marks`,
+          table_name = `md_jotok_chakra`,
+          whr = `hus_jotok_rasi_id = ${hus_rasi_id} AND wife_jotok_rasi_id = ${wif_rasi_id}`,
+          order = null;
+        var res_dt = await db_Select(select, table_name, whr, order)
+        if(res_dt.suc > 0 && res_dt.msg.length > 0){
+            var marks = res_dt.msg[0].marks
+            marks = marks > 0 ? (globalValues.each_marks/globalValues.jotok_max)*marks : 0
+            resolve(marks)
+        }else{
+            var select = `marks`,
+                table_name = `md_jotok_chakra`,
+                whr = `hus_jotok_rasi_id = ${wif_rasi_id} AND wife_jotok_rasi_id = ${hus_rasi_id}`,
+                order = null;
+            var res_dt = await db_Select(select, table_name, whr, order)
+            var marks = res_dt.suc > 0 && res_dt.msg.length > 0 ? res_dt.msg[0].marks : 0
+            marks = marks > 0 ? (globalValues.each_marks/globalValues.jotok_max)*marks : 0
+            resolve(marks)
+        }
+    })
+}
+
+module.exports = {partner_match, RashiMatch, NumberMatchWithDate, JotokMatch}
