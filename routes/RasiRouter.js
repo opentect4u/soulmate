@@ -151,9 +151,13 @@ const kundali = (user_id, coordinates, datetime) => {
       },
     };
     request(options, async function (error, response) {
-      if (error) throw new Error(error);
-      // console.log(response.body);
+      if (error) {
+        console.log(error);
+        throw new Error(error);
+      }
+     
       else {
+        console.log(response.body);
         var data = JSON.parse(response.body);
         var rasiData = data.data.planet_position.filter(
             (dt) => dt.name == "Moon"
