@@ -1,5 +1,5 @@
 const dateFormat = require('dateformat')
-const { db_Select, SunshineMatch, NumberMatch, globalValues, ElementoryField } = require("./MasterModule");
+const { db_Select, SunshineMatch, NumberMatch, globalValues, ElementoryField, MongalField } = require("./MasterModule");
 
 const partner_match = (dob) => {
     return new Promise(async (resolve, reject) => {
@@ -125,26 +125,56 @@ const ElementMatch = (filePath) => {
 const MongalMatch = (filePath) => {
     return new Promise((resolve, reject) => {
         try{
-        var data = require(`../raw_data/${filePath}`)
-        if(data.status == 'ok'){
-            var planet_data = data.data.planet_position
-            var asc_pos = planet_data.findIndex(dt => dt.name == 'Ascendant'), planets = [], result = [], elementVal = []
+        var data = require(`../raw_data/${filePath}`), asc_mangal = false, moon_mangal = false;
+            if(data.status == 'ok'){
+                var planet_data = data.data.planet_position
+                var asc_pos = planet_data.findIndex(dt => dt.name == 'Ascendant'), elementVal = []
 
-            for (let dt of planet_data) {
-                dt.position = dt.position >= planet_data[asc_pos].position ? Math.abs(parseInt(dt.position - planet_data[asc_pos].position)) + 1 : (dt.position + planet_data[asc_pos].position) - 1
-                //  result = fields.includes(dt.position);
-            }
-    
-            var moon_pos = planet_data.findIndex(dt => dt.name == 'Moon'), planets = [], result = [], elementVal = []
+                for (let dt of planet_data) {
+                    dt.position = dt.position >= planet_data[asc_pos].position ? Math.abs(parseInt(dt.position - planet_data[asc_pos].position)) + 1 : (dt.position + planet_data[asc_pos].position) - 1
+                }
+                var asc_planet_data = planet_data
 
-            for (let dt of planet_data) {
-                dt.position = dt.position >= planet_data[moon_pos].position ? Math.abs(parseInt(dt.position - planet_data[moon_pos].position)) + 1 : (dt.position + planet_data[moon_pos].position) - 1
-                //  result = fields.includes(dt.position);
+                for(let dt of asc_planet_data){
+                    if(MongalField[0].fields.includes(dt.position)){
+                        if(dt.name == 'Mars'){
+                            asc_mangal = 80
+                        }
+                    }
+                }
+
+                var moon_pos = planet_data.findIndex(dt => dt.name == 'Moon'), elementVal = []
+
+                for (let dt of planet_data) {
+                    dt.position = dt.position >= planet_data[moon_pos].position ? Math.abs(parseInt(dt.position - planet_data[moon_pos].position)) + 1 : (dt.position + planet_data[moon_pos].position) - 1
+                }
+
+                var moon_planet_data = planet_data
+
+                for(let dt of moon_planet_data){
+                    if(MongalField[1].fields.includes(dt.position)){
+                        if(dt.name == 'Mars'){
+                            moon_mangal = 20
+                        }
+                    }
+                }
+
+                var marks = (asc_mangal ? asc_mangal : 0) + (moon_mangal ? moon_mangal : 0)
+
+                // for (dt of MongalField) {
+                //     var eleObj = {}, totPla = 0
+                //         if (dt.fields.includes(dt.position)) {
+                //             totPla += dt.no_of_planet
+                //         }
+                
+                //     eleObj[dt.flag] = totPla
+                //     elementVal.push(eleObj)
+                // }
+
+                resolve(marks)
+            }else{
+                resolve(0)
             }
-            resolve(elementVal)
-        }else{
-            resolve([])
-        }
         }catch(err){
             console.log(err);
             resolve([])
