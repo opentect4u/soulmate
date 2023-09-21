@@ -132,9 +132,15 @@ const MongalMatch = (filePath) => {
 
             for (let dt of planet_data) {
                 dt.position = dt.position >= planet_data[asc_pos].position ? Math.abs(parseInt(dt.position - planet_data[asc_pos].position)) + 1 : (dt.position + planet_data[asc_pos].position) - 1
+                //  result = fields.includes(dt.position);
             }
     
-            
+            var moon_pos = planet_data.findIndex(dt => dt.name == 'Moon'), planets = [], result = [], elementVal = []
+
+            for (let dt of planet_data) {
+                dt.position = dt.position >= planet_data[moon_pos].position ? Math.abs(parseInt(dt.position - planet_data[moon_pos].position)) + 1 : (dt.position + planet_data[moon_pos].position) - 1
+                //  result = fields.includes(dt.position);
+            }
             resolve(elementVal)
         }else{
             resolve([])
@@ -146,4 +152,4 @@ const MongalMatch = (filePath) => {
     })
 }
 
-module.exports = { partner_match, RashiMatch, NumberMatchWithDate, JotokMatch, ElementMatch }
+module.exports = { partner_match, RashiMatch, NumberMatchWithDate, JotokMatch, ElementMatch, MongalMatch }

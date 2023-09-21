@@ -92,6 +92,8 @@ PartnerRouter.get("/partner_match", async (req, res) => {
         // console.log('Total Marks', Math.round(tot_match_marks));
         var EleFields = await ElementMatch(basic_info.msg[0].kundali_file_name)
 
+        // var Mongol_dosha = await MongalMatch
+
         var hobbies = await user_hobbies({user_id:rdt?.id});
         var result_partner = {
           groom_location : {
