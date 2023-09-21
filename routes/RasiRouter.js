@@ -7,6 +7,7 @@ const express = require("express"),
   location = require("../location.json");
 
 const { db_Select } = require("../module/MasterModule");
+const { MongalMatch } = require("../module/PartnerModel");
 const { getNakhatra, getJotukRashiId } = require("./MasterRouter");
 
 rashiRouter.post("/kundali", (req, res) => {
@@ -97,6 +98,7 @@ rashiRouter.get("/planet_position", async (req, res) => {
     if (chk_user.suc > 0 && chk_user.msg.length > 0) {
       if (chk_user.msg[0].kundali_file_name) {
         var data = require(`../raw_data/${chk_user.msg[0].kundali_file_name}`);
+        var mangal = await MongalMatch(chk_user.msg[0].kundali_file_name)
         var arr = [];
         if (data.status == "ok") {
           for (i = 0; i < data.data.planet_position.length; i++) {
