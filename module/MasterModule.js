@@ -108,4 +108,16 @@ const NumberMatch = {
     'MA': (globalValues.full_marks/2)/2
 }
 
-module.exports = { db_Select, db_Insert, db_Delete, db_Check, EncryptDataToSend, globalValues, SunshineMatch, NumberMatch }
+const ElementoryField = [
+    {flag: 'A', start: 1, end: 4, fields: [1,2,3,4]},
+    {flag: 'W', start: 10, end: 1, fields: [10,11,12,1]},
+    {flag: 'F', start: 7, end: 10, fields: [7,8,9,10]},
+    {flag: 'E', start: 4, end: 7, fields: [4,5,6,7]},
+]
+
+const MongalField = [
+    {flag: 'A', fields: [1,4,7,8,12]},
+    {flag: 'M', fields: [1,4,7,8,12]},
+]
+
+module.exports = { db_Select, db_Insert, db_Delete, db_Check, EncryptDataToSend, globalValues, SunshineMatch, NumberMatch, ElementoryField }

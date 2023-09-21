@@ -1,1 +1,0 @@
-{"id":"c417697f-7a66-4e20-b92d-9f61f35eaf1f","status":"error","errors":[{"source":{"parameter":"/datetime"},"code":"1003","title":"Invalid format","detail":"Value should be a string in ISO 8601 (YYYY-MM-DDTHH:MM:SSZ) format.  Example: 2004-02-12T15:19:21+05:30.  Your input was `{value}`"}]}

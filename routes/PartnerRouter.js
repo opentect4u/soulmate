@@ -7,7 +7,7 @@ const express = require('express'),
 const { promises } = require('nodemailer/lib/xoauth2');
 const { db_Select, EncryptDataToSend, db_Insert} = require('../module/MasterModule');
 const { user_groom_loc, user_basic_info, user_hobbies } = require('../module/ProfileModule');
-const { partner_match, RashiMatch, NumberMatchWithDate, JotokMatch } = require('../module/PartnerModel');
+const { partner_match, RashiMatch, NumberMatchWithDate, JotokMatch, ElementMatch } = require('../module/PartnerModel');
 
 PartnerRouter.get("/partner_pref", async (req, res) => {
     var data = req.query;
@@ -90,6 +90,7 @@ PartnerRouter.get("/partner_match", async (req, res) => {
         // console.log('Jotok', jotok_match);
         var tot_match_marks = Math.round(rashi_match + number_match + jotok_match)
         // console.log('Total Marks', Math.round(tot_match_marks));
+        var EleFields = await ElementMatch(basic_info.msg[0].kundali_file_name)
 
         var hobbies = await user_hobbies({user_id:rdt?.id});
         var result_partner = {
@@ -102,7 +103,8 @@ PartnerRouter.get("/partner_match", async (req, res) => {
           hobbies : {
             "value" :  hobbies.msg
           },
-          astro_match_marks: tot_match_marks
+          astro_match_marks: tot_match_marks,
+          elementValues: EleFields
         }
         result.push(result_partner)
       }
