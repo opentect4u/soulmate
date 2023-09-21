@@ -28,12 +28,14 @@ const express = require("express"),
 UserRouter.post("/user_profile", async (req, res) => {
   // UserRouter.post("/user_profile", async (req, res) => {
   var req_data = req.body,
-    datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss"),
-    BirthDate = new Date(req_data.field_birth_date).toISOString();
-  // console.log(`${date}T${time}Z`);
-  req_data = Buffer.from(req_data.data, "base64").toString();
-  req_data = JSON.parse(req_data);
-
+    datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+    // console.log(BirthDate);
+    // console.log(`${date}T${time}Z`);
+    req_data = Buffer.from(req_data.data, "base64").toString();
+    req_data = JSON.parse(req_data);
+    
+    var BirthDate = new Date(req_data.field_birth_date).toISOString();
+    
   var table_name = "td_user_profile",
     fields =
       req_data.id > 0
