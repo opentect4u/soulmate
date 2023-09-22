@@ -1,4 +1,4 @@
-const accessToken = require('../googleAccessToken.json'),
+// const accessToken = require('../googleAccessToken.json'),
 nodemailer = require('nodemailer');
 
 const SendUserEmail = (emailId) => {
