@@ -97,34 +97,35 @@ rashiRouter.get("/planet_position", async (req, res) => {
     // console.log(chk_user);
     if (chk_user.suc > 0 && chk_user.msg.length > 0) {
       if (chk_user.msg[0].kundali_file_name) {
-        var data = require(`../raw_data/${chk_user.msg[0].kundali_file_name}`);
-        var mangal = await MongalMatch(chk_user.msg[0].kundali_file_name)
+        var pData = require(`../raw_data/${chk_user.msg[0].kundali_file_name}`);
+        // console.log(pData.data.planet_position);
+        // console.log(JSON.stringify(data));
         var arr = [];
-        if (data.status == "ok") {
-          for (i = 0; i < data.data.planet_position.length; i++) {
-            nakhatra_name = await getNakhatra(
-              data.data.planet_position[i].degree,
-              data.data.planet_position[i].position
-            );
-            //   console.log(nakhatra_name);
+        if (pData.status == "ok") {
+        // console.log(pData.data.planet_position);
+        for(let dt of pData.data.planet_position){
+            nakhatra_name = await getNakhatra(dt.degree,dt.position);
+            // console.log(dt.name, dt.position);
             var planet = {
-              planet_name: data.data.planet_position[i]?.name,
-              position: data.data.planet_position[i]?.position,
-              degree: data.data.planet_position[i]?.degree,
-              rashi_name: data.data.planet_position[i]?.rasi.name,
-              lord_name: data.data.planet_position[i]?.rasi.lord.name,
-              verdic_name: data.data.planet_position[i]?.rasi.lord.vedic_name,
+              planet_name: dt?.name,
+              position: dt?.position,
+              degree: dt?.degree,
+              rashi_name: dt?.rasi.name,
+              lord_name: dt?.rasi.lord.name,
+              verdic_name: dt?.rasi.lord.vedic_name,
               nakhatra_name: nakhatra_name.msg[0]?.nakhatra,
               from_deg: nakhatra_name.msg[0]?.from_deg,
               to_deg: nakhatra_name.msg[0]?.to_deg,
             };
+            // console.log(planet);
             arr.push(planet);
           }
           var location_name =
             location[
               location.findIndex((dt) => dt.id == chk_user.msg[0].location_id)
             ].name;
-          res_dt = { suc: 1, msg: arr, location_name: location_name };
+          var mangal = await MongalMatch(chk_user.msg[0].kundali_file_name)
+          res_dt = { suc: 1, msg: arr, location_name: location_name, mangal };
         } else {
           res_dt = { suc: 0, msg: "error in planet position" };
         }
