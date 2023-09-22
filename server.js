@@ -140,50 +140,50 @@ setInterval(() => {
   }
 }, 1000 * 60 * 3);
 
-setInterval(async () => {
-  try {
-    fs.readFile("./googleAccessToken.json", "utf8", async (err, jsonString) => {
-      if (err) {
-        console.log("Error reading file from disk:", err);
-        return;
-      }
-      try {
-        const gAccTokenFile = JSON.parse(jsonString);
-        // console.log((((new Date(gAccTokenFile.time))-(new Date().getTime()))/1000));
-        // console.log(dateFormat(tokenFile.created_dt, "yyyy-mm-dd"), dateFormat(new Date(), "yyyy-mm-dd"));
-        if ((((new Date(gAccTokenFile.time))-(new Date().getTime()))/1000) <= 10) {
-          console.log('here');
-          const OAuth2 = google.auth.OAuth2;
+// setInterval(async () => {
+//   try {
+//     fs.readFile("./googleAccessToken.json", "utf8", async (err, jsonString) => {
+//       if (err) {
+//         console.log("Error reading file from disk:", err);
+//         return;
+//       }
+//       try {
+//         const gAccTokenFile = JSON.parse(jsonString);
+//         // console.log((((new Date(gAccTokenFile.time))-(new Date().getTime()))/1000));
+//         // console.log(dateFormat(tokenFile.created_dt, "yyyy-mm-dd"), dateFormat(new Date(), "yyyy-mm-dd"));
+//         if ((((new Date(gAccTokenFile.time))-(new Date().getTime()))/1000) <= 10) {
+//           console.log('here');
+//           const OAuth2 = google.auth.OAuth2;
 
-          const oauth2Client = new OAuth2(
-            process.env.GOOGLE_CLIENT_ID,
-            process.env.GOOGLE_CLIENT_SECRET,
-            process.env.GOOGLE_REDIRECT_URL // Redirect URL
-          );
+//           const oauth2Client = new OAuth2(
+//             process.env.GOOGLE_CLIENT_ID,
+//             process.env.GOOGLE_CLIENT_SECRET,
+//             process.env.GOOGLE_REDIRECT_URL // Redirect URL
+//           );
         
-          oauth2Client.setCredentials({
-            refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
-          });
+//           oauth2Client.setCredentials({
+//             refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
+//           });
 
-          var accessToken = await oauth2Client.getAccessToken();
+//           var accessToken = await oauth2Client.getAccessToken();
           
-          fs.writeFile(
-            "./googleAccessToken.json",
-            JSON.stringify({time: accessToken.res.data.expiry_date, token: accessToken.res.data.access_token}),
-            "utf8",
-            (err) => {
-              if (err) throw err;
-            }
-          );
-        }
-      } catch (err) {
-        console.log("Error parsing JSON string:", err);
-      }
-    });
-  } catch (err) {
-    throw new Error(err);
-  }
-}, 1000 * 10)
+//           fs.writeFile(
+//             "./googleAccessToken.json",
+//             JSON.stringify({time: accessToken.res.data.expiry_date, token: accessToken.res.data.access_token}),
+//             "utf8",
+//             (err) => {
+//               if (err) throw err;
+//             }
+//           );
+//         }
+//       } catch (err) {
+//         console.log("Error parsing JSON string:", err);
+//       }
+//     });
+//   } catch (err) {
+//     throw new Error(err);
+//   }
+// }, 1000 * 10)
 
 app.use((req, res, next) => {
   var api_key = req.headers.api_key,
