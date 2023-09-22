@@ -274,7 +274,9 @@ app.use((req, res, next) => {
 // }]
 
 app.get("/", async (req, res) => {
-  var data = require('./raw_data/42-1999-05-04T11-20-00.000Z.json')
+  var date = '1998-04-05T17:06'
+  console.log(new Date(date));
+  var data = require('./raw_data/1-199-05-04T11-20-00.000Z.json')
   var planet_data = data.data.planet_position
   var asc_pos = planet_data.findIndex(dt => dt.name == 'Ascendant'), planets = [], result = [], elementVal = []
   console.log(planet_data[asc_pos].position);
