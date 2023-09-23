@@ -317,3 +317,10 @@ INSERT INTO `md_rashi_match_frndsp` (`id`, `frm_rashi_id`, `to_rashi_id`, `match
 
 
 UPDATE `md_jotok_rashi` SET `rashi_name_eng` = 'Kumbha shatabisha' WHERE `md_jotok_rashi`.`id` = 34;
+
+ <-----------------------END --------->
+
+<--------------23-09-2023 ---------------->
+
+
+ALTER TABLE `td_user_profile` ADD `file_path` TEXT NULL DEFAULT NULL AFTER `jotok_rasi_id`;

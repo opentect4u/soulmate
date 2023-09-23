@@ -102,9 +102,9 @@ rashiRouter.get("/planet_position", async (req, res) => {
         // console.log(JSON.stringify(data));
         var arr = [];
         if (pData.status == "ok") {
-        // console.log(pData.data.planet_position);
-        for(let dt of pData.data.planet_position){
-            nakhatra_name = await getNakhatra(dt.degree,dt.position);
+          // console.log(pData.data.planet_position);
+          for (let dt of pData.data.planet_position) {
+            nakhatra_name = await getNakhatra(dt.degree, dt.position);
             // console.log(dt.name, dt.position);
             var planet = {
               planet_name: dt?.name,
@@ -124,8 +124,8 @@ rashiRouter.get("/planet_position", async (req, res) => {
             location[
               location.findIndex((dt) => dt.id == chk_user.msg[0].location_id)
             ].name;
-          var mangal = await MongalMatch(chk_user.msg[0].kundali_file_name)
-          res_dt = { suc: 1, msg: arr, location_name: location_name, mangal };
+          // var mangal = await MongalMatch(chk_user.msg[0].kundali_file_name)
+          res_dt = { suc: 1, msg: arr, location_name: location_name };
         } else {
           res_dt = { suc: 0, msg: "error in planet position" };
         }
@@ -157,9 +157,7 @@ const kundali = (user_id, coordinates, datetime) => {
       if (error) {
         // console.log(error);
         throw new Error(error);
-      }
-     
-      else {
+      } else {
         // console.log(response.body);
         var data = JSON.parse(response.body);
         var rasiData = data.data.planet_position.filter(
@@ -246,33 +244,40 @@ const kundali = (user_id, coordinates, datetime) => {
 
 rashiRouter.get("/position", async (req, res) => {
   var data = require("../raw_data/1-1999-05-04T16-55-00Z.json");
-    var result  = [], planets = [];
-    for(let dt of data.data.planet_position){
-      planets.push(dt.position)
-    }
-    planets = [...new Set(planets)]
-    for(let dt of planets){
-      result.push({pos: dt, no_of_planet: data.data.planet_position.filter((pdt) => pdt.position == dt).length})
-    }
-    //   var position = data.data.planet_position.filter((dt) => dt.position == '10').length
-    //   console.log(position);
-    //  planet = {
-    //   planet_name : data.data.planet_position[position].name
-    //  };
-    //  result.push(planet)
-    //  console.log(result);
-    res.json(result);
+  var result = [],
+    planets = [];
+  for (let dt of data.data.planet_position) {
+    planets.push(dt.position);
+  }
+  planets = [...new Set(planets)];
+  for (let dt of planets) {
+    result.push({
+      pos: dt,
+      no_of_planet: data.data.planet_position.filter(
+        (pdt) => pdt.position == dt
+      ).length,
+    });
+  }
+  //   var position = data.data.planet_position.filter((dt) => dt.position == '10').length
+  //   console.log(position);
+  //  planet = {
+  //   planet_name : data.data.planet_position[position].name
+  //  };
+  //  result.push(planet)
+  //  console.log(result);
+  res.json(result);
 });
-
 
 rashiRouter.get("/planet_arrange", async (req, res) => {
   var data = require("../raw_data/1-1999-05-04T16-55-00Z.json");
-  var index = data.data.planet_position.findIndex((dt) => dt.name == 'Ascendant')
+  var index = data.data.planet_position.findIndex(
+    (dt) => dt.name == "Ascendant"
+  );
   // console.log(index);
-  position = data.data.planet_position[index].position
+  position = data.data.planet_position[index].position;
   console.log(position);
-  res.send(data)
-})
+  res.send(data);
+});
 
 // THIS IS A TEST FUNCTION TO FIND ALL RASI RELATED DETAILS FROM ALL FILES PRESENT IN RAW DATA FOLDER //
 rashiRouter.get("/test", async (req, res) => {
