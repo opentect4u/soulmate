@@ -8,7 +8,7 @@ const express = require('express'),
 const { fileExtLimiter } = require('../middleware/fileExtLimiter');
 const { fileSizeLimiter } = require('../middleware/fileSizeLimiter');
 const { filePayloadExists } = require('../middleware/filesPayloadExists');
-const { db_Select } = require('../module/MasterModule');
+const { db_Select, db_Delete } = require('../module/MasterModule');
 const { db_Insert } = require('../module/MasterModule');
 
     KycRouter.get('/doc_list', async (req, res) => {
@@ -128,5 +128,11 @@ const { db_Insert } = require('../module/MasterModule');
         res.send({suc: 1, msg: 'Uploaded'});
       });
 
-
+KycRouter.get("/single_pic_delete", async (req, res) => {
+  var data = req.query
+  var table_name = 'td_user_profile_image',
+  whr = `id=${data.id}`
+  var res_dt = await db_Delete(table_name,whr)
+  res.send(res_dt)
+})
     module.exports = {KycRouter}
