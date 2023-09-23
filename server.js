@@ -37,9 +37,8 @@ app.use(express.urlencoded({ extended: false }));
 // Enable file uploads with express-fileupload middleware
 // app.use(fileUpload());
 
-app.use(express.static("uploads"));
-
-
+// app.use(express.static("uploads"));
+app.use(express.static('assets'));
 
 setInterval(() => {
   // console.log('Hi');
@@ -189,16 +188,14 @@ app.use((req, res, next) => {
   var api_key = req.headers.api_key,
     api_secret = req.headers.api_secret;
   // console.log(req.headers.referer);
-  // console.log(req.path);
+  // console.log(req.path, req.path.split("/")[1], req.headers.referer);
   // if (req.path.split('/')[1] != 'err') {
   if (req.path != "/") {
     if (req.path.split("/")[1] == "uploads") {
-      if (
-        req.headers.referer &&
-        req.headers.referer == "http://localhost:4200/"
-      ) {
+      if (req.headers.referer && req.headers.referer == "http://localhost:4200/") {
         next();
-      } else {
+      } 
+      else {
         res.json({
           status: 0,
           message: "You Have no permission to access the file",

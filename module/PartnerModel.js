@@ -6,6 +6,7 @@ const {
   globalValues,
   ElementoryField,
   MongalField,
+  MoonShineNotMatchField,
 } = require("./MasterModule");
 
 const partner_match = (dob) => {
@@ -87,17 +88,18 @@ const JotokMatch = (hus_rasi_id, wif_rasi_id) => {
     var res_dt = await db_Select(select, table_name, whr, order);
     if (res_dt.suc > 0 && res_dt.msg.length > 0) {
       var marks = res_dt.msg[0].marks;
+      console.log(marks);
       // marks = marks > 0 ? (globalValues.each_marks / globalValues.jotok_max) * marks : 0
-      if (marks >= 36 && marks <= 30) {
-        result = "20";
-      } else if (marks >= 30 && marks <= 25) {
-        result = "15";
-      } else if (marks >= 25 && marks <= 20) {
-        result = "10";
-      } else if (marks >= 20 && marks <= 18) {
-        result = "8";
+      if (marks <= 36 && marks >= 30) {
+        result = 20;
+      } else if (marks <= 30 && marks >= 25) {
+        result = 15;
+      } else if (marks <= 25 && marks >= 20) {
+        result = 10;
+      } else if (marks <= 20 && marks >= 18) {
+        result = 8;
       } else {
-        result = "0";
+        result = 0;
       }
       resolve(result);
     } else {
@@ -110,15 +112,15 @@ const JotokMatch = (hus_rasi_id, wif_rasi_id) => {
         res_dt.suc > 0 && res_dt.msg.length > 0 ? res_dt.msg[0].marks : 0;
       // marks = marks > 0 ? (globalValues.each_marks / globalValues.jotok_max) * marks : 0
       if (marks >= 36 && marks <= 30) {
-        result = "20";
+        result = 20;
       } else if (marks >= 30 && marks <= 25) {
-        result = "15";
+        result = 15;
       } else if (marks >= 25 && marks <= 20) {
-        result = "10";
+        result = 10;
       } else if (marks >= 20 && marks <= 18) {
-        result = "8";
+        result = 8;
       } else {
-        result = "0";
+        result = 0;
       }
       resolve(result);
     }
@@ -168,9 +170,12 @@ const ElementMatch = (filePath) => {
             }
           }
           eleObj[dt.flag] = totPla;
-          elementVal.push(eleObj);
+        //   elementVal.push(eleObj);
+          elementVal.push({flag: dt.flag, marks: totPla});
         }
-        resolve(elementVal);
+        var maxValue = Math.max(...elementVal.map(dt=>dt.marks))
+        var final_res = elementVal.filter(dt=> dt.marks == maxValue)
+        resolve(final_res);
       } else {
         resolve([]);
       }
@@ -180,6 +185,17 @@ const ElementMatch = (filePath) => {
     }
   });
 };
+
+const calculateElementMarks = (frmElement, toElement) => {
+    return new Promise(async (resolve, reject) => {
+      var select = `marks`,
+        table_name = `md_element_match`,
+        whr = `from_ele = '${frmElement}' AND to_ele = '${toElement}'`,
+        order = null;
+      var partner_match_dt = await db_Select(select, table_name, whr, order);
+      resolve(partner_match_dt);
+    });
+}
 
 const MongalMatch = (filePath) => {
   return new Promise((resolve, reject) => {
@@ -256,6 +272,79 @@ const MongalMatch = (filePath) => {
   });
 };
 
+const CalculateMongalMarks = (frmMonMark, toMonMark) => {
+    return new Promise((resolve, reject) => {
+        var mongal_marks = 0;
+        if(frmMonMark <= 20 && Mongol_dosha <= 20){
+            if((frmMonMark == 0 && toMonMark == 20) || (toMonMark == 0 && frmMonMark == 20)){
+            mongal_marks = 15
+            }else if((frmMonMark == 0 && toMonMark > 20) || (toMonMark == 0 && frmMonMark > 20)){
+            mongal_marks = 0
+            }else if(frmMonMark == 20 && toMonMark == 20){
+            mongal_marks = 20
+            }else{
+            mongal_marks = 0
+            }
+        }else{
+            if((frmMonMark == 20 && toMonMark == 80) || (frmMonMark == 80 && toMonMark == 20)){
+            mongal_marks = 5
+            }else if((frmMonMark == 100 && toMonMark == 80) || (frmMonMark == 80 && toMonMark == 100)){
+            mongal_marks = 15
+            }else if((frmMonMark == 100 && toMonMark == 20) || (frmMonMark == 20 && toMonMark == 100)){
+            mongal_marks = 5
+            }else if(frmMonMark == 80 && toMonMark == 80){
+            mongal_marks = 20
+            }else if(frmMonMark == 100 && toMonMark == 100){
+            mongal_marks = 20
+            }else{
+            mongal_marks = 0
+            }
+        }
+        resolve(mongal_marks);
+    })
+}
+
+const MoonshineMatch = (filePath) => {
+    return new Promise((resolve, reject) => {
+      try {
+        var data = require(`../raw_data/${filePath}`),
+          marks;
+        if (data.status == "ok") {
+          var planet_data = data.data.planet_position;
+          var asc_pos = planet_data.findIndex((dt) => dt.name == "Ascendant");
+
+          for (let dt of planet_data) {
+            dt.position =
+              dt.position >= planet_data[asc_pos].position
+                ? Math.abs(
+                    parseInt(dt.position - planet_data[asc_pos].position)
+                  ) + 1
+                : dt.position + planet_data[asc_pos].position - 1;
+          }
+          var asc_planet_data = planet_data;
+
+          for (let dt of asc_planet_data) {
+            if (MoonShineNotMatchField.includes(dt.position)) {
+              if (dt.name == "Moon") {
+                marks = 0;
+              }else{
+                marks = 20
+              }
+            }else{
+                marks = 20
+            }
+          }
+          resolve(marks);
+        } else {
+          resolve(0);
+        }
+      } catch (err) {
+        console.log(err);
+        resolve(0);
+      }
+    });
+}
+
 module.exports = {
   partner_match,
   RashiMatch,
@@ -263,4 +352,7 @@ module.exports = {
   JotokMatch,
   ElementMatch,
   MongalMatch,
+  MoonshineMatch,
+  calculateElementMarks,
+  CalculateMongalMarks,
 };

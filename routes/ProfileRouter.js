@@ -1,320 +1,145 @@
-const express = require("express"),
-  ProfileRouter = express.Router(),
-  dateFormat = require("dateformat"),
-  fileUpload = require("express-fileupload"),
-  path = require("path");
+const express = require('express'),
+   PartnerRouter = express.Router(),
+   dateFormat = require('dateformat'),
+   request = require("request"),
+   location = require("../location.json");
 
-const { fileExtLimiter } = require("../middleware/fileExtLimiter");
-const { fileSizeLimiter } = require("../middleware/fileSizeLimiter");
-const { filePayloadExists } = require("../middleware/filesPayloadExists");
-const {
-  db_Select,
-  EncryptDataToSend,
-  db_Insert,
-} = require("../module/MasterModule");
-const {
-  user_groom_loc,
-  user_basic_info,
-  user_hobbies,
-} = require("../module/ProfileModule");
+const { promises } = require('nodemailer/lib/xoauth2');
+const { db_Select, EncryptDataToSend, db_Insert} = require('../module/MasterModule');
+const { user_groom_loc, user_basic_info, user_hobbies } = require('../module/ProfileModule');
+const { partner_match, RashiMatch, NumberMatchWithDate, JotokMatch, ElementMatch, MongalMatch, MoonshineMatch, calculateElementMarks, CalculateMongalMarks } = require('../module/PartnerModel');
 
-ProfileRouter.get("/user_groom_loc", async (req, res) => {
-  var data = req.query;
-  // var select =
-  //     "a.*, b.edu_name education_name, c.occu_name, d.income income_name",
-  //     table_name = "td_user_education a LEFT JOIN md_education b ON a.heigh_education=b.id LEFT JOIN  md_occupation c ON a.occup=c.id  LEFT JOIN md_income d ON a.income=d.id",
-  //     whr = data.user_id > 0 ? `a.user_id=${data.user_id}` : null,
-  //     order = null;
-  var res_dt = await user_groom_loc(data);
-  res_dt = await EncryptDataToSend(res_dt);
-  res.send(res_dt);
-});
-
-ProfileRouter.get("/user_basic_info", async (req, res) => {
-  var data = req.query;
-  // var select = "a.id, b.id user_id, b.dob, b.phone_no, a.marital_status,a.height,a.weight,a.family_status,a.family_values,a.family_type,a.disability_flag,a.body_type,a.drinking_habbits,a.age,b.gender, a.age,a.eating_habbits,a.smoking_habbits,a.no_sister,a.no_brother,a.father_occupation,a.mother_occupation,a.family_location,a.about_my_family,b.u_name,b.ac_for,b.mother_tong mother_tong_id, d.lang_name mother_tong, b.about_us, c.caste_name, b.caste_id, b.religion, b.oth_comm_marry_flag",
-  //     table_name = "td_user_p_dtls a LEFT JOIN td_user_profile b ON a.user_id=b.id LEFT JOIN md_caste_list c ON b.caste_id=c.id LEFT JOIN md_language d ON b.mother_tong=d.id",
-  //     whr = data.user_id > 0 ? `a.user_id=${data.user_id}` : null,
-  //     order = null;
-  var res_dt = await user_basic_info(data);
-  res_dt = await EncryptDataToSend(res_dt);
-  res.send(res_dt);
-});
-
-ProfileRouter.post("/user_basic_info", async (req, res) => {
-  var data = req.body,
-    datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-
-  data = Buffer.from(data.data, "base64").toString();
-  data = JSON.parse(data);
-
-  var table_name = "td_user_profile",
-    fields =
-      data.user_id > 0
-        ? `u_name = '${data.field_name}', ac_for = '${data.field_who_creat_profile}', mother_tong = '${data.field_mother_tong}', modified_by = '${data.user}', modified_dt = '${datetime}'`
-        : "(u_name, phone_no, ac_for, mother_tong, created_by, created_dt)",
-    values = `('${data.field_name}', '${data.field_mobile}', '${data.field_who_creat_profile}', '${data.field_mother_tong}', '${data.user}', '${datetime}')`,
-    whr = data.user_id > 0 ? `id = ${data.user_id}` : null,
-    flag = data.user_id > 0 ? 1 : 0;
-  var res_dt = await db_Insert(table_name, fields, values, whr, flag);
-
-  if (res_dt.suc > 0) {
-    var select = "id",
-      table_name = "td_user_p_dtls",
-      whr = `user_id = ${data.user_id}`,
-      order = null;
-    var chk_dt = await db_Select(select, table_name, whr, order);
-
-    var table_name = "td_user_p_dtls",
-      fields =
-        chk_dt.suc > 0 && chk_dt.msg.length > 0
-          ? `marital_status = '${data.field_marital_status}', height = '${data.field_height}', weight = '${data.field_weight}', disability_flag = '${data.field_disability}', body_type = '${data.field_body_type}', drinking_habbits = '${data.field_Drinking_Habits}', age = '${data.field_age}', eating_habbits = '${data.field_Eating_Habits}', smoking_habbits = '${data.field_Smoking_Habits}', modified_by = '${data.user}', modified_dt = '${datetime}'`
-          : "(user_id, marital_status, height, weight, disability_flag, body_type, drinking_habbits, age, eating_habbits, smoking_habbits, created_by, created_dt)",
-      values = `('${data.user_id}', '${data.field_marital_status}', '${data.field_height}', '${data.field_weight}', '${data.field_disability}', '${data.field_body_type}', '${data.field_Drinking_Habits}', '${data.field_age}', '${data.field_Eating_Habits}', '${data.field_Smoking_Habits}', '${data.user}', '${datetime}')`,
-      whr =
-        chk_dt.suc > 0 && chk_dt.msg.length > 0
-          ? `id = ${chk_dt.msg[0].id}`
-          : null,
-      flag = chk_dt.suc > 0 && chk_dt.msg.length > 0 ? 1 : 0;
-    res_dt = await db_Insert(table_name, fields, values, whr, flag);
-  }
-  res.send(res_dt);
-});
-
-ProfileRouter.post("/user_groom_loc", async (req, res) => {
-  var data = req.body,
-    datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-
-  data = Buffer.from(data.data, "base64").toString();
-  data = JSON.parse(data);
-
-  var select = "id",
-    table_name = "td_user_education",
-    whr = `user_id = ${data.user_id}`,
+PartnerRouter.get("/partner_pref", async (req, res) => {
+    var data = req.query;
+    var select = "a.id, a.user_id, a.age_frm, a.age_to, a.marital_status, a.mother_tounge mother_tounge_id, b.lang_name mother_tounge, a.religion, a.location location_id",
+    table_name = "td_user_partner_pref a LEFT JOIN md_language b ON a.mother_tounge=b.id",
+    whr = data.user_id > 0 ? `a.user_id=${data.user_id}` : null,
     order = null;
-  var chk_dt = await db_Select(select, table_name, whr, order);
-
-  var table_name = "td_user_education",
-    fields =
-      chk_dt.suc > 0 && chk_dt.msg.length > 0
-        ? `country = '${data.field_Country}', state = '${data.field_State}', city = '${data.field_City}', citizen = '${data.field_Citizenship}', modified_by = '${data.user}', modified_dt = '${datetime}'`
-        : "(user_id, country, state, city, citizen, created_by, created_dt)",
-    values = `('${data.user_id}', '${data.field_Country}', '${data.field_State}', '${data.field_City}', '${data.field_Citizenship}', '${data.user}', '${datetime}')`,
-    whr =
-      chk_dt.suc > 0 && chk_dt.msg.length > 0
-        ? `id = ${chk_dt.msg[0].id}`
-        : null,
-    flag = chk_dt.suc > 0 && chk_dt.msg.length > 0 ? 1 : 0;
-  var res_dt = await db_Insert(table_name, fields, values, whr, flag);
-  res.send(res_dt);
-});
-
-ProfileRouter.post("/user_prof_info", async (req, res) => {
-  var data = req.body,
-    datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-
-  data = Buffer.from(data.data, "base64").toString();
-  data = JSON.parse(data);
-
-  var select = "id",
-    table_name = "td_user_education",
-    whr = `user_id = ${data.user_id}`,
-    order = null;
-  var chk_dt = await db_Select(select, table_name, whr, order);
-
-  var table_name = "td_user_education",
-    fields =
-      chk_dt.suc > 0 && chk_dt.msg.length > 0
-        ? `heigh_education = '${data.field_highest_education}', emp_type = '${data.field_employed}', occup = '${data.field_Occupation}', edu_in_dtls = '${data.field_Education_Detail}', collage = '${data.field_College}', occup_in_dtls = '${data.field_Occupation_Detail}', org_name = '${data.field_Organization}', income = '${data.field_Annual_Income}', modified_by = '${data.user}', modified_dt = '${datetime}'`
-        : "(user_id, heigh_education, emp_type, occup, edu_in_dtls, collage, occup_in_dtls, org_name, income, created_by, created_dt)",
-    values = `('${data.user_id}', '${data.field_highest_education}', '${data.field_employed}', '${data.field_Occupation}', '${data.field_Education_Detail}', '${data.field_College}', '${data.field_Occupation_Detail}', '${data.field_Organization}', '${data.field_Annual_Income}', '${data.user}', '${datetime}')`,
-    whr =
-      chk_dt.suc > 0 && chk_dt.msg.length > 0
-        ? `id = ${chk_dt.msg[0].id}`
-        : null,
-    flag = chk_dt.suc > 0 && chk_dt.msg.length > 0 ? 1 : 0;
-  var res_dt = await db_Insert(table_name, fields, values, whr, flag);
-  res.send(res_dt);
-});
-
-ProfileRouter.post("/family_dtls", async (req, res) => {
-  var data = req.body,
-    datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-
-  data = Buffer.from(data.data, "base64").toString();
-  data = JSON.parse(data);
-
-  var select = "id",
-    table_name = "td_user_p_dtls",
-    whr = `user_id = ${data.user_id}`,
-    order = null;
-  var chk_dt = await db_Select(select, table_name, whr, order);
-
-  var table_name = "td_user_p_dtls",
-    fields =
-      chk_dt.suc > 0 && chk_dt.msg.length > 0
-        ? `family_status = '${data.field_family_status}', family_type = '${data.field_family_type}', family_values = '${data.field_family_value}', no_sister = '${data.field_No_Sister}', no_brother = '${data.field_No_Brother}', father_occupation = '${data.field_Father_Occupation}', mother_occupation = '${data.field_Mother_Occupation}', family_location = '${data.field_Family_Location}', modified_by = '${data.user}', modified_dt = '${datetime}'`
-        : "(user_id, family_status, family_type, family_values, no_sister, no_brother, father_occupation, mother_occupation, family_location, created_by, created_dt)",
-    values = `('${data.user_id}', '${data.field_family_status}', '${data.field_family_type}', '${data.field_family_value}', '${data.field_No_Sister}', '${data.field_No_Brother}', '${data.field_Father_Occupation}', '${data.field_Mother_Occupation}', '${data.field_Family_Location}', '${data.user}', '${datetime}')`,
-    whr =
-      chk_dt.suc > 0 && chk_dt.msg.length > 0
-        ? `id = ${chk_dt.msg[0].id}`
-        : null,
-    flag = chk_dt.suc > 0 && chk_dt.msg.length > 0 ? 1 : 0;
-  var res_dt = await db_Insert(table_name, fields, values, whr, flag);
-  res.send(res_dt);
-});
-
-ProfileRouter.post("/about_family", async (req, res) => {
-  var data = req.body,
-    datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-
-  data = Buffer.from(data.data, "base64").toString();
-  data = JSON.parse(data);
-
-  var select = "id",
-    table_name = "td_user_p_dtls",
-    whr = `user_id = ${data.user_id}`,
-    order = null;
-  var chk_dt = await db_Select(select, table_name, whr, order);
-
-  var table_name = "td_user_p_dtls",
-    fields =
-      chk_dt.suc > 0 && chk_dt.msg.length > 0
-        ? `about_my_family = '${data.field_About_My_Family}', modified_by = '${data.user}', modified_dt = '${datetime}'`
-        : "(user_id, about_my_family, created_by, created_dt)",
-    values = `('${data.user_id}', '${data.field_About_My_Family}', '${data.user}', '${datetime}')`,
-    whr =
-      chk_dt.suc > 0 && chk_dt.msg.length > 0
-        ? `id = ${chk_dt.msg[0].id}`
-        : null,
-    flag = chk_dt.suc > 0 && chk_dt.msg.length > 0 ? 1 : 0;
-  var res_dt = await db_Insert(table_name, fields, values, whr, flag);
-  res.send(res_dt);
-});
-
-ProfileRouter.get("/user_hobbies", async (req, res) => {
-  var data = req.query,
-    hobbie_data = {},
-    res_dt;
-  res_dt = await user_hobbies(data);
-  res_dt = await EncryptDataToSend(res_dt);
-  res.send(res_dt);
-});
-
-ProfileRouter.post("/user_hobbies", async (req, res) => {
-  var data = req.body,
-    datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss"),
-    res_dt;
-
-  data = Buffer.from(data.data, "base64").toString();
-  data = JSON.parse(data);
-  // console.log(data);
-
-  var hobbies_tb_data = [
-    {
-      field_name: "hobbies_interest",
-      table_name: "td_user_hobbies_int",
-      input_field: "field_Hobbies_Interests",
-    },
-    {
-      field_name: "music_name",
-      table_name: "td_user_hobbies_music",
-      input_field: "field_Music",
-    },
-    {
-      field_name: "sports_name",
-      table_name: "td_user_hobbies_sports",
-      input_field: "field_Sports",
-    },
-    {
-      field_name: "movie_name",
-      table_name: "td_user_hobbies_movies",
-      input_field: "field_Preferred_Movies",
-    },
-    {
-      field_name: "lang_name",
-      table_name: "td_user_hobbies_lang",
-      input_field: "field_Spoken_Languages",
-    },
-  ];
-
-  for (let dt of hobbies_tb_data) {
-    for (let hdt of data[dt.input_field]) {
-      var select = "id",
-        table_name = `${dt.table_name}`,
-        whr = `user_id = ${data.user_id} AND ${dt.field_name} = '${hdt}'`,
-        order = null;
-      var chk_dt = await db_Select(select, table_name, whr, order);
-
-      var table_name = `${dt.table_name}`,
-        fields =
-          chk_dt.suc > 0 && chk_dt.msg.length > 0
-            ? `${dt.field_name} = '${hdt}', modified_by = '${data.user}', modified_dt = '${datetime}'`
-            : `(user_id, ${dt.field_name}, created_by, created_dt)`,
-        values = `('${data.user_id}', '${hdt}', '${data.user}', '${datetime}')`,
-        whr =
-          chk_dt.suc > 0 && chk_dt.msg.length > 0
-            ? `id = ${chk_dt.msg[0].id}`
-            : null,
-        flag = chk_dt.suc > 0 && chk_dt.msg.length > 0 ? 1 : 0;
-      res_dt = await db_Insert(table_name, fields, values, whr, flag);
-    }
-  }
-  res.send(res_dt);
-});
-
-ProfileRouter.get("/profile_pic", async (req, res) => {
-  var data = req.query;
-  var select = "id, file_path",
-    table_name = "td_user_profile",
-    whr = data.id > 0 ? `id = ${id}` : null,
-    order = null;
-  var res_dt = await db_Select(select, table_name, whr, order);
-  res.send({
-    suc: 1,
-    msg: Buffer.from(JSON.stringify(res_dt.msg), "utf8").toString("base64"),
+    var res_dt = await db_Select(select, table_name, whr, order);
+    // console.log('Location ', res_dt.msg[0].location_id, location.findIndex((dt) => dt.id == res_dt.msg[0].location_id));
+    var location_name =
+    res_dt.suc > 0 && res_dt.msg.length > 0
+      ? (location.findIndex((dt) => dt.id == res_dt.msg[0].location_id) >= 0 ? location[location.findIndex((dt) => dt.id == res_dt.msg[0].location_id)]?.name : null) : null;
+  res_dt.suc > 0 ? (res_dt.msg.length > 0 ? res_dt.msg[0]["location_name"] = location_name ? location_name : '' : '') : "";
+    res_dt = await EncryptDataToSend(res_dt)
+    res.send(res_dt);
   });
-});
+  
+PartnerRouter.post("/update_partner", async (req, res) =>{
+    var data = req.body;
+    datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
-ProfileRouter.post(
-  "/upload_profile_pic",
-  fileUpload({ crereateParentPath: true }),
-  filePayloadExists,
-  fileExtLimiter([".png", ".jpg", ".jpeg"]),
-  fileSizeLimiter,
-  async (req, res) => {
-    var data = req.body,
-      files = req.files,
-      datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss"),
-      res_dt;
-    console.log(files);
+    data = Buffer.from(data.data, "base64").toString();
+    data = JSON.parse(data);
+     
+    var select = 'id',
+    table_name = 'td_user_partner_pref',
+    whr = `user_id = ${data.user_id}`,                                                                                                                                                                               
+    order = null;
+    var dt = await db_Select(select, table_name, whr, order)
+    // console.log(dt);
 
-    const filepath = path.join("uploads", files["profile_img"].name),
-      fileName = files["profile_img"].name;
-    files["profile_img"].mv(filepath, async (err) => {
-      if (err) {
-        res.status(500).send({ status: 0, message: err });
-      } else {
-        // var select = 'id',
-        //     table_name = 'td_user_kyc_list',
-        //     whr = `user_id = ${data.user_id}`,
-        //     order = null;
-        // var kyc_dt = await db_Select(select, table_name, whr, order)
+    var table_name = "td_user_partner_pref",
+    fields = dt.suc > 0 && dt.msg.length > 0 ? `${data.field_frm_age > 0 ? `age_frm = '${data.field_frm_age}',` : ''} ${data.field_to_age > 0 ? `age_to = '${data.field_to_age}', ` : ''}
+    ${data.field_marital_status != '' ? `marital_status = '${data.field_marital_status}', ` : ''} ${data.field_mother_tong != '' ? `mother_tounge = '${data.field_mother_tong}', ` : ''} ${data.field_ur_religion  ? `religion = '${data.field_ur_religion}', ` : ''}
+    ${data.field_Country > 0 ? `location = '${data.field_Country}', ` : ''}  modified_by = '${data.user}', modified_dt = '${datetime}'` : '(user_id, age_frm, age_to, marital_status, mother_tounge, religion, location,  created_by, created_dt)',
+    values = `('${data.user_id}', '${data.field_frm_age}', '${data.field_to_age}', '${data.field_marital_status}', '${data.field_mother_tong}',
+    '${data.field_ur_religion}', '${data.field_Country}', '${data.user}', '${datetime}')`,
+    whr = dt.suc > 0 && dt.msg.length > 0 ? `user_id = ${data.user_id}` : null,
+    flag = dt.suc > 0 && dt.msg.length > 0 ? 1 : 0;
+    var res_dt = await db_Insert(table_name, fields, values, whr, flag);
+    res.send(res_dt);
+})
 
-        var table_name = "td_user_profile",
-          fields = `file_path = '${fileName}', modified_by = '${data.user}', modified_dt = '${datetime}'`,
-          values = null,
-          whr = `id= '${data.user_id}'`,
-          flag = 1;
-        res_dt = await db_Insert(table_name, fields, values, whr, flag);
-        res.send(res_dt);
+PartnerRouter.get("/partner_match", async (req, res) => {
+  var result = [], result_dt;
+  var data = req.query;
+  var select = "a.id, a.user_id, a.age_frm, a.age_to, a.marital_status, a.mother_tounge, a.religion, a.location, b.gender, b.dob, b.jotok_rasi_id, b.kundali_file_name",
+  table_name = "td_user_partner_pref a, td_user_profile b",
+  whr = data.user_id > 0 ? `a.user_id=b.id AND a.user_id=${data.user_id}` : `a.user_id=b.id`,
+  order = null;
+  var pref_dt = await db_Select(select, table_name, whr, order);
+  // console.log(pref_dt);
+
+  if(pref_dt.suc > 0 && pref_dt.msg.length > 0){
+    var own_rashi = await partner_match(pref_dt.msg[0].dob)
+    own_rashi = own_rashi.suc > 0 ? (own_rashi.msg.length > 0 ? own_rashi.msg[0].rashi_id : 0) : 0
+
+    var own_mongal_dosh = await MongalMatch(pref_dt.msg[0].kundali_file_name);
+
+    var own_element_val = await ElementMatch(pref_dt.msg[0].kundali_file_name);
+
+    var select = "a.id, a.dob",
+    table_name = "td_user_profile a LEFT JOIN  td_user_p_dtls b ON a.id=b.user_id",
+    whr = `a.gender != '${pref_dt.msg[0].gender}' AND a.kundali_file_name IS NOT NULL ${pref_dt.msg[0].age_frm > 0 ? `AND DATE_FORMAT(from_days(datediff(now(), a.dob)), '%Y')+0 >= ${pref_dt.msg[0].age_frm} ` : ''} ${pref_dt.msg[0].age_to > 0 ? `AND DATE_FORMAT(from_days(datediff(now(), dob)), '%Y')+0 <= ${pref_dt.msg[0].age_to}` : '' }
+            ${pref_dt.msg[0].marital_status != '' ? `AND b.marital_status = '${pref_dt.msg[0].marital_status}'` : ''}  ${pref_dt.msg[0].mother_tounge > 0 ? `AND a.mother_tong = ${pref_dt.msg[0].mother_tounge}` : ''}  ${pref_dt.msg[0].religion != '' ? `AND a.religion = '${pref_dt.msg[0].religion}'` : ''}  ${pref_dt.msg[0].location > 0 ? `AND a.location_id = ${pref_dt.msg[0].location}` : ''}` 
+    order = null;
+    var res_dt = await db_Select(select, table_name, whr, order);
+    // console.log(res_dt);
+
+    if(res_dt.suc > 0 && res_dt.msg.length > 0){
+      for(let rdt of res_dt.msg){
+        var groom_loc = await user_groom_loc({user_id:rdt?.id});
+        // console.log(groom_loc);
+        var basic_info = await user_basic_info({user_id:rdt?.id});
+
+        var partner_rashi = await partner_match(basic_info.msg[0].dob)
+        // console.log('Partner', partner_rashi);
+        partner_rashi = partner_rashi.suc > 0 ? (partner_rashi.msg.length > 0 ? partner_rashi.msg[0].rashi_id : 0) : 0
+        var rashi_match = await RashiMatch(own_rashi, partner_rashi)
+        // console.log('Match', rashi_match);
+        var number_match = await NumberMatchWithDate(dateFormat(pref_dt.msg[0].dob, 'dd'), dateFormat(basic_info.msg[0].dob, 'dd')) // Marks Filed
+        // console.log('Number', number_match);
+        var jotok_match = await JotokMatch(pref_dt.msg[0].jotok_rasi_id, basic_info.msg[0].jotok_rasi_id) // Marks Field
+        // console.log('Jotok', jotok_match);
+        var EleFields = await ElementMatch(basic_info.msg[0].kundali_file_name)
+        // console.log('Element P: ', EleFields, 'Own Element: ', own_element_val);
+        var elementMarks = await calculateElementMarks(own_element_val[0].flag, EleFields[0].flag)
+        elementMarks = elementMarks.suc > 0 ? elementMarks.msg[0].marks : 0 // Marks Filed
+        // console.log("Element Marks: ", elementMarks);
+
+        var Mongol_dosha = await MongalMatch(basic_info.msg[0].kundali_file_name)
+        // console.log("Mongal Dosh", Mongol_dosha, " OWN: ", own_mongal_dosh);
+        var mongal_marks = await CalculateMongalMarks(own_mongal_dosh, Mongol_dosha); // Marks Filed
+        // console.log('Get Marks', mongal_marks);
+
+        var moonShineMatch = await MoonshineMatch(basic_info.msg[0].kundali_file_name) // Marks Filed
+        // console.log('MoonShineMatch', moonShineMatch);
+
+        // var tot_match_marks = Math.round(rashi_match + number_match + jotok_match)
+        var tot_match_marks = Math.round(number_match + jotok_match + elementMarks + mongal_marks + moonShineMatch);
+        // console.log('Total Marks', Math.round(tot_match_marks));
+
+        var hobbies = await user_hobbies({user_id:rdt?.id});
+        var result_partner = {
+          groom_location : {
+            "value" : groom_loc.msg
+          },
+          basic_information : {
+            "value" : basic_info.msg
+          },
+          hobbies : {
+            "value" :  hobbies.msg
+          },
+          sun_shine_rashi_match: rashi_match,
+          numeric_match: number_match,
+          jotok_marks: jotok_match,
+          astro_match_marks: tot_match_marks,
+          elementValues: EleFields,
+          mongal_dasha: Mongol_dosha
+        }
+        result.push(result_partner)
       }
-    });
-
-    // }
+      result_dt = {suc: 1, msg: result}
+    }else{
+      result_dt = {suc: 1, msg: []}
+    }
+  }else{
+    result_dt = pref_dt
   }
-);
+  // res.send(res_dt)
+  // res.send(result)
+  res.send(result_dt)
+})
 
-
-module.exports = { ProfileRouter };
+module.exports = {PartnerRouter}

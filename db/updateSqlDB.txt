@@ -324,3 +324,79 @@ UPDATE `md_jotok_rashi` SET `rashi_name_eng` = 'Kumbha shatabisha' WHERE `md_jot
 
 
 ALTER TABLE `td_user_profile` ADD `file_path` TEXT NULL DEFAULT NULL AFTER `jotok_rasi_id`;
+ <----------------------- DONE --------->
+
+CREATE TABLE `md_element_match` (
+  `id` int(11) NOT NULL,
+  `from_ele` char(2) NOT NULL,
+  `to_ele` char(2) NOT NULL,
+  `marks` int(11) NOT NULL,
+  `created_by` varchar(50) DEFAULT 'admin',
+  `created_dt` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `md_element_match`
+--
+
+INSERT INTO `md_element_match` (`id`, `from_ele`, `to_ele`, `marks`, `created_by`, `created_dt`) VALUES
+(1, 'A', 'A', 30, 'Admin', '2023-09-23 17:43:38'),
+(2, 'A', 'W', 25, 'Admin', '2023-09-23 17:43:38'),
+(3, 'A', 'E', 15, 'Admin', '2023-09-23 17:43:38'),
+(4, 'A', 'F', 0, 'Admin', '2023-09-23 17:43:38'),
+(5, 'E', 'E', 30, 'Admin', '2023-09-23 17:43:38'),
+(6, 'E', 'W', 30, 'Admin', '2023-09-23 17:43:38'),
+(7, 'E', 'A', 10, 'Admin', '2023-09-23 17:43:38'),
+(8, 'E', 'F', 0, 'Admin', '2023-09-23 17:43:38'),
+(9, 'F', 'W', 30, 'Admin', '2023-09-23 17:43:38'),
+(10, 'F', 'F', 20, 'Admin', '2023-09-23 17:43:38'),
+(11, 'F', 'E', 20, 'Admin', '2023-09-23 17:43:38'),
+(12, 'F', 'A', 0, 'Admin', '2023-09-23 17:43:38'),
+(13, 'W', 'W', 30, 'Admin', '2023-09-23 17:43:38'),
+(14, 'W', 'E', 30, 'Admin', '2023-09-23 17:43:38'),
+(15, 'W', 'A', 25, 'Admin', '2023-09-23 17:43:38'),
+(16, 'W', 'F', 10, 'Admin', '2023-09-23 17:43:38'),
+(17, 'AE', 'A', 30, 'Admin', '2023-09-23 17:43:38'),
+(18, 'AE', 'E', 30, 'Admin', '2023-09-23 17:43:38'),
+(19, 'AE', 'W', 30, 'Admin', '2023-09-23 17:43:38'),
+(20, 'AE', 'F', 0, 'Admin', '2023-09-23 17:43:38'),
+(21, 'AF', 'E', 30, 'Admin', '2023-09-23 17:43:38'),
+(22, 'AF', 'W', 20, 'Admin', '2023-09-23 17:43:38'),
+(23, 'AF', 'A', 0, 'Admin', '2023-09-23 17:43:38'),
+(24, 'AF', 'F', 0, 'Admin', '2023-09-23 17:43:38'),
+(25, 'AW', 'E', 30, 'Admin', '2023-09-23 17:43:38'),
+(26, 'AW', 'A', 0, 'Admin', '2023-09-23 17:43:38'),
+(27, 'AW', 'W', 0, 'Admin', '2023-09-23 17:43:38'),
+(28, 'AW', 'F', 0, 'Admin', '2023-09-23 17:43:38'),
+(29, 'EF', 'W', 30, 'Admin', '2023-09-23 17:43:38'),
+(30, 'EF', 'E', 25, 'Admin', '2023-09-23 17:43:38'),
+(31, 'EF', 'A', 0, 'Admin', '2023-09-23 17:43:38'),
+(32, 'EF', 'F', 0, 'Admin', '2023-09-23 17:43:38'),
+(33, 'EW', 'E', 30, 'Admin', '2023-09-23 17:43:38'),
+(34, 'EW', 'W', 30, 'Admin', '2023-09-23 17:43:38'),
+(35, 'EW', 'A', 0, 'Admin', '2023-09-23 17:43:38'),
+(36, 'EW', 'F', 0, 'Admin', '2023-09-23 17:43:38'),
+(37, 'FW', 'E', 30, 'Admin', '2023-09-23 17:43:38'),
+(38, 'FW', 'W', 20, 'Admin', '2023-09-23 17:43:38'),
+(39, 'FW', 'A', 10, 'Admin', '2023-09-23 17:43:38'),
+(40, 'FW', 'F', 0, 'Admin', '2023-09-23 17:43:38');
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `md_element_match`
+--
+ALTER TABLE `md_element_match`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `md_element_match`
+--
+ALTER TABLE `md_element_match`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;

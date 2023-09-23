@@ -120,4 +120,6 @@ const MongalField = [
     {flag: 'M', fields: [1,4,7,8,12]},
 ]
 
-module.exports = { db_Select, db_Insert, db_Delete, db_Check, EncryptDataToSend, globalValues, SunshineMatch, NumberMatch, ElementoryField, MongalField }
+const MoonShineNotMatchField = [2,6,8,14];
+
+module.exports = { db_Select, db_Insert, db_Delete, db_Check, EncryptDataToSend, globalValues, SunshineMatch, NumberMatch, ElementoryField, MongalField, MoonShineNotMatchField }

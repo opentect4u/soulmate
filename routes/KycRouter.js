@@ -36,7 +36,7 @@ const { db_Insert } = require('../module/MasterModule');
         // data = JSON.parse(data);
         // for(let key in files){
         //     console.log(key);
-            const filepath = path.join('uploads', files['kyc_img'].name),
+            const filepath = path.join('assets', 'uploads', files['kyc_img'].name),
                 fileName = files['kyc_img'].name;
             files['kyc_img'].mv(filepath, async (err) => {
                 if (err) {
@@ -90,7 +90,7 @@ const { db_Insert } = require('../module/MasterModule');
           // console.log(uploadPath);
           if(Array.isArray(file)){
             for(let fl of file){
-               var uploadPath = path.join('uploads', `${data.user_id}_${fl.name}`)
+               var uploadPath = path.join('assets', 'uploads', `${data.user_id}_${fl.name}`)
                fl.mv(uploadPath, function (err)  {
                  if (err) {
                   return  res_dt = {suc:0, msg: err}// res.status(500).send(err);
@@ -108,7 +108,7 @@ const { db_Insert } = require('../module/MasterModule');
        });
              }
           }else{
-            var uploadPath = path.join('uploads', `${data.user_id}_${file.name}`)
+            var uploadPath = path.join('assets', 'uploads', `${data.user_id}_${file.name}`)
             file.mv(uploadPath, function (err)  {
               if (err) {
               return  res.status(500).send(err);
