@@ -7,7 +7,7 @@ const express = require('express'),
 const { promises } = require('nodemailer/lib/xoauth2');
 const { db_Select, EncryptDataToSend, db_Insert} = require('../module/MasterModule');
 const { user_groom_loc, user_basic_info, user_hobbies } = require('../module/ProfileModule');
-const { partner_match, RashiMatch, NumberMatchWithDate, JotokMatch, ElementMatch, MongalMatch } = require('../module/PartnerModel');
+const { partner_match, RashiMatch, NumberMatchWithDate, JotokMatch, ElementMatch, MongalMatch, MoonshineMatch, calculateElementMarks, CalculateMongalMarks } = require('../module/PartnerModel');
 
 PartnerRouter.get("/partner_pref", async (req, res) => {
     var data = req.query;
@@ -54,7 +54,7 @@ PartnerRouter.post("/update_partner", async (req, res) =>{
 PartnerRouter.get("/partner_match", async (req, res) => {
   var result = [], result_dt;
   var data = req.query;
-  var select = "a.id, a.user_id, a.age_frm, a.age_to, a.marital_status, a.mother_tounge, a.religion, a.location, b.gender, b.dob, b.jotok_rasi_id",
+  var select = "a.id, a.user_id, a.age_frm, a.age_to, a.marital_status, a.mother_tounge, a.religion, a.location, b.gender, b.dob, b.jotok_rasi_id, b.kundali_file_name",
   table_name = "td_user_partner_pref a, td_user_profile b",
   whr = data.user_id > 0 ? `a.user_id=b.id AND a.user_id=${data.user_id}` : `a.user_id=b.id`,
   order = null;
@@ -64,6 +64,10 @@ PartnerRouter.get("/partner_match", async (req, res) => {
   if(pref_dt.suc > 0 && pref_dt.msg.length > 0){
     var own_rashi = await partner_match(pref_dt.msg[0].dob)
     own_rashi = own_rashi.suc > 0 ? (own_rashi.msg.length > 0 ? own_rashi.msg[0].rashi_id : 0) : 0
+
+    var own_mongal_dosh = await MongalMatch(pref_dt.msg[0].kundali_file_name);
+
+    var own_element_val = await ElementMatch(pref_dt.msg[0].kundali_file_name);
 
     var select = "a.id, a.dob",
     table_name = "td_user_profile a LEFT JOIN  td_user_p_dtls b ON a.id=b.user_id",
@@ -84,16 +88,27 @@ PartnerRouter.get("/partner_match", async (req, res) => {
         partner_rashi = partner_rashi.suc > 0 ? (partner_rashi.msg.length > 0 ? partner_rashi.msg[0].rashi_id : 0) : 0
         var rashi_match = await RashiMatch(own_rashi, partner_rashi)
         // console.log('Match', rashi_match);
-        var number_match = await NumberMatchWithDate(dateFormat(pref_dt.msg[0].dob, 'dd'), dateFormat(basic_info.msg[0].dob, 'dd'))
+        var number_match = await NumberMatchWithDate(dateFormat(pref_dt.msg[0].dob, 'dd'), dateFormat(basic_info.msg[0].dob, 'dd')) // Marks Filed
         // console.log('Number', number_match);
-        var jotok_match = await JotokMatch(pref_dt.msg[0].jotok_rasi_id, basic_info.msg[0].jotok_rasi_id)
+        var jotok_match = await JotokMatch(pref_dt.msg[0].jotok_rasi_id, basic_info.msg[0].jotok_rasi_id) // Marks Field
         // console.log('Jotok', jotok_match);
-        var tot_match_marks = Math.round(rashi_match + number_match + jotok_match)
-        // console.log('Total Marks', Math.round(tot_match_marks));
         var EleFields = await ElementMatch(basic_info.msg[0].kundali_file_name)
+        // console.log('Element P: ', EleFields, 'Own Element: ', own_element_val);
+        var elementMarks = await calculateElementMarks(own_element_val[0].flag, EleFields[0].flag)
+        elementMarks = elementMarks.suc > 0 ? elementMarks.msg[0].marks : 0 // Marks Filed
+        // console.log("Element Marks: ", elementMarks);
 
         var Mongol_dosha = await MongalMatch(basic_info.msg[0].kundali_file_name)
-        // console.log('Mongal Dosh', Mongol_dosha);
+        // console.log("Mongal Dosh", Mongol_dosha, " OWN: ", own_mongal_dosh);
+        var mongal_marks = await CalculateMongalMarks(own_mongal_dosh, Mongol_dosha); // Marks Filed
+        // console.log('Get Marks', mongal_marks);
+
+        var moonShineMatch = await MoonshineMatch(basic_info.msg[0].kundali_file_name) // Marks Filed
+        // console.log('MoonShineMatch', moonShineMatch);
+
+        // var tot_match_marks = Math.round(rashi_match + number_match + jotok_match)
+        var tot_match_marks = Math.round(number_match + jotok_match + elementMarks + mongal_marks + moonShineMatch);
+        // console.log('Total Marks', Math.round(tot_match_marks));
 
         var hobbies = await user_hobbies({user_id:rdt?.id});
         var result_partner = {
@@ -122,9 +137,6 @@ PartnerRouter.get("/partner_match", async (req, res) => {
   }else{
     result_dt = pref_dt
   }
-  
- 
- 
   // res.send(res_dt)
   // res.send(result)
   res.send(result_dt)
