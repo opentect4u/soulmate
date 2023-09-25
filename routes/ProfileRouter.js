@@ -290,7 +290,7 @@ ProfileRouter.post(
       res_dt;
     console.log(files);
 
-    const filepath = path.join("uploads", files["profile_img"].name),
+    const filepath = path.join('assets', "uploads", files["profile_img"].name),
       fileName = files["profile_img"].name;
     files["profile_img"].mv(filepath, async (err) => {
       if (err) {
