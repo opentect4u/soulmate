@@ -275,7 +275,7 @@ const MongalMatch = (filePath) => {
 const CalculateMongalMarks = (frmMonMark, toMonMark) => {
     return new Promise((resolve, reject) => {
         var mongal_marks = 0;
-        if(frmMonMark <= 20 && Mongol_dosha <= 20){
+        if(frmMonMark <= 20 && toMonMark <= 20){
             if((frmMonMark == 0 && toMonMark == 20) || (toMonMark == 0 && frmMonMark == 20)){
             mongal_marks = 15
             }else if((frmMonMark == 0 && toMonMark > 20) || (toMonMark == 0 && frmMonMark > 20)){
