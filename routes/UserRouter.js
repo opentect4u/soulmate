@@ -325,7 +325,7 @@ UserRouter.post("/login", async (req, res) => {
   var select =
       "a.id prof_id, a.user_id, a.profile_id id, a.user_name, a.email_id user_email, a.password, a.last_login, a.pay_status pay_flag, b.plan_id, a.active_flag",
     table_name = "md_user_login a, td_user_profile b",
-    whr = `a.profile_id=b.id AND user_id = '${data.user_id}' AND active_flag ="Y" `,
+    whr = `a.profile_id=b.id AND a.user_id = '${data.user_id}' AND a.active_flag ="Y" `,
     order = null;
   var res_dt = await db_Select(select, table_name, whr, order);
   if (res_dt.suc > 0) {
