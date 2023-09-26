@@ -400,3 +400,9 @@ ALTER TABLE `md_element_match`
 --
 ALTER TABLE `md_element_match`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+
+  --------------------------------END--------------------------
+
+-----------------26.09.2023-------------------------------
+
+  ALTER TABLE `td_user_profile` CHANGE `plan_id` `plan_id` ENUM('B','S','P') NOT NULL;

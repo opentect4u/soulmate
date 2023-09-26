@@ -11,8 +11,8 @@ const {
 
 const partner_match = (dob) => {
   return new Promise(async (resolve, reject) => {
-    var select = `rashi_id`,
-      table_name = `md_sunshine_rashi`,
+    var select = `a.rashi_id, b.beng_rashi`,
+      table_name = `md_sunshine_rashi a LEFT JOIN md_rashi_pos b ON a.rashi_id = b.position`,
       whr = `STR_TO_DATE(CONCAT(YEAR(CURDATE()), '-', frm_month, '-', frm_date), '%Y-%m-%d') <= '${dateFormat(
         new Date(),
         "yyyy"
@@ -344,6 +344,7 @@ const MoonshineMatch = (filePath) => {
       }
     });
 }
+ 
 
 module.exports = {
   partner_match,

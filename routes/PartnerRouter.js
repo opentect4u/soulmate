@@ -110,6 +110,8 @@ PartnerRouter.get("/partner_match", async (req, res) => {
         var tot_match_marks = Math.round(number_match + jotok_match + elementMarks + mongal_marks + moonShineMatch);
         // console.log('Total Marks', Math.round(tot_match_marks));
 
+       
+         
         var hobbies = await user_hobbies({user_id:rdt?.id});
         var result_partner = {
           groom_location : {

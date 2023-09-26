@@ -316,5 +316,25 @@ ProfileRouter.post(
   }
 );
 
+ProfileRouter.post("/update_payStatus", async (req, res) => {
+  var res_dt = req.body,
+
+  res_dt = Buffer.from(res_dt.data, "base64").toString();
+  res_dt = JSON.parse(res_dt);
+
+  var table_name = `td_user_profile`,
+    fields = `pay_flag = '${res_dt.pay_flag}',plan_id = '${res_dt.plan_id}'`,
+    whr = `id = ${res_dt.user_id}`,
+    flag = 1;
+  var payStatus = await db_Insert(table_name, fields, null, whr, flag);
+
+  var table_name = `md_user_login`,
+    fields = `pay_status = '${res_dt.pay_flag}'`,
+    whr = `profile_id = ${res_dt.user_id}`,
+    flag = 1;
+  var payStatus = await db_Insert(table_name, fields, null, whr, flag);
+  res.send(payStatus);
+});
+
 
 module.exports = { ProfileRouter };
