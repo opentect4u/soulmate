@@ -336,5 +336,44 @@ ProfileRouter.post("/update_payStatus", async (req, res) => {
   res.send(payStatus);
 });
 
+ProfileRouter.get("/check_mobile_no", async (req, res) => {
+  var data = req.query, result;
+
+  var select = 'id, phone_no',
+  table_name = 'td_user_profile',
+  whr = `phone_no = ${data.phone_no}`,
+  order = null;
+  var res_dt = await db_Select(select,table_name,whr,order);
+  if(res_dt.suc > 0){
+    if(res_dt.msg.length > 0){
+      result = {suc: 2, msg: "Phone number is alreadyu exists"}
+    }else{
+      result = {suc: 0, msg: "Please enter phone number"}
+    }
+  }else{
+    result = res_dt
+  }
+  res.send(result);
+});
+
+ProfileRouter.get("/check_email", async (req, res) => {
+  var data = req.query, result;
+
+  var select = 'id, email_id',
+  table_name = 'td_user_profile',
+  whr = `email_id = '${data.email_id}'`,
+  order = null;
+  var res_dt = await db_Select(select,table_name,whr,order);
+  if(res_dt.suc > 0){
+    if(res_dt.msg.length > 0){
+      result = {suc: 2, msg: "Email address is alreadyu exists"}
+    }else{
+      result = {suc: 0, msg: "Please enter Email address"}
+    }
+  }else{
+    result = res_dt
+  }
+  res.send(result);
+})
 
 module.exports = { ProfileRouter };

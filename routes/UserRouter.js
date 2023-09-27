@@ -33,8 +33,11 @@ UserRouter.post("/user_profile", async (req, res) => {
     // console.log(`${date}T${time}Z`);
     req_data = Buffer.from(req_data.data, "base64").toString();
     req_data = JSON.parse(req_data);
-    
-    var BirthDate = new Date(req_data.field_birth_date).toISOString();
+    try{
+     var BirthDate = new Date(req_data.field_birth_date).toISOString();
+    }catch(err){
+     console.log(err);
+    }
     
   var table_name = "td_user_profile",
     fields =
@@ -66,8 +69,12 @@ UserRouter.post("/user_profile", async (req, res) => {
   if (req_data.id > 0) {
   } else {
     if (res_dt.suc > 0) {
-      var kundali_data = await kundali(res_dt.lastId.insertId, req_data.field_birth_loca, BirthDate)
-      kundali_data.file_name ? await db_Insert('td_user_profile', `kundali_file_name='${kundali_data.file_name}', rasi_id = '${kundali_data.rasi_id}', nakhatra_id = '${kundali_data.nakhatra_id}', jotok_rasi_id = '${kundali_data.jotok_rasi_id}'`, null, `id=${res_dt.lastId.insertId}`, 1) : ''
+      try{
+        var kundali_data = await kundali(res_dt.lastId.insertId, req_data.field_birth_loca, BirthDate)
+        kundali_data.file_name ? await db_Insert('td_user_profile', `kundali_file_name='${kundali_data.file_name}', rasi_id = '${kundali_data.rasi_id}', nakhatra_id = '${kundali_data.nakhatra_id}', jotok_rasi_id = '${kundali_data.jotok_rasi_id}'`, null, `id=${res_dt.lastId.insertId}`, 1) : ''
+      }catch(err){
+        console.log(err);
+      }
       var pass = bcrypt.hashSync(req_data.field_pass, 10);
       var table_name = `md_user_login`,
         fields =
