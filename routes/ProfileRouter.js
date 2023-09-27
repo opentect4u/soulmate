@@ -346,7 +346,7 @@ ProfileRouter.get("/check_mobile_no", async (req, res) => {
   var res_dt = await db_Select(select,table_name,whr,order);
   if(res_dt.suc > 0){
     if(res_dt.msg.length > 0){
-      result = {suc: 2, msg: "Phone number is alreadyu exists"}
+      result = {suc: 2, msg: "Phone number is already exists"}
     }else{
       result = {suc: 0, msg: "Please enter phone number"}
     }
@@ -366,7 +366,7 @@ ProfileRouter.get("/check_email", async (req, res) => {
   var res_dt = await db_Select(select,table_name,whr,order);
   if(res_dt.suc > 0){
     if(res_dt.msg.length > 0){
-      result = {suc: 2, msg: "Email address is alreadyu exists"}
+      result = {suc: 2, msg: "Email address is already exists"}
     }else{
       result = {suc: 0, msg: "Please enter Email address"}
     }
