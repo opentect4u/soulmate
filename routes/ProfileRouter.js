@@ -378,7 +378,7 @@ ProfileRouter.get("/check_email", async (req, res) => {
 
 ProfileRouter.post("/send_otp", async (req, res) => {
   var otp = Math.floor(1000 + Math.random() * 9000);
-res.send({ suc: 1, msg: 'Otp Sent', otp })
+res.send({ suc: 1, msg: 'Otp Sent', otp: 1234 })
   })
 
 module.exports = { ProfileRouter };
