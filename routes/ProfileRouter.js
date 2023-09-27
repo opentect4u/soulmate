@@ -348,7 +348,7 @@ ProfileRouter.get("/check_mobile_no", async (req, res) => {
     if(res_dt.msg.length > 0){
       result = {suc: 2, msg: "Phone number is already exists"}
     }else{
-      result = {suc: 0, msg: "Please enter phone number"}
+      result = {suc: 1, msg: "Please enter phone number"}
     }
   }else{
     result = res_dt
@@ -368,12 +368,17 @@ ProfileRouter.get("/check_email", async (req, res) => {
     if(res_dt.msg.length > 0){
       result = {suc: 2, msg: "Email address is already exists"}
     }else{
-      result = {suc: 0, msg: "Please enter Email address"}
+      result = {suc: 1, msg: "Please enter Email address"}
     }
   }else{
     result = res_dt
   }
   res.send(result);
-})
+});
+
+ProfileRouter.post("/send_otp", async (req, res) => {
+  var otp = Math.floor(1000 + Math.random() * 9000);
+res.send({ suc: 1, msg: 'Otp Sent', otp })
+  })
 
 module.exports = { ProfileRouter };
