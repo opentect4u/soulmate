@@ -268,7 +268,7 @@ ProfileRouter.get("/profile_pic", async (req, res) => {
   var data = req.query;
   var select = "id, file_path",
     table_name = "td_user_profile",
-    whr = data.id > 0 ? `id = ${data.user_id}` : null,
+    whr = data.user_id > 0 ? `id = ${data.user_id}` : null,
     order = null;
   var res_dt = await db_Select(select, table_name, whr, order);
   res.send({
