@@ -160,17 +160,21 @@ const kundali = (user_id, coordinates, datetime) => {
       } else {
         // console.log(response.body);
         var data = JSON.parse(response.body);
-        var rasiData = data.data.planet_position.filter(
-            (dt) => dt.name == "Moon"
-          ),
-          nakhatra_name = await getNakhatra(
-            rasiData[0].degree,
-            rasiData[0].position
-          ),
-          jotok_rasi_id = await getJotukRashiId(
-            rasiData[0].rasi.name,
-            nakhatra_name.msg[0]?.nakhatra
-          );
+        try{
+       var rasiData = data.data.planet_position.filter(
+              (dt) => dt.name == "Moon"
+            ),
+            nakhatra_name = await getNakhatra(
+              rasiData[0].degree,
+              rasiData[0].position
+            ),
+            jotok_rasi_id = await getJotukRashiId(
+              rasiData[0].rasi.name,
+              nakhatra_name.msg[0]?.nakhatra
+            );
+        }catch(err){
+          console.log(err);
+        }
         var file_name = user_id + "-" + datetime.split(":").join("-");
         fs.writeFile(
           path.join(__dirname, `../raw_data/${file_name}.json`),
