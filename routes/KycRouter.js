@@ -66,7 +66,7 @@ const { db_Insert } = require('../module/MasterModule');
       var data = req.query
       var select = 'id, file_path', 
       table_name = 'td_user_profile_image',
-      whr = data.id > 0 ? `id = ${id}` : null,
+      whr = data.user_id > 0 ? `user_id = ${data.user_id}` : null,
       order = 'ORDER BY id';
       var res_dt = await db_Select(select, table_name, whr, order)
       res.send({suc: 1, msg: Buffer.from(JSON.stringify(res_dt.msg), 'utf8').toString('base64')})
