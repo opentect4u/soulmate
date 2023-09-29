@@ -97,48 +97,72 @@ rashiRouter.get("/planet_position", async (req, res) => {
     // console.log(chk_user);
     if (chk_user.suc > 0 && chk_user.msg.length > 0) {
       if (chk_user.msg[0].kundali_file_name) {
-        var pData = require(`../raw_data/${chk_user.msg[0].kundali_file_name}`);
+        // console.log(request_data.user_id, chk_user.msg[0].kundali_file_name);
+        // var pData = require(`../raw_data/${chk_user.msg[0].kundali_file_name}`);
         // console.log(pData.data.planet_position);
         // console.log(JSON.stringify(data));
-        var arr = [];
-        if (pData.status == "ok") {
-          // console.log(pData.data.planet_position);
-          for (let dt of pData.data.planet_position) {
-            // nakhatra_name = await getNakhatra(dt.degree, dt.position);
-            // console.log(dt.name, dt.position);
-            var planet = {
-              planet_name: dt?.name,
-              position: dt?.position,
-              degree: dt?.degree,
-              rashi_name: dt?.rasi.name,
-              lord_name: dt?.rasi.lord.name,
-              verdic_name: dt?.rasi.lord.vedic_name,
-              // nakhatra_name: nakhatra_name.msg[0]?.nakhatra,
-              // from_deg: nakhatra_name.msg[0]?.from_deg,
-              // to_deg: nakhatra_name.msg[0]?.to_deg,
-            };
-            // console.log(planet);
-            arr.push(planet);
-          }
-          var location_name =
-            location[
-              location.findIndex((dt) => dt.id == chk_user.msg[0].location_id)
-            ].name;
-          // var mangal = await MongalMatch(chk_user.msg[0].kundali_file_name)
-          res_dt = { suc: 1, msg: arr, location_name: location_name };
-        } else {
-          res_dt = { suc: 0, msg: "error in planet position" };
+        try{
+          fs.readFile(path.join('raw_data', chk_user.msg[0].kundali_file_name), 'utf8', (err, jsonData) => {
+            try{
+              var pData = JSON.parse(jsonData)
+              console.log('lalala', pData);
+              
+              var arr = [];
+              if (pData.status == "ok") {
+                // console.log(pData.data.planet_position);
+                for (let dt of pData.data.planet_position) {
+                  // nakhatra_name = await getNakhatra(dt.degree, dt.position);
+                  // console.log(dt.name, dt.position);
+                  var planet = {}
+                  planet = {
+                    planet_name: dt.name,
+                    position: dt.position,
+                    degree: dt.degree,
+                    rashi_name: dt.rasi.name,
+                    lord_name: dt.rasi.lord.name,
+                    verdic_name: dt.rasi.lord.vedic_name,
+                    // nakhatra_name: nakhatra_name.msg[0]?.nakhatra,
+                    // from_deg: nakhatra_name.msg[0]?.from_deg,
+                    // to_deg: nakhatra_name.msg[0]?.to_deg,
+                  };
+                  console.log(planet);
+                  arr.push(planet);
+                }
+                var location_name =
+                  location[
+                    location.findIndex((dt) => dt.id == chk_user.msg[0].location_id)
+                  ].name;
+                  // console.log(arr);
+                // var mangal = await MongalMatch(chk_user.msg[0].kundali_file_name)
+                res_dt = { suc: 1, msg: arr, location_name: location_name };
+                res.send(res_dt)
+              } else {
+                res_dt = { suc: 0, msg: "error in planet position" };
+                res.send(res_dt)
+              }
+            }catch(err){
+              console.log(err);
+              res_dt = { suc: 0, msg: err };
+              res.send(res_dt)
+            }
+          })
+        }catch(err){
+          console.log(err);
+          res_dt = { suc: 0, msg: err };
+          res.send(res_dt)
         }
       } else {
         res_dt = { suc: 0, msg: "No file found" };
+        res.send(res_dt)
       }
     } else {
       res_dt = { suc: 0, msg: "No data found" };
+      res.send(res_dt)
     }
   } else {
     res_dt = { suc: 0, msg: "Please provide user id" };
+    res.send(res_dt)
   }
-  res.send(res_dt);
 });
 
 const kundali = (user_id, coordinates, datetime) => {
