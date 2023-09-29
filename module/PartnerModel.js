@@ -193,7 +193,16 @@ const calculateElementMarks = (frmElement, toElement) => {
         whr = `from_ele = '${frmElement}' AND to_ele = '${toElement}'`,
         order = null;
       var partner_match_dt = await db_Select(select, table_name, whr, order);
-      resolve(partner_match_dt);
+      if(partner_match_dt.suc > 0 && partner_match_dt.msg.length == 0){
+        var select = `marks`,
+          table_name = `md_element_match`,
+          whr = `from_ele = '${toElement}' AND to_ele = '${frmElement}'`,
+          order = null;
+        var partner_match_dt = await db_Select(select, table_name, whr, order);
+        resolve(partner_match_dt);
+      } else{
+        resolve(partner_match_dt);
+      }
     });
 }
 
