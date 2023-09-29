@@ -104,7 +104,7 @@ rashiRouter.get("/planet_position", async (req, res) => {
         if (pData.status == "ok") {
           // console.log(pData.data.planet_position);
           for (let dt of pData.data.planet_position) {
-            nakhatra_name = await getNakhatra(dt.degree, dt.position);
+            // nakhatra_name = await getNakhatra(dt.degree, dt.position);
             // console.log(dt.name, dt.position);
             var planet = {
               planet_name: dt?.name,
@@ -113,9 +113,9 @@ rashiRouter.get("/planet_position", async (req, res) => {
               rashi_name: dt?.rasi.name,
               lord_name: dt?.rasi.lord.name,
               verdic_name: dt?.rasi.lord.vedic_name,
-              nakhatra_name: nakhatra_name.msg[0]?.nakhatra,
-              from_deg: nakhatra_name.msg[0]?.from_deg,
-              to_deg: nakhatra_name.msg[0]?.to_deg,
+              // nakhatra_name: nakhatra_name.msg[0]?.nakhatra,
+              // from_deg: nakhatra_name.msg[0]?.from_deg,
+              // to_deg: nakhatra_name.msg[0]?.to_deg,
             };
             // console.log(planet);
             arr.push(planet);
