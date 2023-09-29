@@ -94,14 +94,15 @@ rashiRouter.get("/planet_position", async (req, res) => {
       whr = `id = ${request_data.user_id}`,
       order = null;
     var chk_user = await db_Select(select, table_name, whr, order);
-    console.log(chk_user);
+    // console.log(chk_user);
     if (chk_user.suc > 0 && chk_user.msg.length > 0) {
       if (chk_user.msg[0].kundali_file_name) {
         var pData = require(`../raw_data/${chk_user.msg[0].kundali_file_name}`);
-        console.log(pData.data.planet_position);
-        console.log(JSON.stringify(data));
+        // console.log(pData.data.planet_position);
+        // console.log(JSON.stringify(data));
+        var arr = [];
         if (pData.status == "ok") {
-          console.log(pData.data.planet_position);
+          // console.log(pData.data.planet_position);
           for (let dt of pData.data.planet_position) {
             // nakhatra_name = await getNakhatra(dt.degree, dt.position);
             // console.log(dt.name, dt.position);
