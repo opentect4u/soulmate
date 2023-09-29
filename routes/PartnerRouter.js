@@ -68,7 +68,7 @@ PartnerRouter.get("/partner_match", async (req, res) => {
     var own_mongal_dosh = await MongalMatch(pref_dt.msg[0].kundali_file_name);
 
     // var own_element_val = await ElementMatch(pref_dt.msg[0].kundali_file_name),
-    var own_element_val = await ElementMatch(basic_info.msg[0].kundali_file_name),
+    var own_element_val = await ElementMatch(pref_dt.msg[0].kundali_file_name),
     own_ele_name;
     if(own_element_val.length > 0){
       own_ele_name = [...own_element_val.map(dt=>dt.flag)]
