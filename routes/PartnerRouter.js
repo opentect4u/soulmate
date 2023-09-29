@@ -111,7 +111,7 @@ PartnerRouter.get("/partner_match", async (req, res) => {
         // console.log('Element P: ', EleFields, 'Own Element: ', own_element_val);
         var elementMarks = await calculateElementMarks(own_ele_name, partner_ele_name)
         console.log(elementMarks);
-        elementMarks = elementMarks.suc > 0 ? elementMarks.msg[0].marks : 0 // Marks Filed
+        elementMarks = elementMarks.suc > 0 ? (elementMarks.msg.length > 0 ? elementMarks.msg[0].marks : 0) : 0 // Marks Filed
         // console.log("Element Marks: ", elementMarks);
 
         var Mongol_dosha = await MongalMatch(basic_info.msg[0].kundali_file_name)
