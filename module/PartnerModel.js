@@ -344,6 +344,21 @@ const MoonshineMatch = (filePath) => {
       }
     });
 }
+
+const SunshineNumberMatch = (frm_rashi_id, to_rashi_id, m_number, pDob) => {
+  return new Promise(async (resolve, reject) => {
+    var select = `id,frm_rashi_id,b_day,b_month,to_rashi_id,m_number,match_flag`,
+      table_name = `md_sunshine_match`,
+      whr = `STR_TO_DATE(CONCAT(YEAR(CURDATE()), '-', b_month, '-', b_day), '%Y-%m-%d') 
+      <= '${dateFormat(new Date(), "yyyy")}-${dateFormat(pDob, "mm-dd")}' 
+      AND
+      STR_TO_DATE(CONCAT(YEAR(CURDATE()), '-', b_month, '-', b_day), '%Y-%m-%d') >= '${dateFormat(new Date(), "yyyy")}-${dateFormat(pDob, "mm-dd")}' 
+      AND frm_rashi_id = '${frm_rashi_id}' AND to_rashi_id = '${to_rashi_id}' AND m_number = '${m_number}';`,
+      order = null;
+    var res_dt = await db_Select(select, table_name, whr, order);
+    resolve(res_dt);
+  })
+};
  
 
 module.exports = {
@@ -356,4 +371,5 @@ module.exports = {
   MoonshineMatch,
   calculateElementMarks,
   CalculateMongalMarks,
+  SunshineNumberMatch
 };

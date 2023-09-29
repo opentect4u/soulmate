@@ -111,7 +111,7 @@ UserRouter.post("/user_caste", async (req, res) => {
   var table_name = "td_user_profile",
     fields =
       req_data.user_id > 0
-        ? `religion = '${req_data.field_ur_religion}', caste_id = '${
+        ? `caste_id = '${
             req_data.field_cast
           }', oth_comm_marry_flag = '${
             req_data.field_willing_marry_other_commun ? "Y" : "N"

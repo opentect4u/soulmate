@@ -161,17 +161,48 @@ const kundali = (user_id, coordinates, datetime) => {
         // console.log(response.body);
         var data = JSON.parse(response.body);
         try{
-       var rasiData = data.data.planet_position.filter(
-              (dt) => dt.name == "Moon"
-            ),
+      //  var rasiData = data.data.planet_position.filter(
+      //         (dt) => dt.name == "Moon"
+      //       ),
+      //       nakhatra_name = await getNakhatra(
+      //         rasiData[0].degree,
+      //         rasiData[0].position
+      //       ),
+      //       jotok_rasi_id = await getJotukRashiId(
+      //         rasiData[0].rasi.name,
+      //         nakhatra_name.msg[0]?.nakhatra
+      //       );
+          var rasiData = data.data.planet_position.filter(
+            (dt) => dt.name == "Moon"
+          ), nakhatra_name, jotok_rasi_id;
+          var rashiPosData = data.data.planet_position.filter(
+            (dt) => dt.position == rasiData[0].position
+          )
+          if(rashiPosData.length > 1){
+            for(let dt of rashiPosData){
+              nakhatra_name = await getNakhatra(
+                dt.degree,
+                dt.position
+              );
+              jotok_rasi_id = await getJotukRashiId(
+                dt.rasi.name,
+                nakhatra_name.msg[0]?.nakhatra
+              );
+              console.log(jotok_rasi_id);
+              if(jotok_rasi_id.suc > 0 && jotok_rasi_id.msg.length > 0){
+                break;
+              }
+            }
+          }else{
             nakhatra_name = await getNakhatra(
               rasiData[0].degree,
               rasiData[0].position
-            ),
+            );
             jotok_rasi_id = await getJotukRashiId(
               rasiData[0].rasi.name,
               nakhatra_name.msg[0]?.nakhatra
             );
+          }
         }catch(err){
           console.log(err);
         }

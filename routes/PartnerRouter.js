@@ -7,7 +7,7 @@ const express = require('express'),
 const { promises } = require('nodemailer/lib/xoauth2');
 const { db_Select, EncryptDataToSend, db_Insert} = require('../module/MasterModule');
 const { user_groom_loc, user_basic_info, user_hobbies } = require('../module/ProfileModule');
-const { partner_match, RashiMatch, NumberMatchWithDate, JotokMatch, ElementMatch, MongalMatch, MoonshineMatch, calculateElementMarks, CalculateMongalMarks } = require('../module/PartnerModel');
+const { partner_match, RashiMatch, NumberMatchWithDate, JotokMatch, ElementMatch, MongalMatch, MoonshineMatch, calculateElementMarks, CalculateMongalMarks,  SunshineNumberMatch} = require('../module/PartnerModel');
 
 PartnerRouter.get("/partner_pref", async (req, res) => {
     var data = req.query;
@@ -17,7 +17,7 @@ PartnerRouter.get("/partner_pref", async (req, res) => {
     order = null;
     var res_dt = await db_Select(select, table_name, whr, order);
     // console.log('Location ', res_dt.msg[0].location_id, location.findIndex((dt) => dt.id == res_dt.msg[0].location_id));
-    var location_name =
+    var location_name =SunshineMatch
     res_dt.suc > 0 && res_dt.msg.length > 0
       ? (location.findIndex((dt) => dt.id == res_dt.msg[0].location_id) >= 0 ? location[location.findIndex((dt) => dt.id == res_dt.msg[0].location_id)]?.name : null) : null;
   res_dt.suc > 0 ? (res_dt.msg.length > 0 ? res_dt.msg[0]["location_name"] = location_name ? location_name : '' : '') : "";
@@ -110,7 +110,7 @@ PartnerRouter.get("/partner_match", async (req, res) => {
         var tot_match_marks = Math.round(number_match + jotok_match + elementMarks + mongal_marks + moonShineMatch);
         // console.log('Total Marks', Math.round(tot_match_marks));
 
-       
+       var SunShineMatch = await SunshineNumberMatch(pref_dt.msg[0].jotok_rasi_id, basic_info.msg[0].jotok_rasi_id, dateFormat(basic_info.msg[0].dob, 'dd'), basic_info.msg[0].dob)
          
         var hobbies = await user_hobbies({user_id:rdt?.id});
         var result_partner = {
@@ -142,6 +142,8 @@ PartnerRouter.get("/partner_match", async (req, res) => {
   // res.send(res_dt)
   // res.send(result)
   res.send(result_dt)
-})
+});
+
+
 
 module.exports = {PartnerRouter}
