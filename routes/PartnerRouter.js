@@ -67,7 +67,15 @@ PartnerRouter.get("/partner_match", async (req, res) => {
 
     var own_mongal_dosh = await MongalMatch(pref_dt.msg[0].kundali_file_name);
 
-    var own_element_val = await ElementMatch(pref_dt.msg[0].kundali_file_name);
+    // var own_element_val = await ElementMatch(pref_dt.msg[0].kundali_file_name),
+    var own_element_val = await ElementMatch(basic_info.msg[0].kundali_file_name),
+    own_ele_name;
+    if(own_element_val.length > 0){
+      own_ele_name = [...own_element_val.map(dt=>dt.flag)]
+      own_ele_name = own_ele_name.join('')
+    }else{
+      own_ele_name = own_element_val.flag
+    }
 
     var select = "a.id, a.dob",
     table_name = "td_user_profile a LEFT JOIN  td_user_p_dtls b ON a.id=b.user_id",
@@ -92,9 +100,16 @@ PartnerRouter.get("/partner_match", async (req, res) => {
         // console.log('Number', number_match);
         var jotok_match = await JotokMatch(pref_dt.msg[0].jotok_rasi_id, basic_info.msg[0].jotok_rasi_id) // Marks Field
         // console.log('Jotok', jotok_match);
-        var EleFields = await ElementMatch(basic_info.msg[0].kundali_file_name)
+        var EleFields = await ElementMatch(basic_info.msg[0].kundali_file_name),
+          partner_ele_name;
+          if(EleFields.length > 0){
+            partner_ele_name = [...EleFields.map(dt=>dt.flag)]
+            partner_ele_name = partner_ele_name.join('')
+          }else{
+            partner_ele_name = EleFields.flag
+          }
         // console.log('Element P: ', EleFields, 'Own Element: ', own_element_val);
-        var elementMarks = await calculateElementMarks(own_element_val[0].flag, EleFields[0].flag)
+        var elementMarks = await calculateElementMarks(own_ele_name, partner_ele_name)
         elementMarks = elementMarks.suc > 0 ? elementMarks.msg[0].marks : 0 // Marks Filed
         // console.log("Element Marks: ", elementMarks);
 
@@ -103,14 +118,15 @@ PartnerRouter.get("/partner_match", async (req, res) => {
         var mongal_marks = await CalculateMongalMarks(own_mongal_dosh, Mongol_dosha); // Marks Filed
         // console.log('Get Marks', mongal_marks);
 
-        var moonShineMatch = await MoonshineMatch(basic_info.msg[0].kundali_file_name) // Marks Filed
+        var moonShineMatch = await MoonshineMatch(pref_dt.msg[0].rasi_id, basic_info.msg[0].rasi_id) // Marks Filed
         // console.log('MoonShineMatch', moonShineMatch);
 
         // var tot_match_marks = Math.round(rashi_match + number_match + jotok_match)
-        var tot_match_marks = Math.round(number_match + jotok_match + elementMarks + mongal_marks + moonShineMatch);
+        var SunShineMatch = await SunshineNumberMatch(pref_dt.msg[0].rasi_id, basic_info.msg[0].rasi_id, dateFormat(basic_info.msg[0].dob, 'dd'), basic_info.msg[0].dob)
+        
+        var tot_match_marks = Math.round(jotok_match + elementMarks + mongal_marks + moonShineMatch + SunShineMatch);
         // console.log('Total Marks', Math.round(tot_match_marks));
 
-        var SunShineMatch = await SunshineNumberMatch(pref_dt.msg[0].jotok_rasi_id, basic_info.msg[0].jotok_rasi_id, dateFormat(basic_info.msg[0].dob, 'dd'), basic_info.msg[0].dob)
          
         var hobbies = await user_hobbies({user_id:rdt?.id});
         var result_partner = {
