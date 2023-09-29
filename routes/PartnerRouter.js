@@ -54,7 +54,7 @@ PartnerRouter.post("/update_partner", async (req, res) =>{
 PartnerRouter.get("/partner_match", async (req, res) => {
   var result = [], result_dt;
   var data = req.query;
-  var select = "a.id, a.user_id, a.age_frm, a.age_to, a.marital_status, a.mother_tounge, a.religion, a.location, b.gender, b.dob, b.jotok_rasi_id, b.kundali_file_name",
+  var select = "a.id, a.user_id, a.age_frm, a.age_to, a.marital_status, a.mother_tounge, a.religion, a.location, b.gender, b.dob, b.jotok_rasi_id, b.rasi_id, b.kundali_file_name",
   table_name = "td_user_partner_pref a, td_user_profile b",
   whr = data.user_id > 0 ? `a.user_id=b.id AND a.user_id=${data.user_id}` : `a.user_id=b.id`,
   order = null;
