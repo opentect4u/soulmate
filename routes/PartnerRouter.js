@@ -110,7 +110,7 @@ PartnerRouter.get("/partner_match", async (req, res) => {
         var tot_match_marks = Math.round(number_match + jotok_match + elementMarks + mongal_marks + moonShineMatch);
         // console.log('Total Marks', Math.round(tot_match_marks));
 
-       var SunShineMatch = await SunshineNumberMatch(pref_dt.msg[0].jotok_rasi_id, basic_info.msg[0].jotok_rasi_id, dateFormat(basic_info.msg[0].dob, 'dd'), basic_info.msg[0].dob)
+        var SunShineMatch = await SunshineNumberMatch(pref_dt.msg[0].jotok_rasi_id, basic_info.msg[0].jotok_rasi_id, dateFormat(basic_info.msg[0].dob, 'dd'), basic_info.msg[0].dob)
          
         var hobbies = await user_hobbies({user_id:rdt?.id});
         var result_partner = {
@@ -144,6 +144,94 @@ PartnerRouter.get("/partner_match", async (req, res) => {
   res.send(result_dt)
 });
 
+PartnerRouter.get('/partner_match_marks', async (req, res) => {
+  // GET own_id and partner_id
 
+  // OWN DETAILS //
+  var data = req.query;
+  var select = "b.gender, b.rasi_id, b.dob, b.jotok_rasi_id, b.kundali_file_name",
+  table_name = "td_user_profile b",
+  whr = `b.id=${data.own_id}`,
+  order = null;
+  var own_dt = await db_Select(select, table_name, whr, order);
+  // console.log(own_dt);
+
+  if(own_dt.suc > 0 && own_dt.msg.length > 0){
+    var own_rashi = await partner_match(own_dt.msg[0].dob),
+      own_rashi_name = own_rashi.suc > 0 ? (own_rashi.msg.length > 0 ? own_rashi.msg[0].beng_rashi : '') : '';
+    own_rashi = own_rashi.suc > 0 ? (own_rashi.msg.length > 0 ? own_rashi.msg[0].rashi_id : 0) : 0
+
+    var own_mongal_dosh = await MongalMatch(own_dt.msg[0].kundali_file_name);
+
+    var own_element_val = await ElementMatch(own_dt.msg[0].kundali_file_name);
+    var own_element_name
+    if(own_element_val.length > 0){
+      own_element_name = [...own_element_val.map(dt=>dt.flag)]
+      own_element_name = own_element_name.join('')
+    }else{
+      own_element_name = own_element_val.flag
+    }
+    // OWN DETAILS END //
+
+    // PARTNER DETAILS //
+    var partner_info = await user_basic_info({user_id:data.partner_id});
+
+    var partner_rashi = await partner_match(partner_info.msg[0].dob),
+      partner_rashi_name = partner_rashi.suc > 0 ? (partner_rashi.msg.length > 0 ? partner_rashi.msg[0].beng_rashi : '') : '';
+    partner_rashi = partner_rashi.suc > 0 ? (partner_rashi.msg.length > 0 ? partner_rashi.msg[0].rashi_id : 0) : 0
+    // console.log('Partner', partner_rashi);
+    
+    // var rashi_match = await RashiMatch(own_rashi, partner_rashi)
+    // console.log('Match', rashi_match);
+    // var number_match = await NumberMatchWithDate(dateFormat(own_dt.msg[0].dob, 'dd'), dateFormat(partner_info.msg[0].dob, 'dd')) // Marks Filed
+    // console.log('Number', number_match);
+    var jotok_match = await JotokMatch(own_dt.msg[0].jotok_rasi_id, partner_info.msg[0].jotok_rasi_id) // Marks Field
+    // console.log('Jotok', jotok_match);
+    var partnerEleField = await ElementMatch(partner_info.msg[0].kundali_file_name)
+    var partner_element_name
+    if(partnerEleField.length > 0){
+      partner_element_name = [...partnerEleField.map(dt=>dt.flag)]
+      partner_element_name = partner_element_name.join('')
+    }else{
+      partner_element_name = partnerEleField.flag
+    }
+    // console.log('Element P: ', partnerEleField, 'Own Element: ', own_element_val);
+    var elementMarks = await calculateElementMarks(own_element_name, partner_element_name)
+    elementMarks = elementMarks.suc > 0 ? elementMarks.msg[0].marks : 0 // Marks Filed
+    // console.log("Element Marks: ", elementMarks);
+
+    var partner_mongol_dosha = await MongalMatch(partner_info.msg[0].kundali_file_name)
+    // console.log("Mongal Dosh", partner_mongol_dosha, " OWN: ", own_mongal_dosh);
+    var mongal_marks = await CalculateMongalMarks(own_mongal_dosh, partner_mongol_dosha); // Marks Filed
+    // console.log('Get Marks', mongal_marks);
+
+    var moonShineMatch = await MoonshineMatch(own_dt.msg[0].rasi_id, partner_info.msg[0].rasi_id) // Marks Filed
+    // console.log('MoonShineMatch', moonShineMatch);
+
+    var SunShineMatch = await SunshineNumberMatch(own_dt.msg[0].rashi_id, partner_info.msg[0].rashi_id, dateFormat(partner_info.msg[0].dob, 'dd'), partner_info.msg[0].dob)
+
+    // var tot_match_marks = Math.round(rashi_match + number_match + jotok_match)
+    console.log('Marks Values', jotok_match , elementMarks , mongal_marks , moonShineMatch , SunShineMatch);
+    var tot_match_marks = Math.round(jotok_match + elementMarks + mongal_marks + moonShineMatch + SunShineMatch);
+    console.log('Total Marks', Math.round(tot_match_marks));
+
+        
+    // PARTNER DETAILS END //
+
+    res.send({
+      'own': {
+        rashi: own_rashi_name,
+        mongal_dasha: own_mongal_dosh,
+        element_name: own_element_name
+      },
+      'partner': {
+        rashi: partner_rashi_name,
+        mongal_dasha: partner_mongol_dosha,
+        element_name: partner_element_name
+      },
+      total_marks: tot_match_marks
+    })
+  }
+})
 
 module.exports = {PartnerRouter}

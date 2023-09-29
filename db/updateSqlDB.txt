@@ -406,3 +406,9 @@ ALTER TABLE `md_element_match`
 -----------------26.09.2023-------------------------------
 
   ALTER TABLE `td_user_profile` CHANGE `plan_id` `plan_id` ENUM('B','S','P') NOT NULL;
+
+--------------------------------END--------------------------
+
+-----------------29.09.2023-------------------------------
+
+  ALTER TABLE `td_user_profile` ADD `file_path` TEXT NOT NULL AFTER `jotok_rasi_id`;

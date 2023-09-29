@@ -304,45 +304,17 @@ const CalculateMongalMarks = (frmMonMark, toMonMark) => {
     })
 }
 
-const MoonshineMatch = (filePath) => {
-    return new Promise((resolve, reject) => {
-      try {
-        var data = require(`../raw_data/${filePath}`),
-          marks;
-        if (data.status == "ok") {
-          var planet_data = data.data.planet_position;
-          var asc_pos = planet_data.findIndex((dt) => dt.name == "Ascendant");
-
-          for (let dt of planet_data) {
-            dt.position =
-              dt.position >= planet_data[asc_pos].position
-                ? Math.abs(
-                    parseInt(dt.position - planet_data[asc_pos].position)
-                  ) + 1
-                : dt.position + planet_data[asc_pos].position - 1;
-          }
-          var asc_planet_data = planet_data;
-
-          for (let dt of asc_planet_data) {
-            if (MoonShineNotMatchField.includes(dt.position)) {
-              if (dt.name == "Moon") {
-                marks = 0;
-              }else{
-                marks = 20
-              }
-            }else{
-                marks = 20
-            }
-          }
-          resolve(marks);
-        } else {
-          resolve(0);
-        }
-      } catch (err) {
-        console.log(err);
-        resolve(0);
-      }
-    });
+const MoonshineMatch = (own_rashi, partner_rashi) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      var res_dt = await db_Select('id', 'md_moonshine_match', `frm_rashi_id = ${own_rashi} AND to_rashi_id = ${partner_rashi}`, null)
+      var marks = res_dt.suc > 0 ? (res_dt.msg.length > 0 ? 0 : 10) : 0
+      resolve(marks)
+    } catch (err) {
+      console.log(err);
+      resolve(0);
+    }
+  });
 }
 
 const SunshineNumberMatch = (frm_rashi_id, to_rashi_id, m_number, pDob) => {
@@ -356,7 +328,8 @@ const SunshineNumberMatch = (frm_rashi_id, to_rashi_id, m_number, pDob) => {
       AND frm_rashi_id = '${frm_rashi_id}' AND to_rashi_id = '${to_rashi_id}' AND m_number = '${m_number}';`,
       order = null;
     var res_dt = await db_Select(select, table_name, whr, order);
-    resolve(res_dt);
+    var marks = res_dt.suc > 0 ? (res_dt.msg.length > 0 ? (res_dt.msg[0].match_flag == 'VG' ? 20 : (res_dt.msg[0].match_flag == 'G' ? 15 : 5)) : 0) : 0
+    resolve(marks);
   })
 };
  
