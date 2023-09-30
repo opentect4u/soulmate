@@ -137,7 +137,7 @@ setInterval(() => {
   } catch (err) {
     throw new Error(err);
   }
-}, 1000 * 60 * 3);
+}, 1000 * 30);
 
 // setInterval(async () => {
 //   try {

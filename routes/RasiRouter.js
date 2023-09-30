@@ -260,6 +260,67 @@ const kundali = (user_id, coordinates, datetime) => {
   });
 };
 
+const addKundaliUser = (fileName) => {
+  return new Promise(async (resolve, reject) => {
+    try{
+      fs.readFile(path.join('raw_data', fileName), 'utf8', async (err, jsonData) => {
+        try{
+          var data = JSON.parse(jsonData)
+          
+          var rasiData = data.data.planet_position.filter(
+            (dt) => dt.name == "Moon"
+          ), nakhatra_name, jotok_rasi_id;
+          var rashiPosData = data.data.planet_position.filter(
+            (dt) => dt.position == rasiData[0].position
+          )
+          if(rashiPosData.length > 1){
+            for(let dt of rashiPosData){
+              nakhatra_name = await getNakhatra(
+                dt.degree,
+                dt.position
+              );
+              jotok_rasi_id = await getJotukRashiId(
+                dt.rasi.name,
+                nakhatra_name.msg[0]?.nakhatra
+              );
+              console.log(jotok_rasi_id);
+              if(jotok_rasi_id.suc > 0 && jotok_rasi_id.msg.length > 0){
+                break;
+              }
+            }
+          }else{
+            nakhatra_name = await getNakhatra(
+              rasiData[0].degree,
+              rasiData[0].position
+            );
+            jotok_rasi_id = await getJotukRashiId(
+              rasiData[0].rasi.name,
+              nakhatra_name.msg[0]?.nakhatra
+            );
+          }
+          resolve({
+            rasi_id: parseInt(rasiData[rasiData.findIndex(dt=> dt.name == "Moon")].rasi.id) + 1,
+            nakhatra_id:
+              nakhatra_name.suc > 0 && nakhatra_name.msg.length > 0
+                ? nakhatra_name.msg[0]?.nakhatra_id
+                : 0,
+            jotok_rasi_id:
+              jotok_rasi_id.suc > 0 && jotok_rasi_id.msg.length > 0
+                ? jotok_rasi_id.msg[0]?.id
+                : 0,
+          });
+        }catch(err){
+          console.log(err);
+          resolve(err)
+        }
+      })
+    }catch(err){
+      console.log(err);
+      resolve(err)
+    }
+  })
+}
+
 // rashiRouter.get("/jotok", async (req, res) => {
 //   var data = require("../raw_data/1-1999-05-04T16-55-00Z.json"),
 //     jotok;
@@ -384,4 +445,4 @@ rashiRouter.get("/test", async (req, res) => {
 });
 // END //
 
-module.exports = { rashiRouter, kundali };
+module.exports = { rashiRouter, kundali, addKundaliUser };

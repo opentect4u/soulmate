@@ -1,4 +1,4 @@
-const { kundali } = require("./RasiRouter");
+const { kundali, addKundaliUser } = require("./RasiRouter");
 
 const express = require("express"),
   UserRouter = express.Router(),
@@ -62,7 +62,7 @@ UserRouter.post("/user_profile", async (req, res) => {
         "yyyy-mm-dd HH:MM:ss"
       )}', '${req_data.field_who_creat_profile}',
         '${req_data.field_ur_religion}', '${req_data.field_gender}', '${req_data.field_mother_tong
-      }', '${req_data.reg_name}', '${datetime}')`,
+      }', '${req_data.user}', '${datetime}')`,
     whr = req_data.id > 0 ? `id= '${req_data.id}'` : null,
     flag = req_data.id > 0 ? 1 : 0;
   var res_dt = await db_Insert(table_name, fields, values, whr, flag);
@@ -330,7 +330,7 @@ UserRouter.post("/login", async (req, res) => {
   data = JSON.parse(data);
   console.log(data);
   var select =
-      "a.id prof_id, a.user_id, a.profile_id id, a.user_name, a.email_id user_email, a.password, a.last_login, a.pay_status pay_flag, b.plan_id, a.active_flag",
+      "a.id prof_id, a.user_id, a.profile_id id, a.user_name, a.email_id user_email, a.password, a.last_login, a.pay_status pay_flag, b.plan_id, a.active_flag, b.kundali_file_name, b.rasi_id, b.nakhatra_id, b.jotok_rasi_id",
     table_name = "md_user_login a, td_user_profile b",
     whr = `a.profile_id=b.id AND a.user_id = '${data.user_id}' AND a.active_flag ="Y" `,
     order = null;
@@ -338,6 +338,18 @@ UserRouter.post("/login", async (req, res) => {
   if (res_dt.suc > 0) {
     if (res_dt.msg.length > 0) {
       if (await bcrypt.compare(data.password, res_dt.msg[0].password)) {
+        if(res_dt.msg[0].kundali_file_name){
+          if(res_dt.msg[0].rasi_id > 0 && res_dt.msg[0].nakhatra_id > 0 && res_dt.msg[0].jotok_rasi_id > 0){
+            true;
+          }else{
+            try{
+              var kundali_data = await addKundaliUser(res_dt.msg[0].kundali_file_name)
+              await db_Insert('td_user_profile', `rasi_id = '${kundali_data.rasi_id}', nakhatra_id = '${kundali_data.nakhatra_id}', jotok_rasi_id = '${kundali_data.jotok_rasi_id}'`, null, `id=${res_dt.msg[0].id}`, 1)
+            }catch(err){
+              console.log(err);
+            }
+          }
+        }
         result = {
           suc: 1,
           msg: "successfully loggedin",
