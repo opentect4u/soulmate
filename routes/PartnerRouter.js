@@ -160,8 +160,8 @@ PartnerRouter.get("/partner_match", async (req, res) => {
             hobbies : {
               "value" :  hobbies.msg
             },
-            sun_shine_rashi_match: rashi_match,
-            numeric_match: number_match,
+            sun_shine_rashi_match: SunShineMatch,
+            numeric_match: elementMarks,
             jotok_marks: jotok_match,
             astro_match_marks: tot_match_marks,
             elementValues: EleFields,
