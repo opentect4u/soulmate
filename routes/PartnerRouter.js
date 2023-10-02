@@ -7,7 +7,7 @@ const express = require('express'),
 const { promises } = require('nodemailer/lib/xoauth2');
 const { db_Select, EncryptDataToSend, db_Insert} = require('../module/MasterModule');
 const { user_groom_loc, user_basic_info, user_hobbies } = require('../module/ProfileModule');
-const { partner_match, RashiMatch, NumberMatchWithDate, JotokMatch, ElementMatch, MongalMatch, MoonshineMatch, calculateElementMarks, CalculateMongalMarks,  SunshineNumberMatch} = require('../module/PartnerModel');
+const { partner_match, RashiMatch, NumberMatchWithDate, JotokMatch, ElementMatch, MongalMatch, MoonshineMatch, calculateElementMarks, CalculateMongalMarks,  SunshineNumberMatch, checkAscMongalDosh, checkMoonMongalDosh} = require('../module/PartnerModel');
 
 PartnerRouter.get("/partner_pref", async (req, res) => {
     var data = req.query;
@@ -65,7 +65,15 @@ PartnerRouter.get("/partner_match", async (req, res) => {
     var own_rashi = await partner_match(pref_dt.msg[0].dob)
     own_rashi = own_rashi.suc > 0 ? (own_rashi.msg.length > 0 ? own_rashi.msg[0].rashi_id : 0) : 0
 
-    var own_mongal_dosh = await MongalMatch(pref_dt.msg[0].kundali_file_name);
+    // var own_mongal_dosh = await MongalMatch(pref_dt.msg[0].kundali_file_name);
+    try{
+      var own_moon_mangal_marks = await checkMoonMongalDosh(pref_dt.msg[0].kundali_file_name),
+          own_asc_mangal_marks = await checkAscMongalDosh(pref_dt.msg[0].kundali_file_name);
+  
+      var own_mongal_dosh = own_moon_mangal_marks + own_asc_mangal_marks;
+    }catch(err){
+      console.log(err);
+    }
 
     // var own_element_val = await ElementMatch(pref_dt.msg[0].kundali_file_name),
     var own_element_val = await ElementMatch(pref_dt.msg[0].kundali_file_name),
@@ -100,7 +108,7 @@ PartnerRouter.get("/partner_match", async (req, res) => {
       (pref_dt.msg[0].own_gender != 'M' ? 
       `AND DATE_FORMAT(from_days(datediff(now(), a.dob)), '%Y')+0 >= DATE_FORMAT(from_days(datediff(now(), '${dateFormat(pref_dt.msg[0].dob, 'yyyy-mm-dd HH:MM:ss')}')), '%Y')+0` : 
       `AND DATE_FORMAT(from_days(datediff(now(), a.dob)), '%Y')+0 <= DATE_FORMAT(from_days(datediff(now(), '${dateFormat(pref_dt.msg[0].dob, 'yyyy-mm-dd HH:MM:ss')}')), '%Y')+0`) : 
-    '')}`;
+    '')} limit 5`;
     var res_dt = await db_Select(select, table_name, whr, order);
     // console.log('PDt', res_dt);
 
@@ -134,10 +142,18 @@ PartnerRouter.get("/partner_match", async (req, res) => {
           elementMarks = elementMarks.suc > 0 ? (elementMarks.msg.length > 0 ? elementMarks.msg[0].marks : 0) : 0 // Marks Filed
           // console.log("Element Marks: ", elementMarks);
 
-          var Mongol_dosha = await MongalMatch(basic_info.msg[0].kundali_file_name)
-          // console.log("Mongal Dosh", Mongol_dosha, " OWN: ", own_mongal_dosh);
+          // var Mongol_dosha = await MongalMatch(basic_info.msg[0].kundali_file_name)
+          try{
+            var partner_moon_mangal_marks = await checkMoonMongalDosh(basic_info.msg[0].kundali_file_name),
+              partner_asc_mangal_marks = await checkAscMongalDosh(basic_info.msg[0].kundali_file_name);
+  
+            var Mongol_dosha = partner_moon_mangal_marks + partner_asc_mangal_marks;
+          }catch(err){
+            console.log(err);
+          }
+          // console.log(basic_info.msg[0].u_name, "Mongal Dosh", Mongol_dosha, partner_moon_mangal_marks, partner_asc_mangal_marks, " OWN: ", own_mongal_dosh);
           var mongal_marks = await CalculateMongalMarks(own_mongal_dosh, Mongol_dosha); // Marks Filed
-          // console.log('Get Marks', mongal_marks);
+          // console.log(basic_info.msg[0].u_name, 'Get Marks', mongal_marks);
 
           var moonShineMatch = await MoonshineMatch(pref_dt.msg[0].rasi_id, basic_info.msg[0].rasi_id) // Marks Filed
           // console.log('MoonShineMatch', moonShineMatch);
@@ -146,7 +162,7 @@ PartnerRouter.get("/partner_match", async (req, res) => {
           var SunShineMatch = await SunshineNumberMatch(own_rashi, partner_rashi, dateFormat(basic_info.msg[0].dob, 'dd'), pref_dt.msg[0].dob)
           
           var tot_match_marks = Math.round(jotok_match + elementMarks + mongal_marks + moonShineMatch + SunShineMatch);
-          // console.log('Total Marks', Math.round(tot_match_marks));
+          console.log(basic_info.msg[0].u_name, 'Total Marks', jotok_match, elementMarks, mongal_marks, moonShineMatch, SunShineMatch);
 
           
           var hobbies = await user_hobbies({user_id:rdt?.id});
@@ -207,7 +223,11 @@ PartnerRouter.get('/partner_match_marks', async (req, res) => {
       own_rashi_name = own_rashi.suc > 0 ? (own_rashi.msg.length > 0 ? own_rashi.msg[0].beng_rashi : '') : '';
     own_rashi = own_rashi.suc > 0 ? (own_rashi.msg.length > 0 ? own_rashi.msg[0].rashi_id : 0) : 0
 
-    var own_mongal_dosh = await MongalMatch(own_dt.msg[0].kundali_file_name);
+    // var own_mongal_dosh = await MongalMatch(own_dt.msg[0].kundali_file_name);
+    var own_moon_mangal_marks = await checkMoonMongalDosh(own_dt.msg[0].kundali_file_name),
+        own_asc_mangal_marks = await checkAscMongalDosh(own_dt.msg[0].kundali_file_name);
+
+    var own_mongal_dosh = own_moon_mangal_marks + own_asc_mangal_marks;
 
     var own_element_val = await ElementMatch(own_dt.msg[0].kundali_file_name);
     var own_element_name
@@ -246,8 +266,12 @@ PartnerRouter.get('/partner_match_marks', async (req, res) => {
     elementMarks = elementMarks.suc > 0 ? elementMarks.msg[0].marks : 0 // Marks Filed
     // console.log("Element Marks: ", elementMarks);
 
-    var partner_mongol_dosha = await MongalMatch(partner_info.msg[0].kundali_file_name)
-    // console.log("Mongal Dosh", partner_mongol_dosha, " OWN: ", own_mongal_dosh);
+    // var partner_mongol_dosha = await MongalMatch(partner_info.msg[0].kundali_file_name)
+    var partner_moon_mangal_marks = await checkMoonMongalDosh(partner_info.msg[0].kundali_file_name),
+        partner_asc_mangal_marks = await checkAscMongalDosh(partner_info.msg[0].kundali_file_name);
+
+    var partner_mongol_dosha = partner_moon_mangal_marks + partner_asc_mangal_marks;
+        // console.log("Mongal Dosh", partner_mongol_dosha, " OWN: ", own_mongal_dosh);
     var mongal_marks = await CalculateMongalMarks(own_mongal_dosh, partner_mongol_dosha); // Marks Filed
     // console.log('Get Marks', mongal_marks);
 
@@ -257,9 +281,9 @@ PartnerRouter.get('/partner_match_marks', async (req, res) => {
     var SunShineMatch = await SunshineNumberMatch(own_dt.msg[0].rashi_id, partner_info.msg[0].rashi_id, dateFormat(partner_info.msg[0].dob, 'dd'), partner_info.msg[0].dob)
 
     // var tot_match_marks = Math.round(rashi_match + number_match + jotok_match)
-    console.log('Marks Values', jotok_match , elementMarks , mongal_marks , moonShineMatch , SunShineMatch);
+    // console.log('Marks Values', jotok_match , elementMarks , mongal_marks , moonShineMatch , SunShineMatch);
     var tot_match_marks = Math.round(jotok_match + elementMarks + mongal_marks + moonShineMatch + SunShineMatch);
-    console.log('Total Marks', Math.round(tot_match_marks));
+    // console.log('Total Marks', Math.round(tot_match_marks));
 
         
     // PARTNER DETAILS END //

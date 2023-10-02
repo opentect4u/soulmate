@@ -1,4 +1,6 @@
-const dateFormat = require("dateformat");
+const dateFormat = require("dateformat"),
+  fs = require('fs'),
+  path = require('path');
 const {
   db_Select,
   SunshineMatch,
@@ -281,6 +283,96 @@ const MongalMatch = (filePath) => {
   });
 };
 
+const checkMoonMongalDosh = (filePath) => {
+  return new Promise((resolve, reject) => {
+    fs.readFile(path.join('raw_data', filePath), 'utf8', (err, jsonData) => {
+      try{
+        var pData = JSON.parse(jsonData),
+          mangal_marks = 0;
+        if (pData.status == "ok") {
+          var planet_data = pData.data.planet_position;
+
+          var moon_pos = planet_data.findIndex((dt) => dt.name == "Moon")
+          // console.log("Moon Pos", moon_pos);
+
+          for (let dt of planet_data) {
+            dt.position =
+              dt.position >= planet_data[moon_pos].position
+                ? Math.abs(
+                    parseInt(dt.position - planet_data[moon_pos].position)
+                  ) + 1
+                : dt.position + planet_data[moon_pos].position - 1;
+          }
+
+          // var moon_planet_data = planet_data;
+          // console.log(moon_planet_data);
+
+          for (let dt of planet_data) {
+            if (MongalField[1].fields.includes(dt.position)) {
+              if (dt.name == "Mars") {
+                // console.log("Moon", dt.position, dt.name, filePath);
+                mangal_marks = 20;
+                break;
+              }
+            }
+          }
+          resolve(mangal_marks);
+        } else {
+          resolve(0);
+        }
+        // console.log('lalala', pData);
+      }catch(err){
+        console.log(err);
+        resolve(0)
+      }
+    })
+  })
+}
+
+const checkAscMongalDosh = (filePath) => {
+  return new Promise((resolve, reject) => {
+    fs.readFile(path.join('raw_data', filePath), 'utf8', (err, jsonData) => {
+      try {
+        var pData = JSON.parse(jsonData),
+          mangal_marks = 0;
+        if (pData.status == "ok") {
+          var planet_data = pData.data.planet_position;
+
+          var asc_pos = planet_data.findIndex((dt) => dt.name == "Ascendant")
+          // console.log('ASC Pos', asc_pos);
+
+          for (let dt of planet_data) {
+            dt.position =
+              dt.position >= planet_data[asc_pos].position
+                ? Math.abs(
+                    parseInt(dt.position - planet_data[asc_pos].position)
+                  ) + 1
+                : dt.position + planet_data[asc_pos].position - 1;
+          }
+          // console.log(asc_planet_data);
+
+          for (let dt of planet_data) {
+            if (MongalField[0].fields.includes(dt.position)) {
+              if (dt.name == "Mars") {
+                // console.log('Asc', dt.position, dt.name, filePath);
+                mangal_marks = 80;
+                break;
+              }
+            }
+          }
+          resolve(mangal_marks);
+        } else {
+          resolve(0);
+        }
+        // console.log('lalala', pData);
+      } catch (err) {
+        console.log(err);
+        resolve(0);
+      }
+    })
+  })
+}
+
 const CalculateMongalMarks = (frmMonMark, toMonMark) => {
     return new Promise((resolve, reject) => {
         var mongal_marks = 0;
@@ -353,5 +445,7 @@ module.exports = {
   MoonshineMatch,
   calculateElementMarks,
   CalculateMongalMarks,
-  SunshineNumberMatch
+  SunshineNumberMatch,
+  checkMoonMongalDosh,
+  checkAscMongalDosh
 };
