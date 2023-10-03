@@ -465,6 +465,16 @@ const SunshineNumberMatch = (frm_rashi_id, to_rashi_id, m_number, pDob) => {
   })
 };
  
+const MoonShineName = (position) => {
+  return new Promise (async (resolve, reject) => {
+   var select = `rashi`,
+  table_name = `md_rashi_pos`,
+  whr = `position = ${position}`,
+  order = null;
+  var MoonShine_dt = await db_Select(select, table_name, whr, order);
+  resolve(MoonShine_dt)
+  });
+}
 
 module.exports = {
   partner_match,
@@ -478,5 +488,6 @@ module.exports = {
   CalculateMongalMarks,
   SunshineNumberMatch,
   checkMoonMongalDosh,
-  checkAscMongalDosh
+  checkAscMongalDosh,
+  MoonShineName
 };

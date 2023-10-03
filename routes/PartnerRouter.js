@@ -7,7 +7,7 @@ const express = require('express'),
 const { promises } = require('nodemailer/lib/xoauth2');
 const { db_Select, EncryptDataToSend, db_Insert} = require('../module/MasterModule');
 const { user_groom_loc, user_basic_info, user_hobbies } = require('../module/ProfileModule');
-const { partner_match, RashiMatch, NumberMatchWithDate, JotokMatch, ElementMatch, MongalMatch, MoonshineMatch, calculateElementMarks, CalculateMongalMarks,  SunshineNumberMatch, checkAscMongalDosh, checkMoonMongalDosh} = require('../module/PartnerModel');
+const { partner_match, RashiMatch, NumberMatchWithDate, JotokMatch, ElementMatch, MongalMatch, MoonshineMatch, calculateElementMarks, CalculateMongalMarks,  SunshineNumberMatch, checkAscMongalDosh, checkMoonMongalDosh, MoonShineName} = require('../module/PartnerModel');
 
 PartnerRouter.get("/partner_pref", async (req, res) => {
     var data = req.query;
@@ -221,6 +221,7 @@ PartnerRouter.get('/partner_match_marks', async (req, res) => {
   // console.log(own_dt);
 
   if(own_dt.suc > 0 && own_dt.msg.length > 0){
+    var own_moonshine_name = await MoonShineName(own_dt.msg[0].rasi_id)
     var own_rashi = await partner_match(own_dt.msg[0].dob),
       own_rashi_name = own_rashi.suc > 0 ? (own_rashi.msg.length > 0 ? own_rashi.msg[0].rashi : '') : '';
     own_rashi = own_rashi.suc > 0 ? (own_rashi.msg.length > 0 ? own_rashi.msg[0].rashi_id : 0) : 0
@@ -243,7 +244,7 @@ PartnerRouter.get('/partner_match_marks', async (req, res) => {
 
     // PARTNER DETAILS //
     var partner_info = await user_basic_info({user_id:data.partner_id});
-
+    var partner_moonshine_name = await MoonShineName(partner_info.msg[0].rasi_id)
     var partner_rashi = await partner_match(partner_info.msg[0].dob),
       partner_rashi_name = partner_rashi.suc > 0 ? (partner_rashi.msg.length > 0 ? partner_rashi.msg[0].rashi : '') : '';
     partner_rashi = partner_rashi.suc > 0 ? (partner_rashi.msg.length > 0 ? partner_rashi.msg[0].rashi_id : 0) : 0
@@ -294,12 +295,14 @@ PartnerRouter.get('/partner_match_marks', async (req, res) => {
       'own': {
         rashi: own_rashi_name,
         mongal_dasha: own_mongal_dosh,
-        element_name: own_element_name
+        element_name: own_element_name,
+        moon_shine_name: own_moonshine_name.suc > 0 && own_moonshine_name.msg.length > 0 ? own_moonshine_name.msg[0].rashi : ''
       },
       'partner': {
         rashi: partner_rashi_name,
         mongal_dasha: partner_mongol_dosha,
-        element_name: partner_element_name
+        element_name: partner_element_name,
+        moon_shine_name: partner_moonshine_name.suc > 0 && partner_moonshine_name.msg.length > 0 ? partner_moonshine_name.msg[0].rashi : ''
       },
       total_marks: tot_match_marks
     })

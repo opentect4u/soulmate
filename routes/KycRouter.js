@@ -13,6 +13,7 @@ const { db_Insert } = require('../module/MasterModule');
 
     KycRouter.get('/doc_list', async (req, res) => {
         var data = req.query
+        console.log(data);
         var select = 'id, doc_type', 
         table_name = 'md_document',
         whr = data.id > 0 ? `id = ${id}` : null,
