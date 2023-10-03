@@ -153,7 +153,9 @@ PartnerRouter.get("/partner_match", async (req, res) => {
           }
           // console.log(basic_info.msg[0].u_name, "Mongal Dosh", Mongol_dosha, partner_moon_mangal_marks, partner_asc_mangal_marks, " OWN: ", own_mongal_dosh);
           var mongal_marks = await CalculateMongalMarks(own_mongal_dosh, Mongol_dosha); // Marks Filed
-          // console.log(basic_info.msg[0].u_name, 'Get Marks', mongal_marks);
+      // console.log(own_moon_mangal_marks,own_asc_mangal_marks,own_mongal_dosh,'own');
+      // console.log(partner_moon_mangal_marks,partner_asc_mangal_marks,Mongol_dosha,'partner');
+      // console.log(basic_info.msg[0].u_name, 'Get Marks', mongal_marks);
 
           var moonShineMatch = await MoonshineMatch(pref_dt.msg[0].rasi_id, basic_info.msg[0].rasi_id) // Marks Filed
           // console.log('MoonShineMatch', moonShineMatch);
@@ -220,7 +222,7 @@ PartnerRouter.get('/partner_match_marks', async (req, res) => {
 
   if(own_dt.suc > 0 && own_dt.msg.length > 0){
     var own_rashi = await partner_match(own_dt.msg[0].dob),
-      own_rashi_name = own_rashi.suc > 0 ? (own_rashi.msg.length > 0 ? own_rashi.msg[0].beng_rashi : '') : '';
+      own_rashi_name = own_rashi.suc > 0 ? (own_rashi.msg.length > 0 ? own_rashi.msg[0].rashi : '') : '';
     own_rashi = own_rashi.suc > 0 ? (own_rashi.msg.length > 0 ? own_rashi.msg[0].rashi_id : 0) : 0
 
     // var own_mongal_dosh = await MongalMatch(own_dt.msg[0].kundali_file_name);
@@ -243,7 +245,7 @@ PartnerRouter.get('/partner_match_marks', async (req, res) => {
     var partner_info = await user_basic_info({user_id:data.partner_id});
 
     var partner_rashi = await partner_match(partner_info.msg[0].dob),
-      partner_rashi_name = partner_rashi.suc > 0 ? (partner_rashi.msg.length > 0 ? partner_rashi.msg[0].beng_rashi : '') : '';
+      partner_rashi_name = partner_rashi.suc > 0 ? (partner_rashi.msg.length > 0 ? partner_rashi.msg[0].rashi : '') : '';
     partner_rashi = partner_rashi.suc > 0 ? (partner_rashi.msg.length > 0 ? partner_rashi.msg[0].rashi_id : 0) : 0
     // console.log('Partner', partner_rashi);
     

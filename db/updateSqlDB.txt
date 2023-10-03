@@ -412,3 +412,12 @@ ALTER TABLE `md_element_match`
 -----------------29.09.2023-------------------------------
 
   ALTER TABLE `td_user_profile` ADD `file_path` TEXT NOT NULL AFTER `jotok_rasi_id`;
+
+--------------------------------END--------------------------
+
+-----------------03.10.2023-------------------------------
+
+DELETE FROM `md_document` WHERE `md_document`.`id` = 5
+DELETE FROM `md_document` WHERE `md_document`.`id` = 6
+DELETE FROM `td_user_profile` WHERE `td_user_profile`.`id` = 59
+DELETE FROM `md_user_login` WHERE `md_user_login`.`id` = 21

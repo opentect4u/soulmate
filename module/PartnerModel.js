@@ -13,7 +13,7 @@ const {
 
 const partner_match = (dob) => {
   return new Promise(async (resolve, reject) => {
-    var select = `a.rashi_id, b.beng_rashi`,
+    var select = `a.rashi_id, b.rashi`,
       table_name = `md_sunshine_rashi a LEFT JOIN md_rashi_pos b ON a.rashi_id = b.position`,
       whr = `STR_TO_DATE(CONCAT(YEAR(CURDATE()), '-', frm_month, '-', frm_date), '%Y-%m-%d') <= '${dateFormat(
         new Date(),
@@ -373,36 +373,67 @@ const checkAscMongalDosh = (filePath) => {
   })
 }
 
+// const CalculateMongalMarks = (frmMonMark, toMonMark) => {
+//     return new Promise((resolve, reject) => {
+//         var mongal_marks = 0;
+//         if(frmMonMark <= 20 && toMonMark <= 20){
+//             if((frmMonMark == 0 && toMonMark == 20) || (toMonMark == 0 && frmMonMark == 20)){
+//             mongal_marks = 15
+//             }else if((frmMonMark == 0 && toMonMark > 20) || (toMonMark == 0 && frmMonMark > 20)){
+//             mongal_marks = 0
+//             }else if(frmMonMark == 20 && toMonMark == 20){
+//             mongal_marks = 20
+//             }else{
+//             mongal_marks = 0
+//             }
+//         }else{
+//             if((frmMonMark == 20 && toMonMark == 80) || (frmMonMark == 80 && toMonMark == 20)){
+//             mongal_marks = 5
+//             }else if((frmMonMark == 100 && toMonMark == 80) || (frmMonMark == 80 && toMonMark == 100)){
+//             mongal_marks = 15
+//             }else if((frmMonMark == 100 && toMonMark == 20) || (frmMonMark == 20 && toMonMark == 100)){
+//             mongal_marks = 5
+//             }else if(frmMonMark == 80 && toMonMark == 80){
+//             mongal_marks = 20
+//             }else if(frmMonMark == 100 && toMonMark == 100){
+//             mongal_marks = 20
+//             }else{
+//             mongal_marks = 0
+//             }
+//         }
+//         resolve(mongal_marks);
+//     })
+// }
+
+
 const CalculateMongalMarks = (frmMonMark, toMonMark) => {
-    return new Promise((resolve, reject) => {
-        var mongal_marks = 0;
-        if(frmMonMark <= 20 && toMonMark <= 20){
-            if((frmMonMark == 0 && toMonMark == 20) || (toMonMark == 0 && frmMonMark == 20)){
-            mongal_marks = 15
-            }else if((frmMonMark == 0 && toMonMark > 20) || (toMonMark == 0 && frmMonMark > 20)){
-            mongal_marks = 0
-            }else if(frmMonMark == 20 && toMonMark == 20){
-            mongal_marks = 20
-            }else{
-            mongal_marks = 0
-            }
-        }else{
-            if((frmMonMark == 20 && toMonMark == 80) || (frmMonMark == 80 && toMonMark == 20)){
-            mongal_marks = 5
-            }else if((frmMonMark == 100 && toMonMark == 80) || (frmMonMark == 80 && toMonMark == 100)){
-            mongal_marks = 15
-            }else if((frmMonMark == 100 && toMonMark == 20) || (frmMonMark == 20 && toMonMark == 100)){
-            mongal_marks = 5
-            }else if(frmMonMark == 80 && toMonMark == 80){
-            mongal_marks = 20
-            }else if(frmMonMark == 100 && toMonMark == 100){
-            mongal_marks = 20
-            }else{
-            mongal_marks = 0
-            }
-        }
-        resolve(mongal_marks);
-    })
+  return new Promise((resolve, reject) => {
+    var mongal_marks = 0;
+    if((frmMonMark == 80 && toMonMark == 20) || (frmMonMark == 20 && toMonMark == 80)) {
+      mongal_marks = 5
+   }else if ((frmMonMark == 100 && toMonMark == 20) || (frmMonMark == 20 && toMonMark == 100)) {
+    mongal_marks = 5
+   }else if ((frmMonMark == 80 && toMonMark == 0) || (frmMonMark == 0 && toMonMark == 80)) {
+    mongal_marks = 0
+   }else if ((frmMonMark == 100 && toMonMark == 0) || (frmMonMark == 0 && toMonMark == 100)) {
+    mongal_marks = 0
+   }else if ((frmMonMark == 80 && toMonMark == 80) || (frmMonMark == 80 && toMonMark == 80)) {
+    mongal_marks = 20
+   }else if ((frmMonMark == 100 && toMonMark == 80) || (frmMonMark == 80 && toMonMark == 100)) {
+    mongal_marks = 20
+   }else if ((frmMonMark == 20 && toMonMark == 20) || (frmMonMark == 20 && toMonMark == 20)) {
+    mongal_marks = 20
+   }else if ((frmMonMark == 0 && toMonMark == 0) || (frmMonMark == 0 && toMonMark == 0)) {
+    mongal_marks = 20
+   }else if ((frmMonMark == 20 && toMonMark == 0) || (frmMonMark == 0 && toMonMark == 20)) {
+    mongal_marks = 20
+   }else if ((frmMonMark == 80 && toMonMark == 0) || (frmMonMark == 0 && toMonMark == 80)) {
+    mongal_marks = 0
+   }else if ((frmMonMark == 100 && toMonMark == 0) || (frmMonMark == 100 && toMonMark == 0)) {
+    mongal_marks = 0
+   }
+   resolve(mongal_marks)
+  })
 }
 
 const MoonshineMatch = (own_rashi, partner_rashi) => {
