@@ -135,25 +135,28 @@ const ElementMatch = (filePath) => {
     try {
       fs.readFile(path.join('raw_data', filePath), 'utf8', (err, jsonData) => {
         try{
+          // console.log('aasdasd', jsonData);
           var pData = JSON.parse(jsonData), result = [], elementVal = [];
 
             if (pData.status == "ok") {
               var planet_data = pData.data.planet_position;
-              var asc_pos = planet_data.findIndex((dt) => dt.name == "Ascendant")
-            console.log('ASC Pos', asc_pos);
+              var asc_pos = planet_data.filter((dt) => dt.name == "Ascendant")
+              asc_pos = asc_pos.length > 0 ? asc_pos[0].position : 0
+            // console.log('ASC Pos', asc_pos);
 
             for (let dt of planet_data) {
-              dt.position =
-                dt.position >= asc_pos
-                  ? Math.abs(
-                      parseInt(dt.position - asc_pos)
-                    ) + 1
-                  : dt.position + asc_pos - 1;
-                }
+              // dt.position =
+              //   dt.position >= asc_pos
+              //     ? Math.abs(
+              //         parseInt(dt.position - asc_pos)
+              //       ) + 1
+              //     : dt.position + asc_pos - 1;
+              dt.position = dt.position >= asc_pos ? ((dt.position - asc_pos) + 1) : ((12 + dt.position) - asc_pos) + 1
+            }
             // console.log(asc_planet_data);
                 var planetPositions = [...planet_data.map(dt=> dt.position)]
                 planetPositions = [...new Set(planetPositions)]
-                console.log(planetPositions);
+                // console.log(planetPositions);
             // console.log(JSON.stringify(planet_data));
             for (let dt of planetPositions) {
               result.push({
@@ -298,16 +301,18 @@ const checkMoonMongalDosh = (filePath) => {
         if (pData.status == "ok") {
           var planet_data = pData.data.planet_position;
 
-          var moon_pos = planet_data.findIndex((dt) => dt.name == "Moon")
+          var moon_pos = planet_data.filter((dt) => dt.name == "Moon")
+          moon_pos = moon_pos.length > 0 ? moon_pos[0].position : 0
           // console.log("Moon Pos", moon_pos);
 
           for (let dt of planet_data) {
-            dt.position =
-              dt.position >= planet_data[moon_pos].position
-                ? Math.abs(
-                    parseInt(dt.position - planet_data[moon_pos].position)
-                  ) + 1
-                : dt.position + planet_data[moon_pos].position - 1;
+            // dt.position =
+            //   dt.position >= planet_data[moon_pos].position
+            //     ? Math.abs(
+            //         parseInt(dt.position - planet_data[moon_pos].position)
+            //       ) + 1
+            //     : dt.position + planet_data[moon_pos].position - 1;
+            dt.position = dt.position >= moon_pos ? ((dt.position - moon_pos) + 1) : (((12 + dt.position) - moon_pos) + 1)
           }
 
           // var moon_planet_data = planet_data;
@@ -344,16 +349,18 @@ const checkAscMongalDosh = (filePath) => {
         if (pData.status == "ok") {
           var planet_data = pData.data.planet_position;
 
-          var asc_pos = planet_data.findIndex((dt) => dt.name == "Ascendant")
+          var asc_pos = planet_data.filter((dt) => dt.name == "Ascendant")
+          asc_pos = asc_pos.length > 0 ? asc_pos[0].position : 0
           // console.log('ASC Pos', asc_pos);
 
           for (let dt of planet_data) {
-            dt.position =
-              dt.position >= planet_data[asc_pos].position
-                ? Math.abs(
-                    parseInt(dt.position - planet_data[asc_pos].position)
-                  ) + 1
-                : dt.position + planet_data[asc_pos].position - 1;
+            // dt.position =
+            //   dt.position >= planet_data[asc_pos].position
+            //     ? Math.abs(
+            //         parseInt(dt.position - planet_data[asc_pos].position)
+            //       ) + 1
+            //     : dt.position + planet_data[asc_pos].position - 1;
+            dt.position = dt.position >= asc_pos ? ((dt.position - asc_pos) + 1) : ((12 + dt.position) - asc_pos) + 1
           }
           // console.log(asc_planet_data);
 

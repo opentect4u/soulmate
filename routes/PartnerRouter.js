@@ -128,7 +128,7 @@ PartnerRouter.get("/partner_match", async (req, res) => {
           var number_match = await NumberMatchWithDate(dateFormat(pref_dt.msg[0].dob, 'dd'), dateFormat(basic_info.msg[0].dob, 'dd')) // Marks Filed
           // console.log('Number', number_match);
           var jotok_match = await JotokMatch(pref_dt.msg[0].jotok_rasi_id, basic_info.msg[0].jotok_rasi_id) // Marks Field
-          // console.log('Jotok', jotok_match);
+          // console.log(basic_info.msg[0].u_name, 'Jotok', jotok_match);
           var EleFields = await ElementMatch(basic_info.msg[0].kundali_file_name),
             partner_ele_name;
             if(EleFields.length > 0){
@@ -137,7 +137,7 @@ PartnerRouter.get("/partner_match", async (req, res) => {
             }else{
               partner_ele_name = EleFields.flag
             }
-          // console.log('Element P: ', basic_info.msg[0].u_name, EleFields, 'Own Element: ', own_element_val);
+          console.log('Element P: ', basic_info.msg[0].u_name, EleFields, 'Own Element: ', own_element_val);
           var elementMarks = await calculateElementMarks(own_ele_name, partner_ele_name)
           // console.log(elementMarks);
           elementMarks = elementMarks.suc > 0 ? (elementMarks.msg.length > 0 ? elementMarks.msg[0].marks : 0) : 0 // Marks Filed
