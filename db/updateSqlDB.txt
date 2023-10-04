@@ -421,3 +421,9 @@ DELETE FROM `md_document` WHERE `md_document`.`id` = 5
 DELETE FROM `md_document` WHERE `md_document`.`id` = 6
 DELETE FROM `td_user_profile` WHERE `td_user_profile`.`id` = 59
 DELETE FROM `md_user_login` WHERE `md_user_login`.`id` = 21
+
+--------------------------------END--------------------------
+
+-----------------04.10.2023-------------------------------
+
+ALTER TABLE `td_user_profile` ADD `profile_id` INT(11) NULL DEFAULT NULL AFTER `id`;

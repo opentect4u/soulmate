@@ -130,57 +130,63 @@ const JotokMatch = (hus_rasi_id, wif_rasi_id) => {
 };
 
 const ElementMatch = (filePath) => {
+  console.log(filePath);
   return new Promise((resolve, reject) => {
     try {
-      var data = require(`../raw_data/${filePath}`);
-      if (data.status == "ok") {
-        var planet_data = data.data.planet_position;
-        var asc_pos = planet_data.findIndex((dt) => dt.name == "Ascendant"),
-          planets = [],
-          result = [],
-          elementVal = [];
-        // console.log(planet_data[asc_pos].position);
-        // while(arrRotate){
-        //  if()
-        // }
-        for (let dt of planet_data) {
-          dt.position =
-            dt.position >= planet_data[asc_pos].position
-              ? Math.abs(
-                  parseInt(dt.position - planet_data[asc_pos].position)
-                ) + 1
-              : dt.position + planet_data[asc_pos].position - 1;
-          planets.push(dt.position);
-        }
+      fs.readFile(path.join('raw_data', filePath), 'utf8', (err, jsonData) => {
+        try{
+          var pData = JSON.parse(jsonData), result = [], elementVal = [];
 
-        planets = [...new Set(planets)];
-        for (let dt of planets) {
-          result.push({
-            pos: dt,
-            no_of_planet: planet_data.filter(
-              (pdt) => pdt.position == dt && pdt.name != "Ascendant"
-            ).length,
-          });
-        }
+            if (pData.status == "ok") {
+              var planet_data = pData.data.planet_position;
+              var asc_pos = planet_data.findIndex((dt) => dt.name == "Ascendant")
+            console.log('ASC Pos', asc_pos);
 
-        for (dt of ElementoryField) {
-          var eleObj = {},
-            totPla = 0;
-          for (rdt of result) {
-            if (dt.fields.includes(rdt.pos)) {
-              totPla += rdt.no_of_planet;
+            for (let dt of planet_data) {
+              dt.position =
+                dt.position >= asc_pos
+                  ? Math.abs(
+                      parseInt(dt.position - asc_pos)
+                    ) + 1
+                  : dt.position + asc_pos - 1;
+                }
+            // console.log(asc_planet_data);
+                var planetPositions = [...planet_data.map(dt=> dt.position)]
+                planetPositions = [...new Set(planetPositions)]
+                console.log(planetPositions);
+            // console.log(JSON.stringify(planet_data));
+            for (let dt of planetPositions) {
+              result.push({
+                pos: dt,
+                no_of_planet: planet_data.filter(
+                  (pdt) => pdt.position == dt && pdt.name != "Ascendant"
+                ).length,
+              });
             }
+
+            for (dt of ElementoryField) {
+              var eleObj = {},
+                totPla = 0;
+              for (rdt of result) {
+                if (dt.fields.includes(rdt.pos)) {
+                  totPla += rdt.no_of_planet;
+                }
+              }
+              eleObj[dt.flag] = totPla;
+            //   elementVal.push(eleObj);
+              elementVal.push({flag: dt.flag, marks: totPla});
+            }
+            // console.log('PlanetList', result);
+            // console.log('element', elementVal);
+            var maxValue = Math.max(...elementVal.map(dt=>dt.marks))
+            var final_res = elementVal.filter(dt=> dt.marks == maxValue)
+            resolve(final_res);
           }
-          eleObj[dt.flag] = totPla;
-        //   elementVal.push(eleObj);
-          elementVal.push({flag: dt.flag, marks: totPla});
+        }catch(err){
+            console.log(err);
+            resolve([]);
         }
-        var maxValue = Math.max(...elementVal.map(dt=>dt.marks))
-        var final_res = elementVal.filter(dt=> dt.marks == maxValue)
-        resolve(final_res);
-      } else {
-        resolve([]);
-      }
+      })
     } catch (err) {
       console.log(err);
       resolve([]);

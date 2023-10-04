@@ -271,37 +271,48 @@ app.use((req, res, next) => {
 // }]
 
 app.get("/", async (req, res) => {
-  var date = '1998-04-05T17:06'
-  console.log(new Date(date));
-  var data = require('./raw_data/1-199-05-04T11-20-00.000Z.json')
-  var planet_data = data.data.planet_position
-  var asc_pos = planet_data.findIndex(dt => dt.name == 'Ascendant'), planets = [], result = [], elementVal = []
-  console.log(planet_data[asc_pos].position);
-  var arrRotate = true
+  // var date = '1998-04-05T17:06'
+  // console.log(new Date(date));
+  // var data = require('./raw_data/1-199-05-04T11-20-00.000Z.json')
+  // var planet_data = data.data.planet_position
+  // var asc_pos = planet_data.findIndex(dt => dt.name == 'Ascendant'), planets = [], result = [], elementVal = []
+  // console.log(planet_data[asc_pos].position);
+  // var arrRotate = true
   // while(arrRotate){
   //  if() 
   // }
-  for(let dt of planet_data){
-    dt.position = dt.position >= planet_data[asc_pos].position ? Math.abs(parseInt(dt.position-planet_data[asc_pos].position))+1 : (dt.position+planet_data[asc_pos].position)-1
-    planets.push(dt.position)
-  }
+  // for(let dt of planet_data){
+  //   dt.position = dt.position >= planet_data[asc_pos].position ? Math.abs(parseInt(dt.position-planet_data[asc_pos].position))+1 : (dt.position+planet_data[asc_pos].position)-1
+  //   planets.push(dt.position)
+  // }
 
-  planets = [...new Set(planets)]
-  for(let dt of planets){
-    result.push({pos: dt, no_of_planet: planet_data.filter((pdt) => pdt.position == dt).length})
-  }
+  // planets = [...new Set(planets)]
+  // for(let dt of planets){
+  //   result.push({pos: dt, no_of_planet: planet_data.filter((pdt) => pdt.position == dt).length})
+  // }
 
-  for(dt of ElementoryField){
-    var eleObj = {}, totPla=0
-    for(rdt of result){
-      if(dt.fields.includes(rdt.pos)){
-        totPla += rdt.no_of_planet
-      }
-    }
-    eleObj[dt.flag] = totPla
-    elementVal.push(eleObj)
+  // for(dt of ElementoryField){
+  //   var eleObj = {}, totPla=0
+  //   for(rdt of result){
+  //     if(dt.fields.includes(rdt.pos)){
+  //       totPla += rdt.no_of_planet
+  //     }
+  //   }
+  //   eleObj[dt.flag] = totPla
+  //   elementVal.push(eleObj)
+  // }
+  var data = require('./cities_lat_long.json'), res_dt;
+  for (let dt of data){
+    var table_name = "md_cities",
+    fields =`lattitude = '${dt.lat}' , longtitude = '${dt.lng}'` , 
+    values = null,
+    whr = `lower(REPLACE(REPLACE(REPLACE(name, "'", ""), "-", ""), " ", "")) = "${dt.city.split(" ").join("").replace("'", "").replace("-", "").toLowerCase()}"`,
+    flag = 1;
+    res_dt = await db_Insert(table_name, fields, values, whr, flag);
+    console.log(dt.city.replace("'", "").replace("-", "").toLowerCase());
   }
-  res.send(elementVal)
+    res.send(res_dt)
+  // res.send(elementVal)
   // var frm_number = [2, 4, 7]
   // var to_number = [
   //   {num: 8, flag: 'VA'},
