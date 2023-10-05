@@ -33,8 +33,8 @@ UserRouter.post("/user_profile", async (req, res) => {
    
     // console.log(BirthDate);
     // console.log(`${date}T${time}Z`);
-    // req_data = Buffer.from(req_data.data, "base64").toString();
-    // req_data = JSON.parse(req_data);
+    req_data = Buffer.from(req_data.data, "base64").toString();
+    req_data = JSON.parse(req_data);
 
     try{
      var BirthDate = new Date(req_data.field_birth_date).toISOString();
@@ -170,10 +170,7 @@ UserRouter.post("/user_about", async (req, res) => {
   req_data = JSON.parse(req_data);
   console.log(req_data);
   var table_name = "td_user_profile",
-    fields =
-      req_data.user_id > 0
-        ? `about_us = '${req_data.field_About_us}', modified_by = '${req_data.user}', modified_dt = '${datetime}'`
-        : null,
+    fields = `about_us = '${req_data.field_About_us}', modified_by = '${req_data.user}', modified_dt = '${datetime}'`,
     values = null,
     whr = `id= '${req_data.user_id}'`,
     flag = 1;
