@@ -332,10 +332,10 @@ app.get("/", async (req, res) => {
   //   }
   // }
   // console.log('get request');
-  // var data = require('./sample_data.json')
+//   var data = require('./language.json')
 // for (let dt of data){
 //   console.log(dt);
-//   await db_Insert('md_document', '(doc_type)', `('${dt.name}')`, null, 0)
+//   await db_Insert('md_language', '(lang_name)', `('${dt.name}')`, null, 0)
 // }
 
   // var arr = [];
