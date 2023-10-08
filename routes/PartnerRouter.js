@@ -4,7 +4,7 @@ const express = require('express'),
    request = require("request"),
    location = require("../location.json");
 
-const { promises } = require('nodemailer/lib/xoauth2');
+// const { promises } = require('nodemailer/lib/xoauth2');
 const { db_Select, EncryptDataToSend, db_Insert} = require('../module/MasterModule');
 const { user_groom_loc, user_basic_info, user_hobbies } = require('../module/ProfileModule');
 const { partner_match, RashiMatch, NumberMatchWithDate, JotokMatch, ElementMatch, MongalMatch, MoonshineMatch, calculateElementMarks, CalculateMongalMarks,  SunshineNumberMatch, checkAscMongalDosh, checkMoonMongalDosh, MoonShineName} = require('../module/PartnerModel');

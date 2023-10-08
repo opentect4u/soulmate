@@ -282,6 +282,28 @@ app.get("/", async (req, res) => {
   // for (let dt of data){
   //   console.log(dt);
   //   await db_Insert('md_language', '(lang_name)', `('${dt.name}')`, null, 0)
+  // console.log('get request');
+//   var data = require('./language.json')
+// for (let dt of data){
+//   console.log(dt);
+//   await db_Insert('md_language', '(lang_name)', `('${dt.name}')`, null, 0)
+// }
+
+  // var arr = [];
+  // res.send(data)
+  // for(i=0; i<data.data.planet_position.length; i++){
+  //     nakhatra_name = await getNakhatra(data.data.planet_position[i].degree,data.data.planet_position[i].position)
+  //     console.log(nakhatra_name);
+  //  var planet = {
+  //        "planet_name" : data.data.planet_position[i].name,
+  //        "position" : data.data.planet_position[i].position,
+  //        "degree" : data.data.planet_position[i].degree,
+  //        "rashi_name" : data.data.planet_position[i].rasi.name,
+  //        "lord_name" : data.data.planet_position[i].rasi.lord.name,
+  //        "verdic_name" : data.data.planet_position[i].rasi.lord.vedic_name,
+  //        nakhatra_name : nakhatra_name.msg[0].nakhatra
+  //     }
+  //     arr.push(planet)
   // }
   res.send('lala')
 });
