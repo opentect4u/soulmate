@@ -129,4 +129,41 @@ const getJotukRashiId = (rasi_name = null, nakhatra_name = null) => {
   });
 };
 
+MasterRouter.get('/countries_list', async (req, res) => {
+    var data = req.query
+    // console.log(data);
+    var select = 'id, shortname, name, phonecode', 
+        table_name = 'md_countries',
+        whr = data.id > 0 ? `id = ${id}` : null,
+        order = null;
+    var res_dt = await db_Select(select, table_name, whr, order)
+    // res.send(res_dt)
+    res.send({suc: 1, msg: Buffer.from(JSON.stringify(res_dt.msg), 'utf8').toString('base64')})
+});
+
+
+MasterRouter.get('/states_list', async (req, res) => {
+    var data = req.query.country_id;
+    // console.log(data);
+    var select = 'id, name, country_id', 
+        table_name = 'md_states',
+        whr = data.country_id > 0 ? `country_id = ${country_id}` : null,
+        order = null;
+    var res_dt = await db_Select(select, table_name, whr, order)
+    // res.send(res_dt)
+    res.send({suc: 1, msg: Buffer.from(JSON.stringify(res_dt.msg), 'utf8').toString('base64')})
+});
+
+MasterRouter.get('/cities_list', async (req, res) => {
+    var data = req.query.state_id
+    // console.log(data);
+    var select = 'id, name, state_id', 
+        table_name = 'md_cities',
+        whr = data.states_id > 0 ? `state_id = ${state_id}` : null,
+        order = null;
+    var res_dt = await db_Select(select, table_name, whr, order)
+    // res.send(res_dt)
+    res.send({suc: 1, msg: Buffer.from(JSON.stringify(res_dt.msg), 'utf8').toString('base64')})
+});
+
 module.exports = { MasterRouter, getNakhatra, getJotukRashiId };

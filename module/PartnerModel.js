@@ -464,6 +464,7 @@ const MoonshineMatch = (own_rashi, partner_rashi) => {
 
 const SunshineNumberMatch = (frm_rashi_id, to_rashi_id, m_number, pDob) => {
   return new Promise(async (resolve, reject) => {
+    var marks = 0
     var select = `id,frm_rashi_id,b_day,b_month,to_rashi_id,m_number,match_flag`,
       table_name = `md_sunshine_match`,
       whr = `STR_TO_DATE(CONCAT(YEAR(CURDATE()), '-', b_month, '-', b_day), '%Y-%m-%d') 
@@ -473,7 +474,20 @@ const SunshineNumberMatch = (frm_rashi_id, to_rashi_id, m_number, pDob) => {
       AND frm_rashi_id = '${frm_rashi_id}' AND to_rashi_id = '${to_rashi_id}' AND m_number = '${m_number}'`,
       order = null;
     var res_dt = await db_Select(select, table_name, whr, order);
-    var marks = res_dt.suc > 0 ? (res_dt.msg.length > 0 ? (res_dt.msg[0].match_flag == 'VG' ? 20 : (res_dt.msg[0].match_flag == 'G' ? 15 : 5)) : 0) : 0
+    if(res_dt.suc > 0 && res_dt.msg.length > 0){
+      marks = res_dt.suc > 0 ? (res_dt.msg.length > 0 ? (res_dt.msg[0].match_flag == 'VG' ? 20 : (res_dt.msg[0].match_flag == 'G' ? 15 : 5)) : 0) : 0
+    }else{
+      var select = `id,frm_rashi_id,b_day,b_month,to_rashi_id,m_number,match_flag`,
+        table_name = `md_sunshine_match`,
+        whr = `STR_TO_DATE(CONCAT(YEAR(CURDATE()), '-', b_month, '-', b_day), '%Y-%m-%d') 
+        <= '${dateFormat(new Date(), "yyyy")}-${dateFormat(pDob, "mm-dd")}' 
+        AND
+        STR_TO_DATE(CONCAT(YEAR(CURDATE()), '-', b_month, '-', b_day), '%Y-%m-%d') >= '${dateFormat(new Date(), "yyyy")}-${dateFormat(pDob, "mm-dd")}' 
+        AND frm_rashi_id = '${frm_rashi_id}' AND to_rashi_id = '${to_rashi_id}'`,
+        order = null;
+      var res_dt = await db_Select(select, table_name, whr, order);
+      marks = res_dt.suc > 0 && res_dt.msg.length > 0 ? 5 : 0
+    }
     resolve(marks);
   })
 };

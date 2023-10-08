@@ -19,7 +19,7 @@ const {fileExtLimiter} = require('./middleware/fileExtLimiter');
 const { db_Insert, db_Select, ElementoryField } = require("./module/MasterModule");
 const { MasterRouter, getNakhatra } = require("./routes/MasterRouter");
 const { ProfileRouter } = require("./routes/ProfileRouter");
-const { rashiRouter } = require("./routes/RasiRouter");
+const { rashiRouter, addKundaliUser } = require("./routes/RasiRouter");
 const { UserRouter } = require("./routes/UserRouter");
 const { PartnerRouter } = require("./routes/PartnerRouter");
 const { KycRouter } = require('./routes/KycRouter');
@@ -271,93 +271,19 @@ app.use((req, res, next) => {
 // }]
 
 app.get("/", async (req, res) => {
-  // var date = '1998-04-05T17:06'
-  // console.log(new Date(date));
-  // var data = require('./raw_data/1-199-05-04T11-20-00.000Z.json')
-  // var planet_data = data.data.planet_position
-  // var asc_pos = planet_data.findIndex(dt => dt.name == 'Ascendant'), planets = [], result = [], elementVal = []
-  // console.log(planet_data[asc_pos].position);
-  // var arrRotate = true
-  // while(arrRotate){
-  //  if() 
-  // }
-  // for(let dt of planet_data){
-  //   dt.position = dt.position >= planet_data[asc_pos].position ? Math.abs(parseInt(dt.position-planet_data[asc_pos].position))+1 : (dt.position+planet_data[asc_pos].position)-1
-  //   planets.push(dt.position)
-  // }
-
-  // planets = [...new Set(planets)]
-  // for(let dt of planets){
-  //   result.push({pos: dt, no_of_planet: planet_data.filter((pdt) => pdt.position == dt).length})
-  // }
-
-  // for(dt of ElementoryField){
-  //   var eleObj = {}, totPla=0
-  //   for(rdt of result){
-  //     if(dt.fields.includes(rdt.pos)){
-  //       totPla += rdt.no_of_planet
-  //     }
-  //   }
-  //   eleObj[dt.flag] = totPla
-  //   elementVal.push(eleObj)
-  // }
-  var data = require('./cities_lat_long.json'), res_dt;
-  for (let dt of data){
-    var table_name = "md_cities",
-    fields =`lattitude = '${dt.lat}' , longtitude = '${dt.lng}'` , 
-    values = null,
-    whr = `lower(REPLACE(REPLACE(REPLACE(name, "'", ""), "-", ""), " ", "")) = "${dt.city.split(" ").join("").replace("'", "").replace("-", "").toLowerCase()}"`,
-    flag = 1;
-    res_dt = await db_Insert(table_name, fields, values, whr, flag);
-    console.log(dt.city.replace("'", "").replace("-", "").toLowerCase());
-  }
-    res.send(res_dt)
-  // res.send(elementVal)
-  // var frm_number = [2, 4, 7]
-  // var to_number = [
-  //   {num: 8, flag: 'VA'},
-  //   {num: 17, flag: 'VA'},
-  //   {num: 26, flag: 'VA'},
-  //   {num: 9, flag: 'VA'},
-  //   {num: 18, flag: 'VA'},
-  //   {num: 27, flag: 'VA'},
-  //   {num: 3, flag: 'MA'},
-  //   {num: 12, flag: 'MA'},
-  //   {num: 21, flag: 'MA'},
-  //   {num: 30, flag: 'MA'},
-  // ];
-  // for(let dt of frm_number){
-  //   for(tdt of to_number){
-  //     await db_Insert('md_frndsp_btwn_number', '(frm_number, to_number, frnd_flag)', `(${dt}, ${tdt.num}, '${tdt.flag}')`, null, 0)
+  // var res_dt = await db_Select('id, kundali_file_name', 'td_user_profile', `jotok_rasi_id = 0 AND kundali_file_name IS NOT NULL`, null)
+  // if(res_dt.suc > 0 && res_dt.msg.length > 0){
+  //   for(let dt of res_dt.msg){
+  //     var kundali_data = await addKundaliUser(dt.kundali_file_name)
+  //     await db_Insert('td_user_profile', `rasi_id = '${kundali_data.rasi_id}', nakhatra_id = '${kundali_data.nakhatra_id}', jotok_rasi_id = '${kundali_data.jotok_rasi_id}'`, null, `id=${dt.id}`, 1)
   //   }
   // }
-  // console.log('get request');
-  // var data = require('./sample_data.json')
-// for (let dt of data){
-//   console.log(dt);
-//   await db_Insert('md_document', '(doc_type)', `('${dt.name}')`, null, 0)
-// }
-
-  // var arr = [];
-  // res.send(data)
-  // for(i=0; i<data.data.planet_position.length; i++){
-  //     nakhatra_name = await getNakhatra(data.data.planet_position[i].degree,data.data.planet_position[i].position)
-  //     console.log(nakhatra_name);
-  //  var planet = {
-  //        "planet_name" : data.data.planet_position[i].name,
-  //        "position" : data.data.planet_position[i].position,
-  //        "degree" : data.data.planet_position[i].degree,
-  //        "rashi_name" : data.data.planet_position[i].rasi.name,
-  //        "lord_name" : data.data.planet_position[i].rasi.lord.name,
-  //        "verdic_name" : data.data.planet_position[i].rasi.lord.vedic_name,
-  //        nakhatra_name : nakhatra_name.msg[0].nakhatra
-  //     }
-  //     arr.push(planet)
+  // var data = require('./language.json')
+  // for (let dt of data){
+  //   console.log(dt);
+  //   await db_Insert('md_language', '(lang_name)', `('${dt.name}')`, null, 0)
   // }
-  // var sendEmailStatus = await SendUserEmail('sayantika@synergicsoftek.in')
-  // res.send(sendEmailStatus)
-  // res.send(arr);
-  // res.send("I am a server")
+  res.send('lala')
 });
 
 const sendMail = require("./controllers/sendMail");
