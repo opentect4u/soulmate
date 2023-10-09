@@ -157,7 +157,7 @@ MasterRouter.get('/states_list', async (req, res) => {
 MasterRouter.get('/cities_list', async (req, res) => {
     var data = req.query.state_id
     // console.log(data);
-    var select = 'id, name, state_id', 
+    var select = 'id, name, state_id, lattitude, longtitude', 
         table_name = 'md_cities',
         whr = data > 0 ? `state_id = ${data}` : null,
         order = null;
