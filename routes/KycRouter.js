@@ -135,5 +135,8 @@ KycRouter.get("/single_pic_delete", async (req, res) => {
   whr = `id=${data.id}`
   var res_dt = await db_Delete(table_name,whr)
   res.send(res_dt)
-})
-    module.exports = {KycRouter}
+});
+
+// KycRouter.get('/')
+
+module.exports = {KycRouter}

@@ -166,4 +166,17 @@ MasterRouter.get('/cities_list', async (req, res) => {
     res.send({suc: 1, msg: Buffer.from(JSON.stringify(res_dt.msg), 'utf8').toString('base64')})
 });
 
+
+MasterRouter.get('/hobbies_list', async (req, res) => {
+    var data = req.query;
+    var select = 'id, hobby',
+    table_name = 'md_hobby',
+    whr = data.id > 0 ? `id = ${id}` : null,
+    order = null;
+    var res_dt = await db_Select(select, table_name, whr, order)
+    // console.log(res_dt);
+    // res.send(res_dt)
+    res.send({suc: 1, msg: Buffer.from(JSON.stringify(res_dt.msg), 'utf-8').toString('base64')})
+})
+
 module.exports = { MasterRouter, getNakhatra, getJotukRashiId };

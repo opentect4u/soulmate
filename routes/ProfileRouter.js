@@ -381,5 +381,4 @@ ProfileRouter.post("/send_otp", async (req, res) => {
 res.send({ suc: 1, msg: 'Otp Sent', otp: 1234 })
   });
 
-
 module.exports = { ProfileRouter };
