@@ -147,7 +147,7 @@ MasterRouter.get('/states_list', async (req, res) => {
     // console.log(data);
     var select = 'id, name, country_id', 
         table_name = 'md_states',
-        whr = data.country_id > 0 ? `country_id = ${country_id}` : null,
+        whr = data > 0 ? `country_id = ${data}` : null,
         order = null;
     var res_dt = await db_Select(select, table_name, whr, order)
     // res.send(res_dt)
@@ -159,7 +159,7 @@ MasterRouter.get('/cities_list', async (req, res) => {
     // console.log(data);
     var select = 'id, name, state_id', 
         table_name = 'md_cities',
-        whr = data.states_id > 0 ? `state_id = ${state_id}` : null,
+        whr = data > 0 ? `state_id = ${data}` : null,
         order = null;
     var res_dt = await db_Select(select, table_name, whr, order)
     // res.send(res_dt)

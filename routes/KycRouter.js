@@ -137,6 +137,5 @@ KycRouter.get("/single_pic_delete", async (req, res) => {
   res.send(res_dt)
 });
 
-// KycRouter.get('/')
 
 module.exports = {KycRouter}
