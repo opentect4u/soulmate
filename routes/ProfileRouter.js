@@ -160,7 +160,7 @@ ProfileRouter.post("/family_dtls", async (req, res) => {
     values = `('${data.user_id}', '${data.field_family_status}', '${data.field_family_type}', '${data.field_family_value}', '${data.field_No_Sister}', '${data.field_No_Brother}', '${data.field_Father_Occupation}', '${data.field_Mother_Occupation}', '${data.field_Family_Location}', '${data.user}', '${datetime}')`,
     whr =
       chk_dt.suc > 0 && chk_dt.msg.length > 0
-        ? `id = ${chk_dt.msg[0].id}`
+        ? `user_id = ${chk_dt.msg[0].id}`
         : null,
     flag = chk_dt.suc > 0 && chk_dt.msg.length > 0 ? 1 : 0;
   var res_dt = await db_Insert(table_name, fields, values, whr, flag);
