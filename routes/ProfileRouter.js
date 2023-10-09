@@ -199,7 +199,7 @@ ProfileRouter.get("/user_hobbies", async (req, res) => {
     hobbie_data = {},
     res_dt;
   res_dt = await user_hobbies(data);
-  // res_dt = await EncryptDataToSend(res_dt);
+  res_dt = await EncryptDataToSend(res_dt);
   res.send(res_dt);
 });
 
