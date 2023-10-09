@@ -11,6 +11,7 @@ const {
   db_Select,
   EncryptDataToSend,
   db_Insert,
+  db_Delete,
 } = require("../module/MasterModule");
 const {
   user_groom_loc,
@@ -198,7 +199,7 @@ ProfileRouter.get("/user_hobbies", async (req, res) => {
     hobbie_data = {},
     res_dt;
   res_dt = await user_hobbies(data);
-  res_dt = await EncryptDataToSend(res_dt);
+  // res_dt = await EncryptDataToSend(res_dt);
   res.send(res_dt);
 });
 
@@ -240,25 +241,46 @@ ProfileRouter.post("/user_hobbies", async (req, res) => {
   ];
 
   for (let dt of hobbies_tb_data) {
+    // console.log(data[dt.input_field]);
+    let a = '';
+    for(let idt of data[dt.input_field]){
+      if(a != ''){
+        a = `${a}, '${idt}'`
+      }else{
+        a = `'${idt}'`
+      }
+    }
+    // console.log(`${dt.field_name} NOT IN(${a})`);
+    try{
+      if(data[dt.input_field].length > 0){
+        await db_Delete(dt.table_name, `${dt.field_name} NOT IN(${a})`)
+      }
+    }catch(err){
+      console.log(err);
+    }
     for (let hdt of data[dt.input_field]) {
-      var select = "id",
-        table_name = `${dt.table_name}`,
-        whr = `user_id = ${data.user_id} AND ${dt.field_name} = '${hdt}'`,
-        order = null;
-      var chk_dt = await db_Select(select, table_name, whr, order);
-
-      var table_name = `${dt.table_name}`,
-        fields =
-          chk_dt.suc > 0 && chk_dt.msg.length > 0
-            ? `${dt.field_name} = '${hdt}', modified_by = '${data.user}', modified_dt = '${datetime}'`
-            : `(user_id, ${dt.field_name}, created_by, created_dt)`,
-        values = `('${data.user_id}', '${hdt}', '${data.user}', '${datetime}')`,
-        whr =
-          chk_dt.suc > 0 && chk_dt.msg.length > 0
-            ? `id = ${chk_dt.msg[0].id}`
-            : null,
-        flag = chk_dt.suc > 0 && chk_dt.msg.length > 0 ? 1 : 0;
-      res_dt = await db_Insert(table_name, fields, values, whr, flag);
+      try{
+        var select = "id",
+          table_name = `${dt.table_name}`,
+          whr = `user_id = ${data.user_id} AND ${dt.field_name} = '${hdt}'`,
+          order = null;
+        var chk_dt = await db_Select(select, table_name, whr, order);
+  
+        var table_name = `${dt.table_name}`,
+          fields =
+            chk_dt.suc > 0 && chk_dt.msg.length > 0
+              ? `${dt.field_name} = '${hdt}', modified_by = '${data.user}', modified_dt = '${datetime}'`
+              : `(user_id, ${dt.field_name}, created_by, created_dt)`,
+          values = `('${data.user_id}', '${hdt}', '${data.user}', '${datetime}')`,
+          whr =
+            chk_dt.suc > 0 && chk_dt.msg.length > 0
+              ? `id = ${chk_dt.msg[0].id}`
+              : null,
+          flag = chk_dt.suc > 0 && chk_dt.msg.length > 0 ? 1 : 0;
+        res_dt = await db_Insert(table_name, fields, values, whr, flag);
+      }catch(err){
+        console.log(err);
+      }
     }
   }
   res.send(res_dt);

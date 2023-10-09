@@ -47,17 +47,17 @@ const user_hobbies = (data) => {
     return new Promise (async (resolve, reject) => {
         var hobbie_data = {}, res_dt;
         var hobbies_tb_data = [
-            {field_name: "id, hobbies_interest", table_name: "td_user_hobbies_int", input_field: "field_Hobbies_Interests"},
-            {field_name: "id, music_name", table_name: "td_user_hobbies_music", input_field: "field_Music"},
-            {field_name: "id, sports_name", table_name: "td_user_hobbies_sports", input_field: "field_Sports"},
-            {field_name: "id, movie_name", table_name: "td_user_hobbies_movies", input_field: "field_Preferred_Movies"},
-            {field_name: "id, lang_name", table_name: "td_user_hobbies_lang", input_field: "field_Spoken_Languages"},
+            {field_name: "a.id, a.hobbies_interest, b.hobby", table_name: "td_user_hobbies_int a, md_hobby b", whr: `AND a.hobbies_interest=b.id`, input_field: "field_Hobbies_Interests"},
+            {field_name: "id, music_name", table_name: "td_user_hobbies_music", whr: ``, input_field: "field_Music"},
+            {field_name: "id, sports_name", table_name: "td_user_hobbies_sports", whr: ``, input_field: "field_Sports"},
+            {field_name: "id, movie_name", table_name: "td_user_hobbies_movies", whr: ``, input_field: "field_Preferred_Movies"},
+            {field_name: "a.id, a.lang_name lang_id, b.lang_name", table_name: "td_user_hobbies_lang a, md_language b", whr: `AND a.lang_name=b.id`, input_field: "field_Spoken_Languages"},
         ]
     
         for(let dt of hobbies_tb_data){
             var select = `${dt.field_name}`,
                 table_name = `${dt.table_name}`,
-                whr = data.user_id > 0 ? `user_id=${data.user_id}` : null,
+                whr = data.user_id > 0 ? `user_id=${data.user_id} ${dt.whr}` : null,
                 order = null;
             res_dt = await db_Select(select, table_name, whr, order);
             res_dt.suc > 0 ? hobbie_data[dt.input_field] = res_dt.msg : ''
