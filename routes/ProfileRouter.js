@@ -90,17 +90,17 @@ ProfileRouter.post("/user_groom_loc", async (req, res) => {
   data = JSON.parse(data);
 
   var select = "id",
-    table_name = "td_user_education",
-    whr = `user_id = ${data.user_id}`,
+    table_name = "td_user_profile",
+    whr = `id = ${data.user_id}`,
     order = null;
   var chk_dt = await db_Select(select, table_name, whr, order);
 
-  var table_name = "td_user_education",
+  var table_name = "td_user_profile",
     fields =
       chk_dt.suc > 0 && chk_dt.msg.length > 0
-        ? `country = '${data.field_Country}', state = '${data.field_State}', city = '${data.field_City}', citizen = '${data.field_Citizenship}', modified_by = '${data.user}', modified_dt = '${datetime}'`
-        : "(user_id, country, state, city, citizen, created_by, created_dt)",
-    values = `('${data.user_id}', '${data.field_Country}', '${data.field_State}', '${data.field_City}', '${data.field_Citizenship}', '${data.user}', '${datetime}')`,
+        ? `country_id = '${data.field_Country}', state_id = '${data.field_State}', city_id = '${data.field_City}', modified_by = '${data.user}', modified_dt = '${datetime}'`
+        : "(country_id, state_id, city_id, created_by, created_dt)",
+    values = `('${data.field_Country}', '${data.field_State}', '${data.field_City}', '${data.field_Citizenship}', '${data.user}', '${datetime}')`,
     whr =
       chk_dt.suc > 0 && chk_dt.msg.length > 0
         ? `id = ${chk_dt.msg[0].id}`
@@ -366,15 +366,20 @@ ProfileRouter.get("/check_mobile_no", async (req, res) => {
   table_name = 'td_user_profile',
   whr = `phone_no = ${data.phone_no}`,
   order = null;
-  var res_dt = await db_Select(select,table_name,whr,order);
-  if(res_dt.suc > 0){
-    if(res_dt.msg.length > 0){
-      result = {suc: 2, msg: "Phone number is already exists"}
+  try{
+    var res_dt = await db_Select(select,table_name,whr,order);
+    if(res_dt.suc > 0){
+      if(res_dt.msg.length > 0){
+        result = {suc: 2, msg: "Phone number is already exists"}
+      }else{
+        result = {suc: 1, msg: "Please enter phone number"}
+      }
     }else{
-      result = {suc: 1, msg: "Please enter phone number"}
+      result = res_dt
     }
-  }else{
-    result = res_dt
+  }catch(err){
+    console.log(err);
+    result = {suc: 0, msg: "No phone number found"}
   }
   res.send(result);
 });

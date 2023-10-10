@@ -159,7 +159,7 @@ MasterRouter.get('/cities_list', async (req, res) => {
     // console.log(data);
     var select = 'id, name, state_id, lattitude, longtitude', 
         table_name = 'md_cities',
-        whr = data > 0 ? `state_id = ${data}` : null,
+        whr = data > 0 ? `state_id = ${data} AND lattitude IS NOT NULL AND longtitude IS NOT NULL` : `lattitude IS NOT NULL AND longtitude IS NOT NULL`,
         order = null;
     var res_dt = await db_Select(select, table_name, whr, order)
     // res.send(res_dt)
@@ -177,6 +177,43 @@ MasterRouter.get('/hobbies_list', async (req, res) => {
     // console.log(res_dt);
     // res.send(res_dt)
     res.send({suc: 1, msg: Buffer.from(JSON.stringify(res_dt.msg), 'utf-8').toString('base64')})
-})
+});
+
+MasterRouter.get('/sports_list', async (req, res) => {
+    var data = req.query
+    // console.log(data);
+    var select = 'id, sports', 
+        table_name = 'md_sports',
+        whr = data.id > 0 ? `id = ${id}` : null,
+        order = null;
+    var res_dt = await db_Select(select, table_name, whr, order)
+    // res.send(res_dt)
+    res.send({suc: 1, msg: Buffer.from(JSON.stringify(res_dt.msg), 'utf8').toString('base64')})
+});
+
+MasterRouter.get('/music_list', async (req, res) => {
+    var data = req.query
+    // console.log(data);
+    var select = 'id, music', 
+        table_name = 'md_music',
+        whr = data.id > 0 ? `id = ${id}` : null,
+        order = null;
+    var res_dt = await db_Select(select, table_name, whr, order)
+    // res.send(res_dt)
+    res.send({suc: 1, msg: Buffer.from(JSON.stringify(res_dt.msg), 'utf8').toString('base64')})
+});
+
+
+MasterRouter.get('/movie_list', async (req, res) => {
+    var data = req.query
+    // console.log(data);
+    var select = 'id, movie', 
+        table_name = 'md_movie',
+        whr = data.id > 0 ? `id = ${id}` : null,
+        order = null;
+    var res_dt = await db_Select(select, table_name, whr, order)
+    // res.send(res_dt)
+    res.send({suc: 1, msg: Buffer.from(JSON.stringify(res_dt.msg), 'utf8').toString('base64')})
+});
 
 module.exports = { MasterRouter, getNakhatra, getJotukRashiId };

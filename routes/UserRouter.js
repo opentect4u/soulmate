@@ -41,14 +41,14 @@ UserRouter.post("/user_profile", async (req, res) => {
     }catch(err){
      console.log(err);
     }
+    
      profile_id = req_data.field_gender+profile_id
      console.log(profile_id);
   var table_name = "td_user_profile",
     fields =
       req_data.id > 0
         ? `u_name = '${req_data.user}',
-         location_id = '${req_data.location_id
-        }',
+         location_id = '${req_data.location_id}',
         latt_long = '${req_data.field_birth_loca}', dob = '${dateFormat(
           req_data.field_birth_date,
           "yyyy-mm-dd HH:MM:ss"
@@ -58,9 +58,8 @@ UserRouter.post("/user_profile", async (req, res) => {
           caste_id = '${req_data.reg_cust_id}',
         mother_tong = '${req_data.field_mother_tong}', modified_by = '${req_data.reg_name
         }', modified_dt = '${datetime}'`
-        : "(profile_id, u_name, phone_no, email_id, location_id, latt_long, dob, ac_for, religion, gender, mother_tong, created_by, created_dt)",
-    values = `('${profile_id}', '${req_data.user}', '${req_data.field_mobile}', '${req_data.field_email_id
-      }', '${req_data.location_id}',
+        : "(profile_id, u_name, phone_no, email_id, country_id, state_id, city_id, location_id, latt_long, dob, ac_for, religion, gender, mother_tong, created_by, created_dt)",
+    values = `('${profile_id}', '${req_data.user}', '${req_data.field_mobile}', '${req_data.field_email_id}', '${req_data.field_State}', '${req_data.field_Country}', '${req_data.field_City}', '${req_data.location_id}',
         '${req_data.field_birth_loca}', '${dateFormat(
         req_data.field_birth_date,
         "yyyy-mm-dd HH:MM:ss"
@@ -102,12 +101,13 @@ UserRouter.post("/user_caste", async (req, res) => {
       req_data.user_id > 0
         ? `caste_id = '${
             req_data.field_cast
+          }', religion = '${req_data.field_ur_religion
           }', oth_comm_marry_flag = '${
             req_data.field_willing_marry_other_commun ? "Y" : "N"
           }', 
          modified_by = '${req_data.user}', modified_dt = '${datetime}'`
-        : "(caste_id, oth_comm_marry_flag, created_by, created_dt)",
-    values = `('${req_data.field_cast}', '${
+        : "(caste_id, religion, oth_comm_marry_flag, created_by, created_dt)",
+    values = `('${req_data.field_cast}', '${req_data.field_ur_religion}', '${
       req_data.field_willing_marry_other_commun ? "Y" : "N"
     }', '${req_data.user}', '${datetime}')`,
     whr = req_data.user_id > 0 ? `id= '${req_data.user_id}'` : null,
@@ -150,13 +150,11 @@ UserRouter.post("/user_professional", async (req, res) => {
       req_data.id > 0
         ? `heigh_education = '${req_data.field_highest_education}', emp_type = '${req_data.field_employed}', 
         occup = '${req_data.field_Occupation}', income = '${req_data.field_Annual_Income}', 
-        work_location = '${req_data.field_Work_Locatio}', state = '${req_data.field_State}', 
-        city = '${req_data.field_City}', ancis_org = '${req_data.reg_Ancestral_Origin}',  country = '${req_data.field_Country}',
-        citizen = '${req_data.reg_citizen}', modified_by = '${req_data.reg_name}', modified_dt = '${datetime}'`
-        : "(user_id, heigh_education, emp_type, occup, income, work_location, state, city, country, created_by, created_dt)",
+        work_location = '${req_data.field_Work_Locatio}', ancis_org = '${req_data.reg_Ancestral_Origin}',
+        modified_by = '${req_data.reg_name}', modified_dt = '${datetime}'`
+        : "(user_id, heigh_education, emp_type, occup, income, work_location, created_by, created_dt)",
     values = `('${req_data.user_id}', '${req_data.field_highest_education}', '${req_data.field_employed}', '${req_data.field_Occupation}',
-        '${req_data.field_Annual_Income}', '${req_data.field_Work_Locatio}', '${req_data.field_State}', '${req_data.field_City}',
-        '${req_data.field_Country}', '${req_data.user}', '${datetime}')`,
+        '${req_data.field_Annual_Income}', '${req_data.field_Work_Locatio}', '${req_data.user}', '${datetime}')`,
     whr = req_data.id > 0 ? `id= '${req_data.id}'` : null,
     flag = req_data.id > 0 ? 1 : 0;
   var res_dt = await db_Insert(table_name, fields, values, whr, flag);

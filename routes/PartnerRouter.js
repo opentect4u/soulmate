@@ -11,8 +11,8 @@ const { partner_match, RashiMatch, NumberMatchWithDate, JotokMatch, ElementMatch
 
 PartnerRouter.get("/partner_pref", async (req, res) => {
     var data = req.query;
-    var select = "a.id, a.user_id, a.age_frm, a.age_to, a.marital_status, a.mother_tounge mother_tounge_id, b.lang_name mother_tounge, a.religion, a.location location_id",
-    table_name = "td_user_partner_pref a LEFT JOIN md_language b ON a.mother_tounge=b.id",
+    var select = "a.id, a.user_id, a.age_frm, a.age_to, a.marital_status, a.mother_tounge mother_tounge_id, b.lang_name mother_tounge, a.religion, c.name city_name, a.city_id city_id, a.country_id, d.name country_name, a.state_id, e.name state_name",
+    table_name = "td_user_partner_pref a LEFT JOIN md_language b ON a.mother_tounge=b.id LEFT JOIN md_cities c ON a.city_id=c.id LEFT JOIN md_countries d ON a.country_id=d.id LEFT JOIN md_states e ON a.state_id=e.id",
     whr = data.user_id > 0 ? `a.user_id=${data.user_id}` : null,
     order = null;
     var res_dt = await db_Select(select, table_name, whr, order);
@@ -42,7 +42,7 @@ PartnerRouter.post("/update_partner", async (req, res) =>{
     var table_name = "td_user_partner_pref",
     fields = dt.suc > 0 && dt.msg.length > 0 ? `${data.field_frm_age > 0 ? `age_frm = '${data.field_frm_age}',` : ''} ${data.field_to_age > 0 ? `age_to = '${data.field_to_age}', ` : ''}
     ${data.field_marital_status != '' ? `marital_status = '${data.field_marital_status}', ` : ''} ${data.field_mother_tong != '' ? `mother_tounge = '${data.field_mother_tong}', ` : ''} ${data.field_ur_religion  ? `religion = '${data.field_ur_religion}', ` : ''}
-    ${data.field_Country > 0 ? `location = '${data.field_Country}', ` : ''}  modified_by = '${data.user}', modified_dt = '${datetime}'` : '(user_id, age_frm, age_to, marital_status, mother_tounge, religion, location,  created_by, created_dt)',
+    ${data.field_Country > 0 ? `country = '${data.field_Country}', ` : ''} , ${data.field_State > 0 ? `state = '${data.field_State}', ` : ''} , ${data.field_City > 0 ? `city = '${data.field_City}', ` : ''} ,modified_by = '${data.user}', modified_dt = '${datetime}'` : '(user_id, age_frm, age_to, marital_status, mother_tounge, religion, location,  created_by, created_dt)',
     values = `('${data.user_id}', '${data.field_frm_age}', '${data.field_to_age}', '${data.field_marital_status}', '${data.field_mother_tong}',
     '${data.field_ur_religion}', '${data.field_Country}', '${data.user}', '${datetime}')`,
     whr = dt.suc > 0 && dt.msg.length > 0 ? `user_id = ${data.user_id}` : null,

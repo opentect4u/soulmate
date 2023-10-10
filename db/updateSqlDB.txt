@@ -435,3 +435,7 @@ ALTER TABLE `td_user_profile` ADD `profile_id` INT(11) NULL DEFAULT NULL AFTER `
 
 UPDATE `md_nakhatra` SET `nakhatra` = 'Uttarsada' WHERE `md_nakhatra`.`nakhatra_id` = 21;
 TRUNCATE TABLE `soul_mate`.`md_language`
+
+
+
+ALTER TABLE `td_user_profile` ADD `country_id` INT NOT NULL DEFAULT '0' COMMENT 'md_countries->id' AFTER `email_id`, ADD `state_id` INT NOT NULL DEFAULT '0' COMMENT 'md_states->id' AFTER `country_id`;
