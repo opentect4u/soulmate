@@ -155,7 +155,7 @@ ProfileRouter.post("/family_dtls", async (req, res) => {
   var table_name = "td_user_p_dtls",
     fields =
       chk_dt.suc > 0 && chk_dt.msg.length > 0
-        ? `family_status =" ${data.field_family_status}", family_type = "${data.field_family_type}", family_values = "${data.field_family_value}", no_sister = "${data.field_No_Sister}", no_brother = "${data.field_No_Brother}", father_occupation = "${data.field_Father_Occupation}", mother_occupation = "${data.field_Mother_Occupation}", family_location = "${data.field_Family_Location}", modified_by = '${data.user}', modified_dt = '${datetime}'`
+        ? `family_status = "${data.field_family_status}", family_type = "${data.field_family_type}", family_values = "${data.field_family_value}", no_sister = "${data.field_No_Sister}", no_brother = "${data.field_No_Brother}", father_occupation = "${data.field_Father_Occupation}", mother_occupation = "${data.field_Mother_Occupation}", family_location = "${data.field_Family_Location}", modified_by = '${data.user}', modified_dt = '${datetime}'`
         : "(user_id, family_status, family_type, family_values, no_sister, no_brother, father_occupation, mother_occupation, family_location, created_by, created_dt)",
     values = `('${data.user_id}', '${data.field_family_status}', '${data.field_family_type}', '${data.field_family_value}', '${data.field_No_Sister}', '${data.field_No_Brother}', '${data.field_Father_Occupation}', '${data.field_Mother_Occupation}', '${data.field_Family_Location}', '${data.user}', '${datetime}')`,
     whr =
