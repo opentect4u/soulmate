@@ -109,7 +109,7 @@ PartnerRouter.get("/partner_match", async (req, res) => {
       (pref_dt.msg[0].own_gender != 'M' ? 
       `AND DATE_FORMAT(from_days(datediff(now(), a.dob)), '%Y')+0 >= DATE_FORMAT(from_days(datediff(now(), '${dateFormat(pref_dt.msg[0].dob, 'yyyy-mm-dd HH:MM:ss')}')), '%Y')+0` : 
       `AND DATE_FORMAT(from_days(datediff(now(), a.dob)), '%Y')+0 <= DATE_FORMAT(from_days(datediff(now(), '${dateFormat(pref_dt.msg[0].dob, 'yyyy-mm-dd HH:MM:ss')}')), '%Y')+0`) : 
-    '')}`;
+    '')} LIMIT ${data.min >= 0 ? data.min : 0}${data.max >= 0 ? ','+data.max : ''}`;
     var res_dt = await db_Select(select, table_name, whr, order);
     // console.log('PDt', res_dt);
 
