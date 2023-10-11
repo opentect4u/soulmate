@@ -29,8 +29,8 @@ PartnerRouter.post("/update_partner", async (req, res) =>{
     var data = req.body;
     datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
-    // data = Buffer.from(data.data, "base64").toString();
-    // data = JSON.parse(data);
+    data = Buffer.from(data.data, "base64").toString();
+    data = JSON.parse(data);
      
     var select = 'id',
     table_name = 'td_user_partner_pref',
