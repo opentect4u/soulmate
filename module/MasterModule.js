@@ -135,7 +135,8 @@ var alpha = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N
   var c = alpha[Math.floor(Math.random() * 62)];
   var d = alpha[Math.floor(Math.random() * 62)];
   var e = alpha[Math.floor(Math.random() * 62)];
-  var sum = a + b + c + d + e;
+  var sum_id = a + b + c + d + e;
+  var sum = sum_id.toUpperCase();
   resolve(sum)
     })
   
