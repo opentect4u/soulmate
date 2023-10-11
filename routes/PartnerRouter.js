@@ -54,7 +54,7 @@ PartnerRouter.post("/update_partner", async (req, res) =>{
 PartnerRouter.get("/partner_match", async (req, res) => {
   var result = [], result_dt;
   var data = req.query;
-  var select = "a.id, a.user_id, a.age_frm, a.age_to, a.marital_status, a.mother_tounge, a.religion, a.location_id, b.gender, b.dob, b.jotok_rasi_id, b.rasi_id, b.kundali_file_name, b.gender own_gender",
+  var select = "a.id, a.user_id, a.age_frm, a.age_to, a.marital_status, a.mother_tounge, a.religion, a.city_id location, b.gender, b.dob, b.jotok_rasi_id, b.rasi_id, b.kundali_file_name, b.gender own_gender",
     table_name = "td_user_profile b LEFT JOIN td_user_partner_pref a ON b.id=a.user_id",
     whr = `b.id=${data.user_id}`,
     order = null;
