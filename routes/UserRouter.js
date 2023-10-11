@@ -29,7 +29,7 @@ const express = require("express"),
 UserRouter.post("/user_profile", async (req, res) => {
   var req_data = req.body,
     datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-    var id = await GenPassword()
+    var profile_id = await GenPassword()
    
     // console.log(BirthDate);
     // console.log(`${date}T${time}Z`);
@@ -42,8 +42,7 @@ UserRouter.post("/user_profile", async (req, res) => {
      console.log(err);
     }
     
-     id = req_data.field_gender+_id
-     profile_id = id.toUppercase();
+     profile_id = req_data.field_gender+profile_id
      console.log(profile_id);
   var table_name = "td_user_profile",
     fields =
