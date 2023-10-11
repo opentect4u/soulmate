@@ -21,7 +21,7 @@ PartnerRouter.get("/partner_pref", async (req, res) => {
     res_dt.suc > 0 && res_dt.msg.length > 0
       ? (location.findIndex((dt) => dt.id == res_dt.msg[0].location_id) >= 0 ? location[location.findIndex((dt) => dt.id == res_dt.msg[0].location_id)]?.name : null) : null;
   res_dt.suc > 0 ? (res_dt.msg.length > 0 ? res_dt.msg[0]["location_name"] = location_name ? location_name : '' : '') : "";
-    // res_dt = await EncryptDataToSend(res_dt)
+    res_dt = await EncryptDataToSend(res_dt)
     res.send(res_dt);
   });
   
