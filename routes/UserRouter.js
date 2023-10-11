@@ -42,7 +42,7 @@ UserRouter.post("/user_profile", async (req, res) => {
      console.log(err);
     }
     
-     id = req_data.field_gender+profile_id
+     id = req_data.field_gender+_id
      profile_id = id.toUppercase();
      console.log(profile_id);
   var table_name = "td_user_profile",
