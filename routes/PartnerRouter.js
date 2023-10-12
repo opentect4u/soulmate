@@ -44,7 +44,7 @@ PartnerRouter.post("/update_partner", async (req, res) =>{
     ${data.field_marital_status != '' ? `marital_status = '${data.field_marital_status}', ` : ''} ${data.field_mother_tong != '' ? `mother_tounge = '${data.field_mother_tong}', ` : ''} ${data.field_ur_religion  ? `religion = '${data.field_ur_religion}', ` : ''}
     ${data.field_Country > 0 ? `country_id = '${data.field_Country}', ` : ''} ${data.field_State > 0 ? `state_id = '${data.field_State}', ` : ''}  ${data.field_City > 0 ? `city_id = '${data.field_City}', ` : ''} modified_by = '${data.user}', modified_dt = '${datetime}'` : '(user_id, age_frm, age_to, marital_status, mother_tounge, religion, country_id, state_id, city_id,  created_by, created_dt)',
     values = `('${data.user_id}', '${data.field_frm_age}', '${data.field_to_age}', '${data.field_marital_status}', '${data.field_mother_tong}',
-    '${data.field_ur_religion}', '${data.field_Country}',  '${data.field_State}',  '${data.field_City}', ${data.user}', '${datetime}')`,
+    '${data.field_ur_religion}', '${data.field_Country}',  '${data.field_State}',  '${data.field_City}', '${data.user}', '${datetime}')`,
     whr = dt.suc > 0 && dt.msg.length > 0 ? `user_id = ${data.user_id}` : null,
     flag = dt.suc > 0 && dt.msg.length > 0 ? 1 : 0;
     var res_dt = await db_Insert(table_name, fields, values, whr, flag);
