@@ -27,7 +27,7 @@ ProfileRouter.get("/user_groom_loc", async (req, res) => {
   //     whr = data.user_id > 0 ? `a.user_id=${data.user_id}` : null,
   //     order = null;
   var res_dt = await user_groom_loc(data);
-  res_dt = await EncryptDataToSend(res_dt);
+  // res_dt = await EncryptDataToSend(res_dt);
   res.send(res_dt);
 });
 
