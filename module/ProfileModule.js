@@ -22,7 +22,7 @@ const user_groom_loc = (data) =>{
     return new Promise (async (resolve, reject) => {
         var select =
             "a.*, b.edu_name education_name, c.occu_name, d.income income_name, e.name work_location",
-            table_name = "td_user_education a LEFT JOIN md_education b ON a.heigh_education=b.id LEFT JOIN  md_occupation c ON a.occup=c.id  LEFT JOIN md_income d ON a.income=d.id LEFT JOIN md_cities e ON a.work_location=e.id",
+            table_name = "td_user_education a LEFT JOIN md_education b ON a.heigh_education=b.id LEFT JOIN  md_occupation c ON a.occup=c.id  LEFT JOIN md_income d ON a.income=d.id LEFT JOIN md_cities e ON a.work_location=e.id LEFT JOIN td_user_profile f ON a.city=f.city_id",
             whr = data.user_id > 0 ? `a.user_id=${data.user_id}` : null,
             order = null;
         var res_dt = await db_Select(select, table_name, whr, order);

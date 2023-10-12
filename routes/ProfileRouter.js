@@ -126,9 +126,9 @@ ProfileRouter.post("/user_prof_info", async (req, res) => {
   var table_name = "td_user_education",
     fields =
       chk_dt.suc > 0 && chk_dt.msg.length > 0
-        ? `heigh_education = '${data.field_highest_education}', emp_type = '${data.field_employed}', occup = '${data.field_Occupation}', edu_in_dtls = '${data.field_Education_Detail}', collage = '${data.field_College}', occup_in_dtls = '${data.field_Occupation_Detail}', org_name = '${data.field_Organization}', income = '${data.field_Annual_Income}', work_location = '${data.work_location}', modified_by = '${data.user}', modified_dt = '${datetime}'`
-        : "(user_id, heigh_education, emp_type, occup, edu_in_dtls, collage, occup_in_dtls, org_name, income, work_location, created_by, created_dt)",
-    values = `('${data.user_id}', '${data.field_highest_education}', '${data.field_employed}', '${data.field_Occupation}', '${data.field_Education_Detail}', '${data.field_College}', '${data.field_Occupation_Detail}', '${data.field_Organization}', '${data.field_Annual_Income}', '${data.work_location}', '${data.user}', '${datetime}')`,
+        ? `heigh_education = '${data.field_highest_education}', emp_type = '${data.field_employed}', occup = '${data.field_Occupation}', edu_in_dtls = '${data.field_Education_Detail}', collage = '${data.field_College}', occup_in_dtls = '${data.field_Occupation_Detail}', org_name = '${data.field_Organization}', income = '${data.field_Annual_Income}', work_location = '${data.work_location}',  work_location_id = '${data.work_location_id}', modified_by = '${data.user}', modified_dt = '${datetime}'`
+        : "(user_id, heigh_education, emp_type, occup, edu_in_dtls, collage, occup_in_dtls, org_name, income, work_location, work_location_id, created_by, created_dt)",
+    values = `('${data.user_id}', '${data.field_highest_education}', '${data.field_employed}', '${data.field_Occupation}', '${data.field_Education_Detail}', '${data.field_College}', '${data.field_Occupation_Detail}', '${data.field_Organization}', '${data.field_Annual_Income}', '${data.work_location}', '${data.work_location_id}', '${data.user}', '${datetime}')`,
     whr =
       chk_dt.suc > 0 && chk_dt.msg.length > 0
         ? `id = ${chk_dt.msg[0].id}`
