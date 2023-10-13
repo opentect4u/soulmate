@@ -59,7 +59,7 @@ UserRouter.post("/user_profile", async (req, res) => {
         mother_tong = '${req_data.field_mother_tong}', modified_by = '${req_data.reg_name
         }', modified_dt = '${datetime}'`
         : "(profile_id, u_name, phone_no, email_id, country_id, state_id, city_id, location_id, latt_long, dob, ac_for, religion, gender, mother_tong, created_by, created_dt)",
-    values = `('${profile_id}', '${req_data.user}', '${req_data.field_mobile}', '${req_data.field_email_id}', '${req_data.field_State}', '${req_data.field_Country}', '${req_data.field_City}', '${req_data.location_id}',
+    values = `('${profile_id}', '${req_data.user}', '${req_data.field_mobile}', '${req_data.field_email_id}', '${req_data.field_Country}', '${req_data.field_State}', '${req_data.field_City}', '${req_data.location_id}',
         '${req_data.field_birth_loca}', '${dateFormat(
         req_data.field_birth_date,
         "yyyy-mm-dd HH:MM:ss"
@@ -164,11 +164,11 @@ UserRouter.post("/user_professional", async (req, res) => {
 UserRouter.post("/user_about", async (req, res) => {
   var req_data = req.body,
     datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-  // req_data = Buffer.from(req_data.data, "base64").toString();
-  // req_data = JSON.parse(req_data);
+  req_data = Buffer.from(req_data.data, "base64").toString();
+  req_data = JSON.parse(req_data);
   console.log(req_data);
   var table_name = "td_user_profile",
-    fields = `about_us = '${req_data.field_About_us}', modified_by = '${req_data.user}', modified_dt = '${datetime}'`,
+    fields = `about_us = "${req_data.field_About_us}", modified_by = '${req_data.user}', modified_dt = '${datetime}'`,
     values = null,
     whr = `id= '${req_data.user_id}'`,
     flag = 1;

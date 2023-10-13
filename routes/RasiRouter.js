@@ -89,9 +89,9 @@ rashiRouter.get("/planet_position", async (req, res) => {
   var request_data = req.query,
     res_dt;
   if (request_data.user_id > 0) {
-    var select = "id, kundali_file_name, location_id",
-      table_name = "td_user_profile",
-      whr = `id = ${request_data.user_id}`,
+    var select = "a.id, a.kundali_file_name, a.location_id, b.name location_name",
+      table_name = "td_user_profile a LEFT JOIN md_cities b ON a.location_id=b.id",
+      whr = `a.id = ${request_data.user_id}`,
       order = null;
     var chk_user = await db_Select(select, table_name, whr, order);
     // console.log(chk_user);
@@ -105,7 +105,7 @@ rashiRouter.get("/planet_position", async (req, res) => {
           fs.readFile(path.join('raw_data', chk_user.msg[0].kundali_file_name), 'utf8', (err, jsonData) => {
             try{
               var pData = JSON.parse(jsonData)
-              console.log('lalala', pData);
+              // console.log('lalala', pData);
               
               var arr = [];
               if (pData.status == "ok") {
@@ -125,16 +125,16 @@ rashiRouter.get("/planet_position", async (req, res) => {
                     // from_deg: nakhatra_name.msg[0]?.from_deg,
                     // to_deg: nakhatra_name.msg[0]?.to_deg,
                   };
-                  console.log(planet);
+                  // console.log(planet);
                   arr.push(planet);
                 }
-                var location_name =
-                  location[
-                    location.findIndex((dt) => dt.id == chk_user.msg[0].location_id)
-                  ].name;
+                // var location_name =
+                //   location[
+                //     location.findIndex((dt) => dt.id == chk_user.msg[0].location_id)
+                //   ].name;
                   // console.log(arr);
                 // var mangal = await MongalMatch(chk_user.msg[0].kundali_file_name)
-                res_dt = { suc: 1, msg: arr, location_name: location_name };
+                res_dt = { suc: 1, msg: arr, location_name: chk_user.msg[0].location_name };
                 res.send(res_dt)
               } else {
                 res_dt = { suc: 0, msg: "error in planet position" };

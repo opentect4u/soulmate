@@ -109,7 +109,7 @@ PartnerRouter.get("/partner_match", async (req, res) => {
       (pref_dt.msg[0].own_gender != 'M' ? 
       `AND DATE_FORMAT(from_days(datediff(now(), a.dob)), '%Y')+0 >= DATE_FORMAT(from_days(datediff(now(), '${dateFormat(pref_dt.msg[0].dob, 'yyyy-mm-dd HH:MM:ss')}')), '%Y')+0` : 
       `AND DATE_FORMAT(from_days(datediff(now(), a.dob)), '%Y')+0 <= DATE_FORMAT(from_days(datediff(now(), '${dateFormat(pref_dt.msg[0].dob, 'yyyy-mm-dd HH:MM:ss')}')), '%Y')+0`) : 
-    '')}`;
+    '')} ${data.max >= 0 && data.min >= 0 ? `LIMIT ${data.min >= 0 ? data.min : 0}${data.max > 0 ? `, ${data.max}` : ''}` : ''}`;
     var res_dt = await db_Select(select, table_name, whr, order);
     // console.log('PDt', res_dt);
 
@@ -441,12 +441,12 @@ PartnerRouter.get('/partner_match_marks', async (req, res) => {
     var moonShineMatch = await MoonshineMatch(own_dt.msg[0].rasi_id, partner_info.msg[0].rasi_id) // Marks Filed
     // console.log('MoonShineMatch', moonShineMatch);
 
-    var SunShineMatch = await SunshineNumberMatch(own_dt.msg[0].rashi_id, partner_info.msg[0].rashi_id, dateFormat(partner_info.msg[0].dob, 'dd'), partner_info.msg[0].dob)
+    var SunShineMatch = await SunshineNumberMatch(own_rashi, partner_rashi, dateFormat(partner_info.msg[0].dob, 'dd'), own_dt.msg[0].dob)
 
     // var tot_match_marks = Math.round(rashi_match + number_match + jotok_match)
     // console.log('Marks Values', jotok_match , elementMarks , mongal_marks , moonShineMatch , SunShineMatch);
     var tot_match_marks = Math.round(jotok_match + elementMarks + mongal_marks + moonShineMatch + SunShineMatch);
-    // console.log('Total Marks', Math.round(tot_match_marks));
+    console.log('Total Marks', jotok_match, elementMarks, mongal_marks, moonShineMatch, SunShineMatch);
 
         
     // PARTNER DETAILS END //
