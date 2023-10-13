@@ -164,8 +164,8 @@ UserRouter.post("/user_professional", async (req, res) => {
 UserRouter.post("/user_about", async (req, res) => {
   var req_data = req.body,
     datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-  // req_data = Buffer.from(req_data.data, "base64").toString();
-  // req_data = JSON.parse(req_data);
+  req_data = Buffer.from(req_data.data, "base64").toString();
+  req_data = JSON.parse(req_data);
   console.log(req_data);
   var table_name = "td_user_profile",
     fields = `about_us = '${req_data.field_About_us}', modified_by = '${req_data.user}', modified_dt = '${datetime}'`,
