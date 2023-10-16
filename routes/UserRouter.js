@@ -162,7 +162,8 @@ UserRouter.post("/user_professional", async (req, res) => {
 });
 
 UserRouter.post("/user_about", async (req, res) => {
-  var req_data = req.body,
+  var req_data = req.body;
+  // res.send(req.body);
     datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
   req_data = Buffer.from(req_data.data, "base64").toString();
   req_data = JSON.parse(req_data);
