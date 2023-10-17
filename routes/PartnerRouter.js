@@ -21,7 +21,7 @@ PartnerRouter.get("/partner_pref", async (req, res) => {
     res_dt.suc > 0 && res_dt.msg.length > 0
       ? (location.findIndex((dt) => dt.id == res_dt.msg[0].location_id) >= 0 ? location[location.findIndex((dt) => dt.id == res_dt.msg[0].location_id)]?.name : null) : null;
   res_dt.suc > 0 ? (res_dt.msg.length > 0 ? res_dt.msg[0]["location_name"] = location_name ? location_name : '' : '') : "";
-    res_dt = await EncryptDataToSend(res_dt)
+    // res_dt = await EncryptDataToSend(res_dt)
     res.send(res_dt);
   });
   
@@ -29,8 +29,8 @@ PartnerRouter.post("/update_partner", async (req, res) =>{
     var data = req.body;
     datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
-    data = Buffer.from(data.data, "base64").toString();
-    data = JSON.parse(data);
+    // data = Buffer.from(data.data, "base64").toString();
+    // data = JSON.parse(data);
      
     var select = 'id',
     table_name = 'td_user_partner_pref',
@@ -38,13 +38,15 @@ PartnerRouter.post("/update_partner", async (req, res) =>{
     order = null;
     var dt = await db_Select(select, table_name, whr, order)
     // console.log(dt);
-
     var table_name = "td_user_partner_pref",
-    fields = dt.suc > 0 && dt.msg.length > 0 ? `${data.field_frm_age > 0 ? `age_frm = '${data.field_frm_age}',` : ''} ${data.field_to_age > 0 ? `age_to = '${data.field_to_age}', ` : ''}
-    ${data.field_marital_status != '' ? `marital_status = '${data.field_marital_status}', ` : ''} ${data.field_mother_tong != '' ? `mother_tounge = '${data.field_mother_tong}', ` : ''} ${data.field_ur_religion  ? `religion = '${data.field_ur_religion}', ` : ''}
-    ${data.field_Country > 0 ? `country_id = '${data.field_Country}', ` : ''} ${data.field_State > 0 ? `state_id = '${data.field_State}', ` : ''}  ${data.field_City > 0 ? `city_id = '${data.field_City}', ` : ''} modified_by = '${data.user}', modified_dt = '${datetime}'` : '(user_id, age_frm, age_to, marital_status, mother_tounge, religion, country_id, state_id, city_id,  created_by, created_dt)',
-    values = `('${data.user_id}', '${data.field_frm_age}', '${data.field_to_age}', '${data.field_marital_status}', '${data.field_mother_tong}',
-    '${data.field_ur_religion}', '${data.field_Country}',  '${data.field_State}',  '${data.field_City}', '${data.user}', '${datetime}')`,
+    fields = dt.suc > 0 && dt.msg.length > 0 ? 
+    `age_frm = '${data.field_frm_age > 0 ? data.field_frm_age : 0}', 
+    age_to = '${data.field_to_age > 0 ? data.field_to_age : 0}',
+    marital_status = '${data.field_marital_status != '' ? data.field_marital_status : ''}', mother_tounge = '${data.field_mother_tong != '' ? data.field_mother_tong : 0}', religion = '${data.field_ur_religion !="" ? data.field_ur_religion : ''}',
+    country_id = '${data.field_Country > 0 ? data.field_Country : 0}', state_id = '${data.field_State > 0 ? data.field_State : 0}', city_id = '${data.field_City > 0 ? data.field_City : 0}', modified_by = '${data.user}', modified_dt = '${datetime}'` : 
+    `(user_id${data.field_frm_age > 0 ? `, age_frm ` : ''} ${data.field_to_age > 0 ? `, age_to` : ''}${data.field_marital_status != '' ? `, marital_status` : ''}${data.field_mother_tong != '' ? `, mother_tounge` : ''}${data.field_ur_religion  ? `, religion` : ''}${data.field_Country > 0 ? `, country_id` : ''}${data.field_State > 0 ? `, state_id` : ''}${data.field_City > 0 ? `, city_id` : ''},  created_by, created_dt)`,
+    values = `('${data.user_id}' ${data.field_frm_age > 0 ? `, '${data.field_frm_age}'` : ''} ${data.field_to_age > 0 ? `, '${data.field_to_age}'` : ''} ${data.field_marital_status != '' ? `, '${data.field_marital_status}'` : ''}
+    ${data.field_mother_tong != '' ? `, '${data.field_mother_tong}'` : ''} ${data.field_ur_religion  ? `, '${data.field_ur_religion}'` : ''} ${data.field_Country > 0 ? `, '${data.field_Country}'` : ''} ${data.field_State > 0 ? `, '${data.field_State}'` : ''} ${data.field_City > 0 ? `, '${data.field_City}'` : ''}, '${data.user}', '${datetime}')`,
     whr = dt.suc > 0 && dt.msg.length > 0 ? `user_id = ${data.user_id}` : null,
     flag = dt.suc > 0 && dt.msg.length > 0 ? 1 : 0;
     var res_dt = await db_Insert(table_name, fields, values, whr, flag);
@@ -54,7 +56,7 @@ PartnerRouter.post("/update_partner", async (req, res) =>{
 PartnerRouter.get("/partner_match", async (req, res) => {
   var result = [], result_dt;
   var data = req.query;
-  var select = "a.id, a.user_id, a.age_frm, a.age_to, a.marital_status, a.mother_tounge, a.religion, a.city_id location, b.gender, b.dob, b.jotok_rasi_id, b.rasi_id, b.kundali_file_name, b.gender own_gender",
+  var select = "a.id, a.user_id, a.age_frm, a.age_to, a.marital_status, a.mother_tounge, a.religion, a.city_id location, b.profile_id, b.gender, b.dob, b.jotok_rasi_id, b.rasi_id, b.kundali_file_name, b.gender own_gender",
     table_name = "td_user_profile b LEFT JOIN td_user_partner_pref a ON b.id=a.user_id",
     whr = `b.id=${data.user_id}`,
     order = null;
