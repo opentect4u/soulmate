@@ -38,7 +38,7 @@ ProfileRouter.get("/user_basic_info", async (req, res) => {
   //     whr = data.user_id > 0 ? `a.user_id=${data.user_id}` : null,
   //     order = null;
   var res_dt = await user_basic_info(data, true);
-  // res_dt = await EncryptDataToSend(res_dt);
+  res_dt = await EncryptDataToSend(res_dt);
   res.send(res_dt);
 });
 
