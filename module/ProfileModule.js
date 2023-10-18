@@ -30,13 +30,21 @@ const user_groom_loc = (data) =>{
     })
 }
 
-const user_basic_info = (data) => {
+const user_basic_info = (data, dashboard_flag = false) => {
   return new Promise (async (resolve, reject) => {
     var select = "a.id user_id, b.id id, b.profile_id, b.dob, b.email_id, b.phone_no, a.marital_status,a.height,a.weight,a.family_status,a.family_values,a.family_type,a.disability_flag,a.body_type,a.drinking_habbits,a.age,b.gender, a.age,a.eating_habbits,a.smoking_habbits,a.no_sister,a.no_brother,a.father_occupation,a.mother_occupation,a.family_location,a.about_my_family,b.u_name,b.ac_for,b.mother_tong mother_tong_id, d.lang_name mother_tong, b.about_us, c.caste_name, b.caste_id, b.religion, b.oth_comm_marry_flag, b.jotok_rasi_id, b.kundali_file_name, b.phone_approved_flag, b.email_approved_flag, e.beng_rashi, b.file_path, b.rasi_id, f.name city_name, b.city_id city_id, b.country_id, g.name country_name, b.state_id, h.name state_name",
         table_name = "td_user_p_dtls a LEFT JOIN td_user_profile b ON a.user_id=b.id LEFT JOIN md_caste_list c ON b.caste_id=c.id LEFT JOIN md_language d ON b.mother_tong=d.id LEFT JOIN md_rashi_pos e ON b.rasi_id = e.position LEFT JOIN md_cities f ON b.city_id=f.id LEFT JOIN md_countries g ON b.country_id=g.id LEFT JOIN md_states h ON b.state_id=h.id",
         whr = data.user_id > 0 ? `a.user_id=${data.user_id}` : null,
         order = null;
     var res_dt = await db_Select(select, table_name, whr, order);
+    if(data.user_id > 0 && dashboard_flag){
+        var select = "IF(COUNT(id) > 0, 'Y', 'N') kyc_data",
+            table_name = "td_user_kyc_list",
+            whr = `user_id = ${data.user_id}`,
+            order = null;
+        var kyc_chk = await db_Select(select, table_name, whr, order);
+        res_dt.suc > 0 && res_dt.msg.length > 0 ? res_dt.msg[0]['kyc_flag'] = (kyc_chk.suc > 0 && kyc_chk.msg.length > 0 ? kyc_chk.msg[0].kyc_data : 'N') : ''
+    }
     // console.log(res_dt);
     resolve(res_dt)
   })

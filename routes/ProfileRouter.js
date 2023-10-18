@@ -37,8 +37,8 @@ ProfileRouter.get("/user_basic_info", async (req, res) => {
   //     table_name = "td_user_p_dtls a LEFT JOIN td_user_profile b ON a.user_id=b.id LEFT JOIN md_caste_list c ON b.caste_id=c.id LEFT JOIN md_language d ON b.mother_tong=d.id",
   //     whr = data.user_id > 0 ? `a.user_id=${data.user_id}` : null,
   //     order = null;
-  var res_dt = await user_basic_info(data);
-  res_dt = await EncryptDataToSend(res_dt);
+  var res_dt = await user_basic_info(data, true);
+  // res_dt = await EncryptDataToSend(res_dt);
   res.send(res_dt);
 });
 
