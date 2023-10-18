@@ -368,11 +368,11 @@ PartnerRouter.post("/partner_match_search", async (req, res) => {
       }
       result_dt = {suc: 1, msg: result}
     }else{
-      result_dt = {suc: 0, msg: []}
+      result_dt = {suc: 1, msg: []}
     }
   }else{
     result_dt = pref_dt
-    // console.log(result_dt);
+    console.log(result_dt);
   }
   // res.send(res_dt)
   // res.send(result)
