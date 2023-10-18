@@ -268,7 +268,8 @@ PartnerRouter.post("/partner_match_search", async (req, res) => {
       ${data.mother_tounge > 0 ? `AND a.mother_tong = ${data.mother_tounge}` : ''} 
       ${data.religion != '' ? `AND a.religion = '${data.religion}'` : ''} 
       ${data.country_id > 0 ? `AND a.country_id = ${data.country_id}` : ''}  
-      ${data.state_id > 0 ? `AND a.state_id = ${data.state_id}` : ''}`  
+      ${data.state_id > 0 ? `AND a.state_id = ${data.state_id}` : ''}
+      ${data.city_id > 0 ? `AND a.state_id = ${data.city_id}` : ''}`    
     // whr = `a.kundali_file_name IS NOT NULL ${data.age_frm > 0 ? `AND DATE_FORMAT(from_days(datediff(now(), a.dob)), '%Y')+0 >= ${data.age_frm} ` : ''} ${data.age_to > 0 ? `AND DATE_FORMAT(from_days(datediff(now(), dob)), '%Y')+0 <= ${data.age_to}` : '' }
     //         ${data.marital_status != '' ? `OR b.marital_status = '${data.marital_status}'` : ''}  ${data.mother_tounge > 0 ? `OR a.mother_tong = ${data.mother_tounge}` : ''}  ${data.religion != '' ? `OR a.religion = '${data.religion}'` : ''}  ${data.location > 0 ? `AND a.location_id = ${data.location}` : ''}`,             
     order = `GROUP BY a.id 
