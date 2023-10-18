@@ -56,7 +56,7 @@ PartnerRouter.post("/update_partner", async (req, res) =>{
 PartnerRouter.get("/partner_match", async (req, res) => {
   var result = [], result_dt;
   var data = req.query;
-  var select = "a.id, a.user_id, a.age_frm, a.age_to, a.marital_status, a.mother_tounge, a.religion, a.city_id location, a.country_id, a.state_id ,b.profile_id, b.gender, b.dob, b.jotok_rasi_id, b.rasi_id, b.kundali_file_name, b.gender own_gender, b.country_id own_country, b.state_id own_state",
+  var select = "a.id, a.user_id, a.age_frm, a.age_to, a.marital_status, a.mother_tounge, a.religion, a.city_id location, a.country_id, a.state_id ,b.profile_id, b.gender, b.dob, b.jotok_rasi_id, b.rasi_id, b.kundali_file_name, b.gender own_gender, b.country_id own_country, b.state_id own_state, b.city_id own_city",
     table_name = "td_user_profile b LEFT JOIN td_user_partner_pref a ON b.id=a.user_id",
     whr = `b.id=${data.user_id}`,
     order = null;
@@ -110,7 +110,10 @@ PartnerRouter.get("/partner_match", async (req, res) => {
       (pref_dt.msg[0].own_country ? `AND a.country_id = ${pref_dt.msg[0].own_country}` : '')}
       ${pref_dt.msg[0].state_id > 0 ? 
         `AND a.state_id = ${pref_dt.msg[0].state_id}` : 
-        (pref_dt.msg[0].own_state ? `AND a.state_id = ${pref_dt.msg[0].own_state}` : '')}`
+        (pref_dt.msg[0].own_state ? `AND a.state_id = ${pref_dt.msg[0].own_state}` : '')}
+        ${pref_dt.msg[0].location > 0 ? 
+          `AND a.location = ${pref_dt.msg[0].city_id}` : 
+          (pref_dt.msg[0].own_city ? `AND a.location = ${pref_dt.msg[0].own_city}` : '')}`
     order = `GROUP BY a.id 
     HAVING a.gender != '${pref_dt.msg[0].gender}' 
     ${pref_dt.msg[0].age_frm > 0 || pref_dt.msg[0].age_to > 0 ?
