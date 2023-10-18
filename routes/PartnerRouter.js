@@ -56,7 +56,7 @@ PartnerRouter.post("/update_partner", async (req, res) =>{
 PartnerRouter.get("/partner_match", async (req, res) => {
   var result = [], result_dt;
   var data = req.query;
-  var select = "a.id, a.user_id, a.age_frm, a.age_to, a.marital_status, a.mother_tounge, a.religion, a.city_id location, b.profile_id, b.gender, b.dob, b.jotok_rasi_id, b.rasi_id, b.kundali_file_name, b.gender own_gender",
+  var select = "a.id, a.user_id, a.age_frm, a.age_to, a.marital_status, a.mother_tounge, a.religion, a.city_id location, a.country_id, a.state_id b.profile_id, b.gender, b.dob, b.jotok_rasi_id, b.rasi_id, b.kundali_file_name, b.gender own_gender, b.coutry_id own_country, b.state_id own_state",
     table_name = "td_user_profile b LEFT JOIN td_user_partner_pref a ON b.id=a.user_id",
     whr = `b.id=${data.user_id}`,
     order = null;
@@ -92,15 +92,25 @@ PartnerRouter.get("/partner_match", async (req, res) => {
     table_name = "td_user_profile a LEFT JOIN td_user_p_dtls b ON a.id=b.user_id",
     // whr = `a.gender != '${pref_dt.msg[0].gender}' AND a.kundali_file_name IS NOT NULL ${pref_dt.msg[0].age_frm > 0 ? `AND DATE_FORMAT(from_days(datediff(now(), a.dob)), '%Y')+0 >= ${pref_dt.msg[0].age_frm} ` : ''} ${pref_dt.msg[0].age_to > 0 ? `AND DATE_FORMAT(from_days(datediff(now(), dob)), '%Y')+0 <= ${pref_dt.msg[0].age_to}` : '' }
     //         ${pref_dt.msg[0].marital_status != '' ? `AND b.marital_status = '${pref_dt.msg[0].marital_status}'` : ''}  ${pref_dt.msg[0].mother_tounge > 0 ? `AND a.mother_tong = ${pref_dt.msg[0].mother_tounge}` : ''}  ${pref_dt.msg[0].religion != '' ? `AND a.religion = '${pref_dt.msg[0].religion}'` : ''}  ${pref_dt.msg[0].location > 0 ? `AND a.location_id = ${pref_dt.msg[0].location}` : ''}` 
-    whr = `a.kundali_file_name IS NOT NULL
-      ${pref_dt.msg[0].marital_status != '' ? `OR b.marital_status = '${pref_dt.msg[0].marital_status}'` : ''} 
-      ${pref_dt.msg[0].mother_tounge > 0 ? `OR a.mother_tong = ${pref_dt.msg[0].mother_tounge}` : ''} 
-      ${pref_dt.msg[0].religion != '' ? `OR a.religion = '${pref_dt.msg[0].religion}'` : ''} 
-      ${pref_dt.msg[0].location > 0 ? 
-        `AND a.location_id = ${pref_dt.msg[0].location}` : 
-        (pref_dt.msg[0].own_location ? `AND a.location_id = ${pref_dt.msg[0].own_location}` : '')}`  
+    // whr = `a.kundali_file_name IS NOT NULL
+    //   ${pref_dt.msg[0].marital_status != '' ? `OR b.marital_status = '${pref_dt.msg[0].marital_status}'` : ''} 
+    //   ${pref_dt.msg[0].mother_tounge > 0 ? `OR a.mother_tong = ${pref_dt.msg[0].mother_tounge}` : ''} 
+    //   ${pref_dt.msg[0].religion != '' ? `OR a.religion = '${pref_dt.msg[0].religion}'` : ''} 
+    //   ${pref_dt.msg[0].location > 0 ? 
+    //     `AND a.location_id = ${pref_dt.msg[0].location}` : 
+    //     (pref_dt.msg[0].own_location ? `AND a.location_id = ${pref_dt.msg[0].own_location}` : '')}`  
     // whr = `a.kundali_file_name IS NOT NULL ${pref_dt.msg[0].age_frm > 0 ? `AND DATE_FORMAT(from_days(datediff(now(), a.dob)), '%Y')+0 >= ${pref_dt.msg[0].age_frm} ` : ''} ${pref_dt.msg[0].age_to > 0 ? `AND DATE_FORMAT(from_days(datediff(now(), dob)), '%Y')+0 <= ${pref_dt.msg[0].age_to}` : '' }
     //         ${pref_dt.msg[0].marital_status != '' ? `OR b.marital_status = '${pref_dt.msg[0].marital_status}'` : ''}  ${pref_dt.msg[0].mother_tounge > 0 ? `OR a.mother_tong = ${pref_dt.msg[0].mother_tounge}` : ''}  ${pref_dt.msg[0].religion != '' ? `OR a.religion = '${pref_dt.msg[0].religion}'` : ''}  ${pref_dt.msg[0].location > 0 ? `AND a.location_id = ${pref_dt.msg[0].location}` : ''}`,             
+    whr = `a.kundali_file_name IS NOT NULL
+    ${pref_dt.msg[0].marital_status != '' ? `OR b.marital_status = '${pref_dt.msg[0].marital_status}'` : ''} 
+    ${pref_dt.msg[0].mother_tounge > 0 ? `OR a.mother_tong = ${pref_dt.msg[0].mother_tounge}` : ''} 
+    ${pref_dt.msg[0].religion != '' ? `OR a.religion = '${pref_dt.msg[0].religion}'` : ''} 
+    ${pref_dt.msg[0].country_id > 0 ? 
+      `AND a.country_id = ${pref_dt.msg[0].country_id}` : 
+      (pref_dt.msg[0].own_country ? `AND a.country_id = ${pref_dt.msg[0].own_country}` : '')}
+      ${pref_dt.msg[0].state_id > 0 ? 
+        `AND a.state_id = ${pref_dt.msg[0].state_id}` : 
+        (pref_dt.msg[0].own_state ? `AND a.state_id = ${pref_dt.msg[0].own_state}` : '')}`
     order = `GROUP BY a.id 
     HAVING a.gender != '${pref_dt.msg[0].gender}' 
     ${pref_dt.msg[0].age_frm > 0 || pref_dt.msg[0].age_to > 0 ?
@@ -362,7 +372,7 @@ PartnerRouter.post("/partner_match_search", async (req, res) => {
     }
   }else{
     result_dt = pref_dt
-    console.log(result_dt);
+    // console.log(result_dt);
   }
   // res.send(res_dt)
   // res.send(result)
