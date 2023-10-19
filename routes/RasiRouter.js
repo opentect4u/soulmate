@@ -196,62 +196,71 @@ const kundali = (user_id, coordinates, datetime) => {
       //         rasiData[0].rasi.name,
       //         nakhatra_name.msg[0]?.nakhatra
       //       );
-          var rasiData = data.data.planet_position.filter(
-            (dt) => dt.name == "Moon"
-          ), nakhatra_name, jotok_rasi_id;
-          var rashiPosData = data.data.planet_position.filter(
-            (dt) => dt.position == rasiData[0].position
-          )
-          if(rashiPosData.length > 1){
-            for(let dt of rashiPosData){
+          if(data.status == 'ok'){
+            var rasiData = data.data.planet_position.filter(
+              (dt) => dt.name == "Moon"
+            ), nakhatra_name, jotok_rasi_id;
+            var rashiPosData = data.data.planet_position.filter(
+              (dt) => dt.position == rasiData[0].position
+            )
+            if(rashiPosData.length > 1){
+              for(let dt of rashiPosData){
+                nakhatra_name = await getNakhatra(
+                  dt.degree,
+                  dt.position
+                );
+                jotok_rasi_id = await getJotukRashiId(
+                  dt.rasi.name,
+                  nakhatra_name.msg[0]?.nakhatra
+                );
+                console.log(jotok_rasi_id);
+                if(jotok_rasi_id.suc > 0 && jotok_rasi_id.msg.length > 0){
+                  break;
+                }
+              }
+            }else{
               nakhatra_name = await getNakhatra(
-                dt.degree,
-                dt.position
+                rasiData[0].degree,
+                rasiData[0].position
               );
               jotok_rasi_id = await getJotukRashiId(
-                dt.rasi.name,
+                rasiData[0].rasi.name,
                 nakhatra_name.msg[0]?.nakhatra
               );
-              console.log(jotok_rasi_id);
-              if(jotok_rasi_id.suc > 0 && jotok_rasi_id.msg.length > 0){
-                break;
-              }
             }
+          
+            var file_name = user_id + "-" + datetime.split(":").join("-");
+            fs.writeFile(
+              path.join(__dirname, `../raw_data/${file_name}.json`),
+              JSON.stringify(data),
+              "utf-8",
+              (err) => {
+                if (err) resolve(err);
+                else
+                  resolve({
+                    file_name: `${file_name}.json`,
+                    rasi_id: parseInt(rasiData[0].rasi.id) + 1,
+                    nakhatra_id:
+                      nakhatra_name.suc > 0 && nakhatra_name.msg.length > 0
+                        ? nakhatra_name.msg[0]?.nakhatra_id
+                        : 0,
+                    jotok_rasi_id:
+                      jotok_rasi_id.suc > 0 && jotok_rasi_id.msg.length > 0
+                        ? jotok_rasi_id.msg[0]?.id
+                        : 0,
+                  });
+              }
+            );
           }else{
-            nakhatra_name = await getNakhatra(
-              rasiData[0].degree,
-              rasiData[0].position
-            );
-            jotok_rasi_id = await getJotukRashiId(
-              rasiData[0].rasi.name,
-              nakhatra_name.msg[0]?.nakhatra
-            );
+            resolve({
+              file_name: '',
+              rasi_id: 0,
+              jotok_rasi_id: 0,
+            })
           }
         }catch(err){
           console.log(err);
         }
-        var file_name = user_id + "-" + datetime.split(":").join("-");
-        fs.writeFile(
-          path.join(__dirname, `../raw_data/${file_name}.json`),
-          JSON.stringify(data),
-          "utf-8",
-          (err) => {
-            if (err) resolve(err);
-            else
-              resolve({
-                file_name: `${file_name}.json`,
-                rasi_id: parseInt(rasiData[0].rasi.id) + 1,
-                nakhatra_id:
-                  nakhatra_name.suc > 0 && nakhatra_name.msg.length > 0
-                    ? nakhatra_name.msg[0]?.nakhatra_id
-                    : 0,
-                jotok_rasi_id:
-                  jotok_rasi_id.suc > 0 && jotok_rasi_id.msg.length > 0
-                    ? jotok_rasi_id.msg[0]?.id
-                    : 0,
-              });
-          }
-        );
         // fs.writeFileSync(path.join(__dirname, `../raw_data/${file_name}.json`), JSON.stringify(data), 'utf-8')
       }
 

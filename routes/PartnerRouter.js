@@ -219,6 +219,23 @@ PartnerRouter.get("/partner_match", async (req, res) => {
   }else{
     result_dt = pref_dt
   }
+
+  // function* streamChunks() {
+  //   const chunkSize = 5;
+  //   for (let i = 0; i < result_dt.msg.length; i += chunkSize) {
+  //     yield result_dt.msg.slice(i, i + chunkSize);
+  //   }
+  // }
+  // res.setHeader('Content-Type', 'application/json');
+  // try{
+  //   for (const chunk of streamChunks()) {
+  //     res.write(JSON.stringify(chunk));
+  //     // res.flush();
+  //   }
+  // }catch(err){
+  //   console.log(err);
+  // }
+  // res.end();
   // res.send(res_dt)
   // res.send(result)
   res.send(result_dt)
