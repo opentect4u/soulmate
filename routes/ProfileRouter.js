@@ -240,7 +240,7 @@ ProfileRouter.post("/user_hobbies", async (req, res) => {
       input_field: "field_Spoken_Languages",
     },
   ];
-
+  
   for (let dt of hobbies_tb_data) {
     // console.log(data[dt.input_field]);
     let a = '';

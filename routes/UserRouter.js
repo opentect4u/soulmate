@@ -180,15 +180,16 @@ UserRouter.post("/user_about", async (req, res) => {
 UserRouter.post("/login", async (req, res) => {
   var data = req.body,
     result;
-  // data = Buffer.from(data.data, "base64").toString();
-  // data = JSON.parse(data);
-  console.log(data);
+  data = Buffer.from(data.data, "base64").toString();
+  data = JSON.parse(data);
+  // console.log(data);
   var select =
       "a.id prof_id, a.user_id, a.profile_id id, a.user_name, a.email_id user_email, a.password, a.last_login, a.pay_status pay_flag, b.plan_id, a.active_flag, b.kundali_file_name, b.rasi_id, b.nakhatra_id, b.jotok_rasi_id, b.dob, b.latt_long",
     table_name = "md_user_login a, td_user_profile b",
     whr = `a.profile_id=b.id AND a.user_id = '${data.user_id}' AND a.active_flag ="Y" `,
     order = null;
   var res_dt = await db_Select(select, table_name, whr, order);
+  // console.log(res_dt);
   if (res_dt.suc > 0) {
     if (res_dt.msg.length > 0) {
       if (await bcrypt.compare(data.password, res_dt.msg[0].password)) {
@@ -203,7 +204,7 @@ UserRouter.post("/login", async (req, res) => {
               console.log(err);
             }
           }
-        }else{
+        }else if(res_dt.msg[0].kundali_file_name == '' || res_dt.msg[0].kundali_file_name == null || res_dt.msg[0].kundali_file_name == undefined){
           try{
             var BirthDate = new Date(res_dt.msg[0].dob).toISOString();
            }catch(err){
