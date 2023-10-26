@@ -89,8 +89,8 @@ rashiRouter.get("/planet_position", async (req, res) => {
   var request_data = req.query,
     res_dt;
   if (request_data.user_id > 0) {
-    var select = "a.id, a.kundali_file_name, a.location_id, b.name location_name",
-      table_name = "td_user_profile a LEFT JOIN md_cities b ON a.location_id=b.id",
+    var select = "a.id, a.kundali_file_name, a.location_id, a.location_id location_name",
+      table_name = "td_user_profile a",
       whr = `a.id = ${request_data.user_id}`,
       order = null;
     var chk_user = await db_Select(select, table_name, whr, order);
