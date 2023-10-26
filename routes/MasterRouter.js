@@ -159,7 +159,8 @@ MasterRouter.get('/cities_list', async (req, res) => {
     // console.log(data);
     var select = 'id, name, state_id, lattitude, longtitude', 
         table_name = 'md_cities',
-        whr = data > 0 ? `state_id = ${data} AND lattitude IS NOT NULL AND longtitude IS NOT NULL` : `lattitude IS NOT NULL AND longtitude IS NOT NULL`,
+        // whr = data > 0 ? `state_id = ${data} AND lattitude IS NOT NULL AND longtitude IS NOT NULL` : `lattitude IS NOT NULL AND longtitude IS NOT NULL`,
+        whr = data > 0 ? `state_id = ${data}` : '',
         order = 'ORDER BY name, state_id';
     var res_dt = await db_Select(select, table_name, whr, order)
     // res.send(res_dt)

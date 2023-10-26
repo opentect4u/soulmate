@@ -94,13 +94,14 @@ ProfileRouter.post("/user_groom_loc", async (req, res) => {
     whr = `id = ${data.user_id}`,
     order = null;
   var chk_dt = await db_Select(select, table_name, whr, order);
+  // console.log(chk_dt);
 
   var table_name = "td_user_profile",
     fields =
       chk_dt.suc > 0 && chk_dt.msg.length > 0
-        ? `country_id = '${data.field_Country}', state_id = '${data.field_State}', city_id = '${data.field_City}', modified_by = '${data.user}', modified_dt = '${datetime}'`
+        ? `country_id = '${data.field_Country}', state_id = '${data.field_State}', city_id = '${data.field_City > 0 ? data.field_City : 0}', modified_by = '${data.user}', modified_dt = '${datetime}'`
         : "(country_id, state_id, city_id, created_by, created_dt)",
-    values = `('${data.field_Country}', '${data.field_State}', '${data.field_City}', '${data.field_Citizenship}', '${data.user}', '${datetime}')`,
+    values = `('${data.field_Country}', '${data.field_State}', '${data.field_City > 0 ? data.field_City : 0}', '${data.user}', '${datetime}')`,
     whr =
       chk_dt.suc > 0 && chk_dt.msg.length > 0
         ? `id = ${chk_dt.msg[0].id}`
