@@ -94,7 +94,7 @@ ProfileRouter.post("/user_groom_loc", async (req, res) => {
     whr = `id = ${data.user_id}`,
     order = null;
   var chk_dt = await db_Select(select, table_name, whr, order);
-  // console.log(chk_dt);
+  console.log(chk_dt);
 
   var table_name = "td_user_profile",
     fields =
