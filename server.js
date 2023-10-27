@@ -283,11 +283,11 @@ app.get("/", async (req, res) => {
   //   console.log(dt);
   //   await db_Insert('md_language', '(lang_name)', `('${dt.name}')`, null, 0)
   // console.log('get request');
-  var data = require('./masterDataCollection/sports_data.json')
-for (let dt of data){
-  console.log(dt);
-  await db_Insert('md_sports', '(sports)', `('${dt.sports}')`, null, 0)
-}
+//   var data = require('./masterDataCollection/sports_data.json')
+// for (let dt of data){
+//   console.log(dt);
+//   await db_Insert('md_sports', '(sports)', `('${dt.sports}')`, null, 0)
+// }
 
   // var arr = [];
   // res.send(data)
@@ -305,6 +305,7 @@ for (let dt of data){
   //     }
   //     arr.push(planet)
   // }
+  // console.log(path.join('/accessToken.json'));
   res.send('lala')
 });
 

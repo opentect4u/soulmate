@@ -205,6 +205,7 @@ UserRouter.post("/login", async (req, res) => {
             }
           }
         }else if(res_dt.msg[0].kundali_file_name == '' || res_dt.msg[0].kundali_file_name == null || res_dt.msg[0].kundali_file_name == undefined){
+          console.log('here');
           try{
             var BirthDate = new Date(res_dt.msg[0].dob).toISOString();
            }catch(err){

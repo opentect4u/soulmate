@@ -169,6 +169,17 @@ const kundali = (user_id, coordinates, datetime) => {
   return new Promise((resolve, reject) => {
     var ayanamsa = 1,
       lang = "en";
+    try{
+      fs.readFile(path.join('/accessToken.json', (err, data) => {
+        if(err){
+          console.log(err);
+        }else{
+          accessToken = JSON.parse(data)
+        }
+      }))
+    }catch(err){
+      console.log(err);
+    }
     var options = {
       method: "GET",
       url: `https://api.prokerala.com/v2/astrology/planet-position?ayanamsa=${ayanamsa}&coordinates=${coordinates}&datetime=${datetime}&la=${lang}`,
