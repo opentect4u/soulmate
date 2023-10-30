@@ -255,7 +255,7 @@ ProfileRouter.post("/user_hobbies", async (req, res) => {
     // console.log(`${dt.field_name} NOT IN(${a})`);
     try{
       if(data[dt.input_field].length > 0){
-        await db_Delete(dt.table_name, `${dt.field_name} NOT IN(${a})`)
+        await db_Delete(dt.table_name, `user_id = ${data.user_id} AND ${dt.field_name} NOT IN(${a})`)
       }
     }catch(err){
       console.log(err);
