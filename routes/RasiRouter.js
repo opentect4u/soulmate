@@ -272,7 +272,7 @@ const kundali = (user_id, coordinates, datetime) => {
         }catch(err){
           console.log(err);
         }
-        // fs.writeFileSync(path.join(__dirname, `../raw_data/${file_name}.json`), JSON.stringify(data), 'utf-8')
+        // fs.writeFileSync((__dirname, `../raw_data/${file_name}.json`), JSON.stringify(data), 'utf-8')
       }
 
       // res.send(response.body)

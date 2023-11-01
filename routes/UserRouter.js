@@ -101,13 +101,12 @@ UserRouter.post("/user_caste", async (req, res) => {
       req_data.user_id > 0
         ? `caste_id = '${
             req_data.field_cast
-          }', religion = '${req_data.field_ur_religion
           }', oth_comm_marry_flag = '${
             req_data.field_willing_marry_other_commun ? "Y" : "N"
           }', 
          modified_by = '${req_data.user}', modified_dt = '${datetime}'`
-        : "(caste_id, religion, oth_comm_marry_flag, created_by, created_dt)",
-    values = `('${req_data.field_cast}', '${req_data.field_ur_religion}', '${
+        : "(caste_id, oth_comm_marry_flag, created_by, created_dt)",
+    values = `('${req_data.field_cast}', '${
       req_data.field_willing_marry_other_commun ? "Y" : "N"
     }', '${req_data.user}', '${datetime}')`,
     whr = req_data.user_id > 0 ? `id= '${req_data.user_id}'` : null,

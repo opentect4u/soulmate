@@ -177,7 +177,7 @@ const ElementMatch = (filePath) => {
               }
               eleObj[dt.flag] = totPla;
             //   elementVal.push(eleObj);
-              elementVal.push({flag: dt.flag, marks: totPla});
+              elementVal.push({flag: dt.flag, marks: totPla});``
             }
             // console.log('PlanetList', result);
             // console.log('element', elementVal);
