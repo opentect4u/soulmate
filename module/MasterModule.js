@@ -1,4 +1,6 @@
-const db = require("../core/db");
+const db = require("../core/db"),
+fs = require('fs'),
+path = require('path');
 // const dateFormat = require("dateformat");
 
 const db_Select = (select, table_name, whr, order) => {
@@ -142,4 +144,12 @@ var alpha = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N
   
 }
 
-module.exports = { db_Select, db_Insert, db_Delete, db_Check, EncryptDataToSend,GenPassword, globalValues, SunshineMatch, NumberMatch, ElementoryField, MongalField, MoonShineNotMatchField }
+const getAccessTokenMaster = () => {
+    return new Promise((resolve, reject) => {
+        var access_token = fs.readFileSync(path.join(__dirname, '../accessToken.json'), 'utf-8')
+        access_token = JSON.parse(access_token)
+        resolve(access_token)
+    })
+}
+
+module.exports = { db_Select, db_Insert, db_Delete, db_Check, EncryptDataToSend,GenPassword, globalValues, SunshineMatch, NumberMatch, ElementoryField, MongalField, MoonShineNotMatchField, getAccessTokenMaster }

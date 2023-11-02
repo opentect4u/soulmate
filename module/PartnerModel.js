@@ -346,47 +346,52 @@ const checkMoonMongalDosh = (filePath) => {
 
 const checkAscMongalDosh = (filePath) => {
   return new Promise((resolve, reject) => {
-    fs.readFile(path.join('raw_data', filePath), 'utf8', (err, jsonData) => {
-      try {
-        var pData = JSON.parse(jsonData),
-          mangal_marks = 0;
-        if (pData.status == "ok") {
-          var planet_data = pData.data.planet_position;
-
-          var asc_pos = planet_data.filter((dt) => dt.name == "Ascendant")
-          asc_pos = asc_pos.length > 0 ? asc_pos[0].position : 0
-          // console.log('ASC Pos', asc_pos);
-
-          for (let dt of planet_data) {
-            // dt.position =
-            //   dt.position >= planet_data[asc_pos].position
-            //     ? Math.abs(
-            //         parseInt(dt.position - planet_data[asc_pos].position)
-            //       ) + 1
-            //     : dt.position + planet_data[asc_pos].position - 1;
-            dt.position = dt.position >= asc_pos ? ((dt.position - asc_pos) + 1) : ((12 + dt.position) - asc_pos) + 1
-          }
-          // console.log(asc_planet_data);
-
-          for (let dt of planet_data) {
-            if (MongalField[0].fields.includes(dt.position)) {
-              if (dt.name == "Mars") {
-                // console.log('Asc', dt.position, dt.name, filePath);
-                mangal_marks = 80;
-                break;
+    try{
+      fs.readFile(path.join('raw_data', filePath), 'utf8', (err, jsonData) => {
+        try {
+          var pData = JSON.parse(jsonData),
+            mangal_marks = 0;
+          if (pData.status == "ok") {
+            var planet_data = pData.data.planet_position;
+  
+            var asc_pos = planet_data.filter((dt) => dt.name == "Ascendant")
+            asc_pos = asc_pos.length > 0 ? asc_pos[0].position : 0
+            // console.log('ASC Pos', asc_pos);
+  
+            for (let dt of planet_data) {
+              // dt.position =
+              //   dt.position >= planet_data[asc_pos].position
+              //     ? Math.abs(
+              //         parseInt(dt.position - planet_data[asc_pos].position)
+              //       ) + 1
+              //     : dt.position + planet_data[asc_pos].position - 1;
+              dt.position = dt.position >= asc_pos ? ((dt.position - asc_pos) + 1) : ((12 + dt.position) - asc_pos) + 1
+            }
+            // console.log(asc_planet_data);
+  
+            for (let dt of planet_data) {
+              if (MongalField[0].fields.includes(dt.position)) {
+                if (dt.name == "Mars") {
+                  // console.log('Asc', dt.position, dt.name, filePath);
+                  mangal_marks = 80;
+                  break;
+                }
               }
             }
+            resolve(mangal_marks);
+          } else {
+            resolve(0);
           }
-          resolve(mangal_marks);
-        } else {
+          // console.log('lalala', pData);
+        } catch (err) {
+          console.log(err);
           resolve(0);
         }
-        // console.log('lalala', pData);
-      } catch (err) {
-        console.log(err);
-        resolve(0);
-      }
-    })
+      })
+    }catch(err){
+      console.log(err);
+      resolve(0);
+    }
   })
 }
 

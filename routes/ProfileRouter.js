@@ -312,7 +312,7 @@ ProfileRouter.post(
       files = req.files,
       datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss"),
       res_dt;
-    console.log(files);
+    // console.log(files);
 
     const filepath = path.join('assets', "uploads", files["profile_img"].name),
       fileName = files["profile_img"].name;

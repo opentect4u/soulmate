@@ -166,13 +166,48 @@ UserRouter.post("/user_about", async (req, res) => {
     datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
   req_data = Buffer.from(req_data.data, "base64").toString();
   req_data = JSON.parse(req_data);
-  console.log(req_data);
+  // console.log(req_data);
   var table_name = "td_user_profile",
     fields = `about_us = "${req_data.field_About_us}", modified_by = '${req_data.user}', modified_dt = '${datetime}'`,
     values = null,
     whr = `id= '${req_data.user_id}'`,
     flag = 1;
   var res_dt = await db_Insert(table_name, fields, values, whr, flag);
+  var select =
+      "id, kundali_file_name, rasi_id, nakhatra_id, jotok_rasi_id, dob, latt_long",
+    table_name = "td_user_profile",
+    whr = `id = '${req_data.user_id}'`,
+    order = null;
+  var proChk = await db_Select(select, table_name, whr, order);
+  if (proChk.suc > 0) {
+    if (proChk.msg.length > 0) {
+      if(proChk.msg[0].kundali_file_name){
+        if(proChk.msg[0].rasi_id > 0 && proChk.msg[0].nakhatra_id > 0 && proChk.msg[0].jotok_rasi_id > 0){
+          true;
+        }else{
+          try{
+            var kundali_data = await addKundaliUser(proChk.msg[0].kundali_file_name)
+            await db_Insert('td_user_profile', `rasi_id = '${kundali_data.rasi_id}', nakhatra_id = '${kundali_data.nakhatra_id}', jotok_rasi_id = '${kundali_data.jotok_rasi_id}'`, null, `id=${proChk.msg[0].id}`, 1)
+          }catch(err){
+            console.log(err);
+          }
+        }
+      }else if(proChk.msg[0].kundali_file_name == '' || proChk.msg[0].kundali_file_name == null || proChk.msg[0].kundali_file_name == undefined){
+        // console.log('here');
+        try{
+          var BirthDate = new Date(proChk.msg[0].dob).toISOString();
+          }catch(err){
+          console.log(err);
+          }
+          try{
+            var kundali_data = await kundali(proChk.msg[0].id, proChk.msg[0].latt_long, BirthDate)
+            kundali_data.file_name ? await db_Insert('td_user_profile', `kundali_file_name='${kundali_data.file_name}', rasi_id = '${kundali_data.rasi_id}', nakhatra_id = '${kundali_data.nakhatra_id}', jotok_rasi_id = '${kundali_data.jotok_rasi_id}'`, null, `id=${proChk.msg[0].id}`, 1) : ''
+          }catch(err){
+            console.log(err);
+          }
+      }
+    }
+  }
   res.send(res_dt);
 });
 

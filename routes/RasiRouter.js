@@ -6,7 +6,7 @@ const express = require("express"),
   accessToken = require("../accessToken.json"),
   location = require("../location.json");
 
-const { db_Select } = require("../module/MasterModule");
+const { db_Select, getAccessTokenMaster } = require("../module/MasterModule");
 const { MongalMatch } = require("../module/PartnerModel");
 const { getNakhatra, getJotukRashiId } = require("./MasterRouter");
 
@@ -166,26 +166,28 @@ rashiRouter.get("/planet_position", async (req, res) => {
 });
 
 const kundali = (user_id, coordinates, datetime) => {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     var ayanamsa = 1,
       lang = "en";
-    try{
-      fs.readFile(path.join('/accessToken.json', (err, data) => {
-        if(err){
-          console.log(err);
-        }else{
-          accessToken = JSON.parse(data)
-        }
-      }))
-    }catch(err){
-      console.log(err);
-    }
+    // try{
+    //   fs.readFile(path.join('/accessToken.json', (err, data) => {
+    //     if(err){
+    //       console.log(err);
+    //     }else{
+    //       accessToken = JSON.parse(data)
+    //     }
+    //   }))
+    // }catch(err){
+    //   console.log(err);
+    // }
+    var accTkn = await getAccessTokenMaster()
+    console.log(accTkn, 'Token');
     var options = {
       method: "GET",
       url: `https://api.prokerala.com/v2/astrology/planet-position?ayanamsa=${ayanamsa}&coordinates=${coordinates}&datetime=${datetime}&la=${lang}`,
       headers: {
         Accept: "application/json",
-        Authorization: `Bearer ${accessToken.token}`,
+        Authorization: `Bearer ${accTkn.token}`,
       },
     };
     request(options, async function (error, response) {
@@ -193,7 +195,7 @@ const kundali = (user_id, coordinates, datetime) => {
         // console.log(error);
         throw new Error(error);
       } else {
-        // console.log(response.body);
+        console.log(response.body);
         var data = JSON.parse(response.body);
         try{
       //  var rasiData = data.data.planet_position.filter(
