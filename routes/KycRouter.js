@@ -26,7 +26,7 @@ const { db_Insert } = require('../module/MasterModule');
     KycRouter.post('/update_doc_list', 
     fileUpload({ crereateParentPath: true }),
     filePayloadExists,
-    fileExtLimiter(['.png','.jpg','.jpeg','.pdf']),
+    fileExtLimiter(['.png','.jpg','.jpeg','.pdf', '.docx', '.doc']),
     fileSizeLimiter, async (req, res) => {
 
         var data = req.body,

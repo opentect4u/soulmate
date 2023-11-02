@@ -7,3 +7,7 @@ uploads/
 accessToken.json
 core/db.js
 googleAccessToken.json
+db/
+masterDataCollection/
+raw_data/
+SunshineData/

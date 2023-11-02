@@ -1,1 +1,0 @@
-{"id":"e7281594-17fe-46d8-adf0-c8491e4436c2","status":"error","errors":[{"source":{"parameter":"/coordinates"},"code":"1003","title":"Invalid format","detail":"Coordinates value is not in required format. If latitude is `10.214 N` and longitude is `78.097 E`, the value should be string `10.21,78.09`.  Your input was `undefined,undefined`"}]}
