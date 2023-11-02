@@ -19,7 +19,7 @@ PartnerRouter.get("/partner_pref", async (req, res) => {
     // console.log('Location ', res_dt.msg[0].location_id, location.findIndex((dt) => dt.id == res_dt.msg[0].location_id));
     var location_name =
     res_dt.suc > 0 && res_dt.msg.length > 0
-      ? (location.findIndex((dt) => dt.id == res_dt.msg[0].location_id) >= 0 ? location[location.findIndex((dt) => dt.id == res_dt.msg[0].location_id)]?.name : null) : null;
+      ? (location.findIndex((dt) => dt.id == res_dt.msg[0].location_id) >= 0 ? location[location.findIndex((dt) => dt.id == res_dt.msg[0].location_id)].name : null) : null;
   res_dt.suc > 0 ? (res_dt.msg.length > 0 ? res_dt.msg[0]["location_name"] = location_name ? location_name : '' : '') : "";
     res_dt = await EncryptDataToSend(res_dt)
     res.send(res_dt);
@@ -131,9 +131,9 @@ PartnerRouter.get("/partner_match", async (req, res) => {
     if(res_dt.suc > 0 && res_dt.msg.length > 0){
       for(let rdt of res_dt.msg){
         try{
-          var groom_loc = await user_groom_loc({user_id:rdt?.id});
+          var groom_loc = await user_groom_loc({user_id:rdt.id});
           // console.log(groom_loc);
-          var basic_info = await user_basic_info({user_id:rdt?.id});
+          var basic_info = await user_basic_info({user_id:rdt.id});
           // console.log('Basic', basic_info);
           var partner_rashi = await partner_match(basic_info.msg[0].dob)
           // console.log('Partner', partner_rashi);
@@ -183,7 +183,7 @@ PartnerRouter.get("/partner_match", async (req, res) => {
           console.log(basic_info.msg[0].u_name, 'Total Marks', jotok_match, elementMarks, mongal_marks, moonShineMatch, SunShineMatch);
 
           
-          var hobbies = await user_hobbies({user_id:rdt?.id});
+          var hobbies = await user_hobbies({user_id:rdt.id});
           var result_partner = {
             groom_location : {
               "value" : groom_loc.msg
@@ -306,9 +306,9 @@ PartnerRouter.post("/partner_match_search", async (req, res) => {
     if(res_dt.suc > 0 && res_dt.msg.length > 0){
       for(let rdt of res_dt.msg){
         try{
-          var groom_loc = await user_groom_loc({user_id:rdt?.id});
+          var groom_loc = await user_groom_loc({user_id:rdt.id});
           // console.log(groom_loc);
-          var basic_info = await user_basic_info({user_id:rdt?.id});
+          var basic_info = await user_basic_info({user_id:rdt.id});
           // console.log('Basic', basic_info);
           var partner_rashi = await partner_match(basic_info.msg[0].dob)
           // console.log('Partner', partner_rashi);
@@ -358,7 +358,7 @@ PartnerRouter.post("/partner_match_search", async (req, res) => {
           console.log(basic_info.msg[0].u_name, 'Total Marks', jotok_match, elementMarks, mongal_marks, moonShineMatch, SunShineMatch);
 
           
-          var hobbies = await user_hobbies({user_id:rdt?.id});
+          var hobbies = await user_hobbies({user_id:rdt.id});
           var result_partner = {
             groom_location : {
               "value" : groom_loc.msg
@@ -466,9 +466,9 @@ PartnerRouter.post("/partner_match_search", async (req, res) => {
 //     if(res_dt.suc > 0 && res_dt.msg.length > 0){
 //       for(let rdt of res_dt.msg){
 //         try{
-//           var groom_loc = await user_groom_loc({user_id:rdt?.id});
+//           var groom_loc = await user_groom_loc({user_id:rdt.id});
 //           // console.log(groom_loc);
-//           var basic_info = await user_basic_info({user_id:rdt?.id});
+//           var basic_info = await user_basic_info({user_id:rdt.id});
 //           // console.log('Basic', basic_info);
 //           var partner_rashi = await partner_match(basic_info.msg[0].dob)
 //           // console.log('Partner', partner_rashi);
@@ -518,7 +518,7 @@ PartnerRouter.post("/partner_match_search", async (req, res) => {
 //           console.log(basic_info.msg[0].u_name, 'Total Marks', jotok_match, elementMarks, mongal_marks, moonShineMatch, SunShineMatch);
 
           
-//           var hobbies = await user_hobbies({user_id:rdt?.id});
+//           var hobbies = await user_hobbies({user_id:rdt.id});
 //           var result_partner = {
 //             groom_location : {
 //               "value" : groom_loc.msg
