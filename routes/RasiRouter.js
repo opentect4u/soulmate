@@ -70,15 +70,15 @@ rashiRouter.post("/kundali", (req, res) => {
 //       nakhatra_name = await getNakhatra(data.data.planet_position[i].degree,data.data.planet_position[i].position)
 //     //   console.log(nakhatra_name);
 //       var planet = {
-//                 "planet_name" : data.data.planet_position[i]?.name,
-//                 "position" : data.data.planet_position[i]?.position,
-//                 "degree" : data.data.planet_position[i]?.degree,
-//                 "rashi_name" : data.data.planet_position[i]?.rasi.name,
-//                 "lord_name" : data.data.planet_position[i]?.rasi.lord.name,
-//                 "verdic_name" : data.data.planet_position[i]?.rasi.lord.vedic_name,
-//                 "nakhatra_name" : nakhatra_name.msg[0]?.nakhatra,
-//                 "from_deg" : nakhatra_name.msg[0]?.from_deg,
-//                 "to_deg" : nakhatra_name.msg[0]?.to_deg
+//                 "planet_name" : data.data.planet_position[i].name,
+//                 "position" : data.data.planet_position[i].position,
+//                 "degree" : data.data.planet_position[i].degree,
+//                 "rashi_name" : data.data.planet_position[i].rasi.name,
+//                 "lord_name" : data.data.planet_position[i].rasi.lord.name,
+//                 "verdic_name" : data.data.planet_position[i].rasi.lord.vedic_name,
+//                 "nakhatra_name" : nakhatra_name.msg[0].nakhatra,
+//                 "from_deg" : nakhatra_name.msg[0].from_deg,
+//                 "to_deg" : nakhatra_name.msg[0].to_deg
 //              }
 //       arr.push(planet)
 //  }
@@ -121,9 +121,9 @@ rashiRouter.get("/planet_position", async (req, res) => {
                     rashi_name: dt.rasi.name,
                     lord_name: dt.rasi.lord.name,
                     verdic_name: dt.rasi.lord.vedic_name,
-                    // nakhatra_name: nakhatra_name.msg[0]?.nakhatra,
-                    // from_deg: nakhatra_name.msg[0]?.from_deg,
-                    // to_deg: nakhatra_name.msg[0]?.to_deg,
+                    // nakhatra_name: nakhatra_name.msg[0].nakhatra,
+                    // from_deg: nakhatra_name.msg[0].from_deg,
+                    // to_deg: nakhatra_name.msg[0].to_deg,
                   };
                   // console.log(planet);
                   arr.push(planet);
@@ -205,7 +205,7 @@ const kundali = (user_id, coordinates, datetime) => {
       //       ),
       //       jotok_rasi_id = await getJotukRashiId(
       //         rasiData[0].rasi.name,
-      //         nakhatra_name.msg[0]?.nakhatra
+      //         nakhatra_name.msg[0].nakhatra
       //       );
           if(data.status == 'ok'){
             var rasiData = data.data.planet_position.filter(
@@ -222,7 +222,7 @@ const kundali = (user_id, coordinates, datetime) => {
                 );
                 jotok_rasi_id = await getJotukRashiId(
                   dt.rasi.name,
-                  nakhatra_name.msg[0]?.nakhatra
+                  nakhatra_name.msg[0].nakhatra
                 );
                 console.log(jotok_rasi_id);
                 if(jotok_rasi_id.suc > 0 && jotok_rasi_id.msg.length > 0){
@@ -236,7 +236,7 @@ const kundali = (user_id, coordinates, datetime) => {
               );
               jotok_rasi_id = await getJotukRashiId(
                 rasiData[0].rasi.name,
-                nakhatra_name.msg[0]?.nakhatra
+                nakhatra_name.msg[0].nakhatra
               );
             }
           
@@ -253,11 +253,11 @@ const kundali = (user_id, coordinates, datetime) => {
                     rasi_id: parseInt(rasiData[0].rasi.id) + 1,
                     nakhatra_id:
                       nakhatra_name.suc > 0 && nakhatra_name.msg.length > 0
-                        ? nakhatra_name.msg[0]?.nakhatra_id
+                        ? nakhatra_name.msg[0].nakhatra_id
                         : 0,
                     jotok_rasi_id:
                       jotok_rasi_id.suc > 0 && jotok_rasi_id.msg.length > 0
-                        ? jotok_rasi_id.msg[0]?.id
+                        ? jotok_rasi_id.msg[0].id
                         : 0,
                   });
               }
@@ -301,7 +301,7 @@ const addKundaliUser = (fileName) => {
               );
               jotok_rasi_id = await getJotukRashiId(
                 dt.rasi.name,
-                nakhatra_name.msg[0]?.nakhatra
+                nakhatra_name.msg[0].nakhatra
               );
               console.log(jotok_rasi_id);
               if(jotok_rasi_id.suc > 0 && jotok_rasi_id.msg.length > 0){
@@ -315,18 +315,18 @@ const addKundaliUser = (fileName) => {
             );
             jotok_rasi_id = await getJotukRashiId(
               rasiData[0].rasi.name,
-              nakhatra_name.msg[0]?.nakhatra
+              nakhatra_name.msg[0].nakhatra
             );
           }
           resolve({
             rasi_id: parseInt(rasiData[rasiData.findIndex(dt=> dt.name == "Moon")].rasi.id) + 1,
             nakhatra_id:
               nakhatra_name.suc > 0 && nakhatra_name.msg.length > 0
-                ? nakhatra_name.msg[0]?.nakhatra_id
+                ? nakhatra_name.msg[0].nakhatra_id
                 : 0,
             jotok_rasi_id:
               jotok_rasi_id.suc > 0 && jotok_rasi_id.msg.length > 0
-                ? jotok_rasi_id.msg[0]?.id
+                ? jotok_rasi_id.msg[0].id
                 : 0,
           });
         }catch(err){
@@ -353,10 +353,10 @@ const addKundaliUser = (fileName) => {
 //     console.log(nakhatra_name);
 //     if (data.data.planet_position[i].name == "Moon") {
 //       jotok = {
-//         position: data.data.planet_position[i]?.position,
-//         rashi: data.data.planet_position[i]?.rasi.name,
-//         degree: data.data.planet_position[i]?.degree,
-//         nakhatra_name: nakhatra_name.msg[0]?.nakhatra,
+//         position: data.data.planet_position[i].position,
+//         rashi: data.data.planet_position[i].rasi.name,
+//         degree: data.data.planet_position[i].degree,
+//         nakhatra_name: nakhatra_name.msg[0].nakhatra,
 //       };
 //     }
 //   }
@@ -372,10 +372,10 @@ const addKundaliUser = (fileName) => {
 //     console.log(nakhatra_name);
 //     if (data_1.data.planet_position[i].name == "Moon") {
 //       jotok_1 = {
-//         position: data_1.data.planet_position[i]?.position,
-//         rashi: data_1.data.planet_position[i]?.rasi.name,
-//         degree: data_1.data.planet_position[i]?.degree,
-//         nakhatra_name: nakhatra_name.msg[0]?.nakhatra,
+//         position: data_1.data.planet_position[i].position,
+//         rashi: data_1.data.planet_position[i].rasi.name,
+//         degree: data_1.data.planet_position[i].degree,
+//         nakhatra_name: nakhatra_name.msg[0].nakhatra,
 //       };
 //     }
 //   }
@@ -441,16 +441,16 @@ rashiRouter.get("/test", async (req, res) => {
               ),
               jotok_rasi_id = await getJotukRashiId(
                 rasiData[0].rasi.name,
-                nakhatra_name.msg[0]?.nakhatra
+                nakhatra_name.msg[0].nakhatra
               ),
               rasi_id = parseInt(rasiData[0].rasi.id) + 1,
               nakhatra_id =
                 nakhatra_name.suc > 0 && nakhatra_name.msg.length > 0
-                  ? nakhatra_name.msg[0]?.nakhatra_id
+                  ? nakhatra_name.msg[0].nakhatra_id
                   : 0,
               jotok_rasi_id =
                 jotok_rasi_id.suc > 0 && jotok_rasi_id.msg.length > 0
-                  ? jotok_rasi_id.msg[0]?.id
+                  ? jotok_rasi_id.msg[0].id
                   : 0;
             // console.log(rasiData);
             sql += `UPDATE td_user_profile SET rasi_id = '${rasi_id}', nakhatra_id = '${nakhatra_id}', jotok_rasi_id = '${jotok_rasi_id}' WHERE id = ${id};`;
