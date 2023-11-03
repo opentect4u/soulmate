@@ -37,7 +37,7 @@ PartnerRouter.post("/update_partner", async (req, res) =>{
     whr = `user_id = ${data.user_id}`,                                                                                                                                                                               
     order = null;
     var dt = await db_Select(select, table_name, whr, order)
-    // console.log(dt);
+    console.log(dt);
     var table_name = "td_user_partner_pref",
     fields = dt.suc > 0 && dt.msg.length > 0 ? 
     `age_frm = '${data.field_frm_age > 0 ? data.field_frm_age : 0}', 
@@ -45,7 +45,7 @@ PartnerRouter.post("/update_partner", async (req, res) =>{
     marital_status = '${data.field_marital_status != '' ? data.field_marital_status : ''}', mother_tounge = '${data.field_mother_tong != '' ? data.field_mother_tong : 0}', religion = '${data.field_ur_religion !="" ? data.field_ur_religion : ''}',
     country_id = '${data.field_Country > 0 ? data.field_Country : 0}', state_id = '${data.field_State > 0 ? data.field_State : 0}', city_id = '${data.field_City > 0 ? data.field_City : 0}', modified_by = '${data.user}', modified_dt = '${datetime}'` : 
     `(user_id${data.field_frm_age > 0 ? `, age_frm ` : ''} ${data.field_to_age > 0 ? `, age_to` : ''}${data.field_marital_status != '' ? `, marital_status` : ''}${data.field_mother_tong != '' ? `, mother_tounge` : ''}${data.field_ur_religion  ? `, religion` : ''}${data.field_Country > 0 ? `, country_id` : ''}${data.field_State > 0 ? `, state_id` : ''}${data.field_City > 0 ? `, city_id` : ''},  created_by, created_dt)`,
-    values = `('${data.user_id}' ${data.field_frm_age > 0 ? `, '${data.field_frm_age}'` : ''} ${data.field_to_age > 0 ? `, '${data.field_to_age}'` : ''} ${data.field_marital_status != '' ? `, '${data.field_marital_status}'` : ''}
+    values = `('${data.user_id}' ${data.field_frm_age > 0 ? `, '${data.field_frm_age}'` : ''} ${data.field_to_age > 0 ? `, '${data.field_to_age}'` : ''} ${data.field_marital_status ? `, '${data.field_marital_status}'` : ''}
     ${data.field_mother_tong != '' ? `, '${data.field_mother_tong}'` : ''} ${data.field_ur_religion  ? `, '${data.field_ur_religion}'` : ''} ${data.field_Country > 0 ? `, '${data.field_Country}'` : ''} ${data.field_State > 0 ? `, '${data.field_State}'` : ''} ${data.field_City > 0 ? `, '${data.field_City}'` : ''}, '${data.user}', '${datetime}')`,
     whr = dt.suc > 0 && dt.msg.length > 0 ? `user_id = ${data.user_id}` : null,
     flag = dt.suc > 0 && dt.msg.length > 0 ? 1 : 0;
