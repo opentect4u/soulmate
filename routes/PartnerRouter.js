@@ -42,7 +42,7 @@ PartnerRouter.post("/update_partner", async (req, res) =>{
     fields = dt.suc > 0 && dt.msg.length > 0 ? 
     `age_frm = '${data.field_frm_age > 0 ? data.field_frm_age : 0}', 
     age_to = '${data.field_to_age > 0 ? data.field_to_age : 0}',
-    marital_status = '${data.field_marital_status != '' ? data.field_marital_status : ''}', mother_tounge = '${data.field_mother_tong != '' ? data.field_mother_tong : 0}', religion = '${data.field_ur_religion !="" ? data.field_ur_religion : ''}',
+    marital_status = '${data.field_marital_status != '' ? data.field_marital_status : 0}', mother_tounge = '${data.field_mother_tong != '' ? data.field_mother_tong : 0}', religion = '${data.field_ur_religion !="" ? data.field_ur_religion : ''}',
     country_id = '${data.field_Country > 0 ? data.field_Country : 0}', state_id = '${data.field_State > 0 ? data.field_State : 0}', city_id = '${data.field_City > 0 ? data.field_City : 0}', modified_by = '${data.user}', modified_dt = '${datetime}'` : 
     `(user_id${data.field_frm_age > 0 ? `, age_frm ` : ''} ${data.field_to_age > 0 ? `, age_to` : ''}${data.field_marital_status != '' ? `, marital_status` : ''}${data.field_mother_tong != '' ? `, mother_tounge` : ''}${data.field_ur_religion  ? `, religion` : ''}${data.field_Country > 0 ? `, country_id` : ''}${data.field_State > 0 ? `, state_id` : ''}${data.field_City > 0 ? `, city_id` : ''},  created_by, created_dt)`,
     values = `('${data.user_id}' ${data.field_frm_age > 0 ? `, '${data.field_frm_age}'` : ''} ${data.field_to_age > 0 ? `, '${data.field_to_age}'` : ''} ${data.field_marital_status != '' ? `, '${data.field_marital_status}'` : ''}
