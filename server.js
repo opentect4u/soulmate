@@ -306,11 +306,14 @@ app.get("/", async (req, res) => {
   //     arr.push(planet)
   // }
   // console.log(path.join('/accessToken.json'));
+  var otp = Math.floor(1000 + Math.random() * 9000);
+  console.log(encodeURIComponent(`Dear User, ${otp} is your OTP for Registration in My Soul Mate. OTP is valid for 5 minutes. For security reasons, DO NOT share this OTP with anyone -My Soul Mate`));
   res.send('lala')
 });
 
 const sendMail = require("./controllers/sendMail");
 const { SendUserEmail } = require("./module/EmailModule");
+// const { SmsRouter } = require("./routes/SmsRouter");
 
 app.get("/email", sendMail);
 
@@ -320,7 +323,7 @@ app.use('/profile', ProfileRouter)
 app.use(rashiRouter);
 app.use('/partner', PartnerRouter);
 app.use('/kyc', KycRouter);
-
+// app.use('/sms', SmsRouter);
 
 
 

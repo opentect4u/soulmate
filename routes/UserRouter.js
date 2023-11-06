@@ -1,3 +1,4 @@
+const { sendProfile_id } = require("../module/SmsModule");
 const { kundali, addKundaliUser } = require("./RasiRouter");
 
 const express = require("express"),
@@ -43,7 +44,7 @@ UserRouter.post("/user_profile", async (req, res) => {
     }
     
      profile_id = req_data.field_gender+profile_id
-     console.log(profile_id);
+    //  console.log(profile_id);
   var table_name = "td_user_profile",
     fields =
       req_data.id > 0
@@ -86,6 +87,11 @@ UserRouter.post("/user_profile", async (req, res) => {
         whr = null,
         flag = 0;
       var log_dt = await db_Insert(table_name, fields, values, whr, flag);
+      try{
+        await sendProfile_id(req_data.field_mobile, profile_id)
+      }catch(err){
+        console.log(err);
+      }
     }
   }
   res.send(res_dt);
