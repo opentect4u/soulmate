@@ -55,7 +55,7 @@ const sendProfile_id = (phone_no, pro_id) => {
               resolve({suc:0, msg: 'Registration not done', err: error})
             }else{
               console.log(body);
-              resolve({ suc: 1, msg: 'Registration completed successfully', profile_id: profile_id })
+              resolve({ suc: 1, msg: 'Registration completed successfully', profile_id: pro_id })
             }
           });
     })
