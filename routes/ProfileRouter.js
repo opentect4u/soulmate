@@ -410,9 +410,9 @@ ProfileRouter.get("/check_email", async (req, res) => {
 
 ProfileRouter.post("/send_otp", async (req, res) => {
   var data = req.body;
-  // var otp_dt = await getOtp(data);
-  // res.send(otp_dt);
-  res.send({ suc: 1, msg: 'Otp Sent', otp: 1234 });
+  var otp_dt = await getOtp(data);
+  res.send(otp_dt);
+  // res.send({ suc: 1, msg: 'Otp Sent', otp: 1234 });
   });
 
 module.exports = { ProfileRouter };
