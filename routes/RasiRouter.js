@@ -10,7 +10,8 @@ const { db_Select, getAccessTokenMaster } = require("../module/MasterModule");
 const { MongalMatch } = require("../module/PartnerModel");
 const { getNakhatra, getJotukRashiId } = require("./MasterRouter");
 
-rashiRouter.post("/kundali", (req, res) => {
+rashiRouter.post("/kundali", async(req, res) => {
+  var accTkn = await getAccessTokenMaster()
   var ayanamsa = 1,
     user_id = 2,
     coordinates = "22.569722,88.369722",
@@ -21,7 +22,7 @@ rashiRouter.post("/kundali", (req, res) => {
     url: `https://api.prokerala.com/v2/astrology/planet-position?ayanamsa=${ayanamsa}&coordinates=${coordinates}&datetime=${datetime}&la=${lang}`,
     headers: {
       Accept: "application/json",
-      Authorization: `Bearer ${accessToken.token}`,
+      Authorization: `Bearer ${accTkn}`,
     },
   };
   request(options, async function (error, response) {
@@ -187,7 +188,7 @@ const kundali = (user_id, coordinates, datetime) => {
       url: `https://api.prokerala.com/v2/astrology/planet-position?ayanamsa=${ayanamsa}&coordinates=${coordinates}&datetime=${datetime}&la=${lang}`,
       headers: {
         Accept: "application/json",
-        Authorization: `Bearer ${accTkn.token}`,
+        Authorization: `Bearer ${accTkn}`,
       },
     };
     request(options, async function (error, response) {
