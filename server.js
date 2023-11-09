@@ -313,6 +313,7 @@ app.get("/", async (req, res) => {
 
 const sendMail = require("./controllers/sendMail");
 const { SendUserEmail } = require("./module/EmailModule");
+const { subscriptionRouter } = require("./routes/SubscriptionRouter");
 // const { SmsRouter } = require("./routes/SmsRouter");
 
 app.get("/email", sendMail);
@@ -323,6 +324,7 @@ app.use('/profile', ProfileRouter)
 app.use(rashiRouter);
 app.use('/partner', PartnerRouter);
 app.use('/kyc', KycRouter);
+app.use('/subscription', subscriptionRouter)
 // app.use('/sms', SmsRouter);
 
 
