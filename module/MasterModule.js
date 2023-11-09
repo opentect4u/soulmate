@@ -1,7 +1,8 @@
 const db = require("../core/db"),
 fs = require('fs'),
-path = require('path');
-// const dateFormat = require("dateformat");
+path = require('path'),
+request = require("request"),
+dateFormat = require("dateformat");
 
 const db_Select = (select, table_name, whr, order) => {
     var tb_whr = whr ? `WHERE ${whr}` : "";
@@ -146,9 +147,57 @@ var alpha = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N
 
 const getAccessTokenMaster = () => {
     return new Promise((resolve, reject) => {
+        // var access_token = fs.readFileSync(path.join(__dirname, '../accessToken.json'), 'utf-8')
+        // access_token = JSON.parse(access_token)
+        // resolve(access_token)
         var access_token = fs.readFileSync(path.join(__dirname, '../accessToken.json'), 'utf-8')
-        access_token = JSON.parse(access_token)
-        resolve(access_token)
+		var tokenFile = JSON.parse(access_token)
+		if (dateFormat(tokenFile.created_dt, "yyyy-mm-dd") == dateFormat(new Date(), "yyyy-mm-dd")){
+			const timeDiff = parseInt(
+				(new Date().getTime() -
+				  new Date(Date.parse(tokenFile.created_dt)).getTime()) /
+				  (60 * 60 * 1000)
+			  );
+			if (timeDiff >= 1) {
+				var options = {
+					method: "POST",
+					url: process.env.GENERATE_TOKEN_API,
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						grant_type: process.env.GRANT_TYPE,
+						client_id: process.env.CLIENT_ID,
+						client_secret: process.env.CLIENT_SECRET,
+					}),
+				};
+				request(options, function (error, response) {
+					if (error) throw new Error(error);
+					var output = JSON.parse(response.body);
+					resolve(output.access_token)
+				});
+			}else{
+				resolve(tokenFile.token)
+			}
+		}else{
+			var options = {
+				method: "POST",
+				url: process.env.GENERATE_TOKEN_API,
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					grant_type: process.env.GRANT_TYPE,
+					client_id: process.env.CLIENT_ID,
+					client_secret: process.env.CLIENT_SECRET,
+				}),
+			};
+			request(options, function (error, response) {
+				if (error) throw new Error(error);
+				var output = JSON.parse(response.body);
+				resolve(output.access_token)
+			});
+		}
     })
 }
 
