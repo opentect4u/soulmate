@@ -182,7 +182,7 @@ const kundali = (user_id, coordinates, datetime) => {
     //   console.log(err);
     // }
     var accTkn = await getAccessTokenMaster()
-    console.log(accTkn, 'Token');
+    // console.log(accTkn, 'Token');
     var options = {
       method: "GET",
       url: `https://api.prokerala.com/v2/astrology/planet-position?ayanamsa=${ayanamsa}&coordinates=${coordinates}&datetime=${datetime}&la=${lang}`,
@@ -196,7 +196,7 @@ const kundali = (user_id, coordinates, datetime) => {
         // console.log(error);
         throw new Error(error);
       } else {
-        console.log(response.body);
+        // console.log(response.body);
         var data = JSON.parse(response.body);
         try{
       //  var rasiData = data.data.planet_position.filter(
@@ -227,7 +227,7 @@ const kundali = (user_id, coordinates, datetime) => {
                   dt.rasi.name,
                   nakhatra_name.msg[0].nakhatra
                 );
-                console.log(jotok_rasi_id);
+                // console.log(jotok_rasi_id);
                 if(jotok_rasi_id.suc > 0 && jotok_rasi_id.msg.length > 0){
                   break;
                 }
@@ -306,7 +306,7 @@ const addKundaliUser = (fileName) => {
                 dt.rasi.name,
                 nakhatra_name.msg[0].nakhatra
               );
-              console.log(jotok_rasi_id);
+              // console.log(jotok_rasi_id);
               if(jotok_rasi_id.suc > 0 && jotok_rasi_id.msg.length > 0){
                 break;
               }

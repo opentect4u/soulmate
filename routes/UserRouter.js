@@ -320,13 +320,27 @@ UserRouter.post("/birth_details", async (req, res) => {
   var data = req.body;
   data = Buffer.from(data.data, "base64").toString();
   data = JSON.parse(data);
+  
   var datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
   var table_name = "td_user_profile",
-  fields = `dob = '${data.field_birth_date}', age = '${data.field_age}', location_id = '${data.location_id}', modified_by = '${data.user}', modified_dt = '${datetime}'`,
+  fields = `dob = '${dateFormat(data.field_birth_date, "yyyy-mm-dd HH:MM:ss")}', location_id = '${data.location_id}', latt_long = '${data.latt_long}', modified_by = '${data.user}', modified_dt = '${datetime}'`,
   values = null,
   whr = `id=${data.user_id}`;
   flag = 1;
-  var res_dt = await db_Insert(table_name, fields, values, whr, flag); 
+  var res_dt = await db_Insert(table_name, fields, values, whr, flag);
+  if(res_dt.suc > 0){
+    try{
+      var BirthDate = new Date(data.field_birth_date).toISOString();
+    }catch(err){
+      console.log(err);
+    }
+    try{
+      var kundali_data = await kundali(data.user_id, data.latt_long, BirthDate)
+      kundali_data.file_name ? await db_Insert('td_user_profile', `kundali_file_name='${kundali_data.file_name}', rasi_id = '${kundali_data.rasi_id}', nakhatra_id = '${kundali_data.nakhatra_id}', jotok_rasi_id = '${kundali_data.jotok_rasi_id}'`, null, `id=${data.user_id}`, 1) : ''
+    }catch(err){
+      console.log(err);
+    }
+  }
   res.send(res_dt);
 })
 
