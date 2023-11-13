@@ -316,4 +316,18 @@ if (res_dt.suc > 0) {
 res.send(result)
 })
 
+UserRouter.post("/birth_details", async (req, res) => {
+  var data = req.body;
+  data = Buffer.from(data.data, "base64").toString();
+  data = JSON.parse(data);
+  var datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+  var table_name = "td_user_profile",
+  fields = `dob = '${data.field_birth_date}', age = '${data.field_age}', location_id = '${data.location_id}', modified_by = '${data.user}', modified_dt = '${datetime}'`,
+  values = null,
+  whr = `id=${data.user_id}`;
+  flag = 1;
+  var res_dt = await db_Insert(table_name, fields, values, whr, flag); 
+  res.send(res_dt);
+})
+
 module.exports = { UserRouter };
