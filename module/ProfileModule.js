@@ -30,6 +30,18 @@ const user_groom_loc = (data) =>{
     })
 }
 
+// const user_contact_details = (data) => {
+//     return new Promise (async (resolve, reject) => {
+//         var select = "id,phone_no,email_id",
+//         table_name = "td_user_profile",
+//         whr = data.id > 0 ? `id=${data.user_id}` : null,
+//         order = null;
+//         var res_dt = await db_Select(select,table_name,whr,order);
+//         resolve(res_dt);
+//     })
+// }
+
+
 const user_basic_info = (data, dashboard_flag = false) => {
   return new Promise (async (resolve, reject) => {
     var select = "a.id user_id, b.id id, b.profile_id, b.dob, b.email_id, b.phone_no, a.marital_status,a.height,a.weight,a.family_status,a.family_values,a.family_type,a.disability_flag,a.body_type,a.drinking_habbits,a.age,b.gender, a.age,a.eating_habbits,a.smoking_habbits,a.no_sister,a.no_brother,a.father_occupation,a.mother_occupation,a.family_location,a.about_my_family,b.u_name,b.ac_for,b.mother_tong mother_tong_id,b.latt_long, d.lang_name mother_tong, b.about_us, c.caste_name, b.caste_id, b.religion, b.oth_comm_marry_flag, b.jotok_rasi_id, b.kundali_file_name, b.phone_approved_flag, b.email_approved_flag, e.beng_rashi, b.file_path, b.rasi_id, f.name city_name, b.city_id city_id, b.country_id, g.name country_name, b.state_id, h.name state_name, b.location_id",

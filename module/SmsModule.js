@@ -61,4 +61,33 @@ const sendProfile_id = (phone_no, pro_id) => {
     })
 };
 
-module.exports = { getOtp, sendProfile_id }
+const loginOtp = (otp, phone_no) => {
+    return new Promise((resolve, reject) => {
+        const options1 = {
+            method: 'GET',
+            url: 'http://sms.digilexa.in/http-api.php',
+            qs: {
+              username: process.env.MESSAGE_USERNAME,
+              password: process.env.MESSAGE_PASSWORD,
+              senderid: process.env.MESSAGE_SENDER_ID,
+              route: process.env.MESSAGE_ROUTE,
+              number: phone_no,
+              message: `Dear User, ${otp} is your OTP to access your account. OTP is valid for 5 minutes. For security reasons, DO NOT share this OTP with anyone -MY SOUL MATE`
+            },
+            headers: {Accept: '*/*'}
+          };
+    
+        request(options1, function (error, response, body) {
+            if (error) 
+            {
+                // throw new Error(error);
+                resolve({suc:0, msg: 'OTP not send', err: error})
+            }else{
+                console.log(body);
+                resolve({ suc: 1, msg: 'OTP send successfully' })
+            }
+        });
+    })
+}
+
+module.exports = { getOtp, sendProfile_id, loginOtp }

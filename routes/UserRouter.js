@@ -1,4 +1,4 @@
-const { sendProfile_id } = require("../module/SmsModule");
+const { sendProfile_id, loginOtp } = require("../module/SmsModule");
 const { kundali, addKundaliUser } = require("./RasiRouter");
 
 const express = require("express"),
@@ -60,7 +60,7 @@ UserRouter.post("/user_profile", async (req, res) => {
         mother_tong = '${req_data.field_mother_tong}', modified_by = '${req_data.reg_name
         }', modified_dt = '${datetime}'`
         : "(profile_id, u_name, phone_no, email_id, country_id, state_id, city_id, location_id, latt_long, dob, ac_for, religion, gender, mother_tong, created_by, created_dt)",
-    values = `('${profile_id}', '${req_data.user}', '${req_data.field_mobile}', '${req_data.field_email_id}', '${req_data.field_Country}', '${req_data.field_State}', '${req_data.field_City}', '${req_data.location_id}',
+    values = `('${profile_id}', '${req_data.user}', '${req_data.field_mobile}', '${req_data.field_email_id}', '${req_data.field_Country}', '${req_data.field_State}', '0', '${req_data.location_id}',
         '${req_data.field_birth_loca}', '${dateFormat(
         req_data.field_birth_date,
         "yyyy-mm-dd HH:MM:ss"
@@ -97,29 +97,45 @@ UserRouter.post("/user_profile", async (req, res) => {
   res.send(res_dt);
 });
 
-UserRouter.post("/user_caste", async (req, res) => {
+// UserRouter.post("/user_caste", async (req, res) => {
+//   var req_data = req.body,
+//   datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+//   req_data = Buffer.from(req_data.data, "base64").toString();
+//   req_data = JSON.parse(req_data);
+//   var table_name = "td_user_profile",
+//     fields =
+//       req_data.user_id > 0
+//         ? `caste_id = '${
+//             req_data.field_cast
+//           }', oth_comm_marry_flag = '${
+//             req_data.field_willing_marry_other_commun ? "Y" : "N"
+//           }', 
+//          modified_by = '${req_data.user}', modified_dt = '${datetime}'`
+//         : "(caste_id, oth_comm_marry_flag, created_by, created_dt)",
+//     values = `('${req_data.field_cast}', '${
+//       req_data.field_willing_marry_other_commun ? "Y" : "N"
+//     }', '${req_data.user}', '${datetime}')`,
+//     whr = req_data.user_id > 0 ? `id= '${req_data.user_id}'` : null,
+//     flag = req_data.user_id > 0 ? 1 : 0;
+//   var res_dt = await db_Insert(table_name, fields, values, whr, flag);
+//   res.send(res_dt);
+// });
+
+UserRouter.post("/user_caste", async(req, res) => {
   var req_data = req.body,
-  datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-  req_data = Buffer.from(req_data.data, "base64").toString();
-  req_data = JSON.parse(req_data);
-  var table_name = "td_user_profile",
-    fields =
-      req_data.user_id > 0
-        ? `caste_id = '${
-            req_data.field_cast
-          }', oth_comm_marry_flag = '${
-            req_data.field_willing_marry_other_commun ? "Y" : "N"
-          }', 
-         modified_by = '${req_data.user}', modified_dt = '${datetime}'`
-        : "(caste_id, oth_comm_marry_flag, created_by, created_dt)",
-    values = `('${req_data.field_cast}', '${
-      req_data.field_willing_marry_other_commun ? "Y" : "N"
-    }', '${req_data.user}', '${datetime}')`,
+    datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+    req_data = Buffer.from(req_data.data, "base64").toString();
+    req_data = JSON.parse(req_data);
+    var table_name = "td_user_profile",
+    fields =   req_data.user_id > 0
+            ? `caste_id = '${req_data.field_cast }', religion = '${req_data.field_ur_religion}', modified_by = '${req_data.user}', modified_dt = '${datetime}'`
+            : "(caste_id, religion, created_by, created_dt)",
+    values = `('${req_data.field_cast }','${req_data.field_ur_religion}','${req_data.user},'${datetime}')`,
     whr = req_data.user_id > 0 ? `id= '${req_data.user_id}'` : null,
     flag = req_data.user_id > 0 ? 1 : 0;
-  var res_dt = await db_Insert(table_name, fields, values, whr, flag);
-  res.send(res_dt);
-});
+var res_dt = await db_Insert(table_name,fields,values,whr,flag);
+res.send(res_dt)
+})
 
 UserRouter.post("/user_personal_details", async (req, res) => {
   var req_data = req.body,
@@ -279,6 +295,86 @@ UserRouter.post("/login", async (req, res) => {
   res.send(result);
 });
 
+UserRouter.post('/login_otp', async (req, res) => {
+  var data = req.body;
+  data = Buffer.from(data.data, "base64").toString();
+  data = JSON.parse(data);
+  var select =
+      "a.id",
+    table_name = "md_user_login a",
+    whr = `a.user_id = '${data.user_id}'`,
+    order = null;
+  var res_dt = await db_Select(select, table_name, whr, order);
+  if(res_dt.suc > 0){
+    if(res_dt.msg.length > 0){
+      var otp = Math.floor(1000 + Math.random() * 9000);
+      var otpRes = await loginOtp(otp, data.user_id)
+      if(otpRes.suc > 0){
+        res.send({suc:1, msg:'OTP Sent', otp: otp})
+      }else{
+        res.send({suc:0, msg: 'OTP not sent', otp:0})
+      }
+    }else{
+      res.send({suc:0, msg: 'User ID not found', otp:0})
+    }
+  }else{
+    res.send({suc:0, msg: res_dt.msg, otp:0})
+  }
+})
+
+UserRouter.post('/get_login_data', async (req, res) => {
+  var data = req.body,
+    result;
+  data = Buffer.from(data.data, "base64").toString();
+  data = JSON.parse(data);
+  // console.log(data);
+  var select =
+      "a.id prof_id, a.user_id, a.profile_id id, a.user_name, a.email_id user_email, a.password, a.last_login, a.pay_status pay_flag, b.plan_id, a.active_flag, b.kundali_file_name, b.rasi_id, b.nakhatra_id, b.jotok_rasi_id, b.dob, b.latt_long",
+    table_name = "md_user_login a, td_user_profile b",
+    whr = `a.profile_id=b.id AND a.user_id = '${data.user_id}' AND a.active_flag ="Y" `,
+    order = null;
+  var res_dt = await db_Select(select, table_name, whr, order);
+  console.log(res_dt);
+  if (res_dt.suc > 0) {
+    if (res_dt.msg.length > 0) {
+      if(res_dt.msg[0].kundali_file_name){
+        if(res_dt.msg[0].rasi_id > 0 && res_dt.msg[0].nakhatra_id > 0 && res_dt.msg[0].jotok_rasi_id > 0){
+          true;
+        }else{
+          try{
+            var kundali_data = await addKundaliUser(res_dt.msg[0].kundali_file_name)
+            await db_Insert('td_user_profile', `rasi_id = '${kundali_data.rasi_id}', nakhatra_id = '${kundali_data.nakhatra_id}', jotok_rasi_id = '${kundali_data.jotok_rasi_id}'`, null, `id=${res_dt.msg[0].id}`, 1)
+          }catch(err){
+            console.log(err);
+          }
+        }
+      }else if(res_dt.msg[0].kundali_file_name == '' || res_dt.msg[0].kundali_file_name == null || res_dt.msg[0].kundali_file_name == undefined){
+        console.log('here');
+        try{
+          var BirthDate = new Date(res_dt.msg[0].dob).toISOString();
+          }catch(err){
+          console.log(err);
+          }
+          try{
+            var kundali_data = await kundali(res_dt.msg[0].id, res_dt.msg[0].latt_long, BirthDate)
+            kundali_data.file_name ? await db_Insert('td_user_profile', `kundali_file_name='${kundali_data.file_name}', rasi_id = '${kundali_data.rasi_id}', nakhatra_id = '${kundali_data.nakhatra_id}', jotok_rasi_id = '${kundali_data.jotok_rasi_id}'`, null, `id=${res_dt.msg[0].id}`, 1) : ''
+          }catch(err){
+            console.log(err);
+          }
+      }
+      result = {
+        suc: 1,
+        msg: "successfully loggedin",
+        user_data: res_dt.msg,
+      };
+    } else {
+      result = { suc: 0, msg: "No data found", user_data: null };
+    }
+  } else {
+    result = { suc: 0, msg: res_dt.msg };
+  }
+  res.send(result);
+})
 
 UserRouter.post('/update_pass', async (req, res) => {
   var data = req.body, result;
@@ -320,7 +416,7 @@ UserRouter.post("/birth_details", async (req, res) => {
   var data = req.body;
   data = Buffer.from(data.data, "base64").toString();
   data = JSON.parse(data);
-  
+
   var datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
   var table_name = "td_user_profile",
   fields = `dob = '${dateFormat(data.field_birth_date, "yyyy-mm-dd HH:MM:ss")}', location_id = '${data.location_id}', latt_long = '${data.latt_long}', modified_by = '${data.user}', modified_dt = '${datetime}'`,

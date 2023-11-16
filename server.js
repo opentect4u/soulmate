@@ -190,6 +190,7 @@ app.use((req, res, next) => {
   // console.log(req.headers.referer);
   // console.log(req.path, req.path.split("/")[1], req.headers.referer);
   // if (req.path.split('/')[1] != 'err') {
+    // console.log(req.path, req.headers.referer);
   if (req.path != "/") {
     if (req.path.split("/")[1] == "uploads") {
       if (req.headers.referer && req.headers.referer == "http://localhost:4200/") {
@@ -407,6 +408,11 @@ fileSizeLimiter,
       res.json({ status: 'success', message: Object.keys(files).toString()})
  }
 )
+
+app.get('/uploads/:image', (req, res) => {
+  var img = req.params.image
+  console.log(req.path, req.headers.referer, img);
+})
 
 
 app.listen(port, (err) => {

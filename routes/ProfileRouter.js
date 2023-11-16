@@ -19,8 +19,9 @@ const {
   user_groom_loc,
   user_basic_info,
   user_hobbies,
+  user_contact_details,
 } = require("../module/ProfileModule");
-const { getOtp} = require("../module/SmsModule")
+const { getOtp} = require("../module/SmsModule");
 
 ProfileRouter.get("/user_groom_loc", async (req, res) => {
   var data = req.query;
@@ -44,6 +45,30 @@ ProfileRouter.get("/user_basic_info", async (req, res) => {
   res_dt = await EncryptDataToSend(res_dt);
   res.send(res_dt);
 });
+
+ProfileRouter.get("/user_contact_details", async (req, res) => {
+  var data = req.query;
+  var res_dt = await user_basic_info(data);
+  res_dt = await EncryptDataToSend(res_dt);
+  res.send(res_dt);
+});
+
+ProfileRouter.post("/user_contact_details", async(req, res)=>{
+  var data = req.body,
+  datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+data = Buffer.from(data.data, "base64").toString();
+data = JSON.parse(data);
+var table_name = "td_user_profile",
+    fields =`phone_no= '${data.field_mobile}', email_id= '${data.field_email_id}', modified_by = '${data.user}', modified_dt = '${datetime}'`
+        "(phone_no, email_id, created_by, created_dt)",
+    values = null,
+    whr = data.user_id > 0 ? `id = ${data.user_id}` : null,
+    flag = 1;
+  var res_dt = await db_Insert(table_name, fields, values, whr, flag);
+  res.send(res_dt);
+})
+
 
 ProfileRouter.post("/user_basic_info", async (req, res) => {
   var data = req.body,
@@ -103,9 +128,9 @@ ProfileRouter.post("/user_groom_loc", async (req, res) => {
   var table_name = "td_user_profile",
     fields =
       chk_dt.suc > 0 && chk_dt.msg.length > 0
-        ? `country_id = '${data.field_Country}', state_id = '${data.field_State > 0 ? data.field_State : 0}', city_id = '${data.field_City > 0 ? data.field_City : 0}', modified_by = '${data.user}', modified_dt = '${datetime}'`
-        : "(country_id, state_id, city_id, created_by, created_dt)",
-    values = `('${data.field_Country}', '${data.field_State > 0 ? data.field_State : 0}', '${data.field_City > 0 ? data.field_City : 0}', '${data.user}', '${datetime}')`,
+        ? `country_id = '${data.field_Country}', state_id = '${data.field_State > 0 ? data.field_State : 0}', modified_by = '${data.user}', modified_dt = '${datetime}'`
+        : "(country_id, state_id,created_by, created_dt)",
+    values = `('${data.field_Country}', '${data.field_State > 0 ? data.field_State : 0}', 0, '${data.user}', '${datetime}')`,
     whr =
       chk_dt.suc > 0 && chk_dt.msg.length > 0
         ? `id = ${chk_dt.msg[0].id}`
@@ -131,9 +156,9 @@ ProfileRouter.post("/user_prof_info", async (req, res) => {
   var table_name = "td_user_education",
     fields =
       chk_dt.suc > 0 && chk_dt.msg.length > 0
-        ? `heigh_education = '${data.field_highest_education}', emp_type = '${data.field_employed}', occup = '${data.field_Occupation}', edu_in_dtls = '${data.field_Education_Detail}', collage = '${data.field_College}', occup_in_dtls = '${data.field_Occupation_Detail}', org_name = '${data.field_Organization}', income = '${data.field_Annual_Income}', work_location = '${data.work_location}', modified_by = '${data.user}', modified_dt = '${datetime}'`
-        : "(user_id, heigh_education, emp_type, occup, edu_in_dtls, collage, occup_in_dtls, org_name, income, work_location, created_by, created_dt)",
-    values = `('${data.user_id}', '${data.field_highest_education}', '${data.field_employed}', '${data.field_Occupation}', '${data.field_Education_Detail}', '${data.field_College}', '${data.field_Occupation_Detail}', '${data.field_Organization}', '${data.field_Annual_Income}', '${data.work_location}', '${data.user}', '${datetime}')`,
+        ? `heigh_education = '${data.field_highest_education}', emp_type = '${data.field_employed}', occup = '${data.field_Occupation}', collage = '${data.field_College}', org_name = '${data.field_Organization}', income = '${data.field_Annual_Income}', work_location = '${data.work_location}', modified_by = '${data.user}', modified_dt = '${datetime}'`
+        : "(user_id, heigh_education, emp_type, occup, collage, org_name, income, work_location, created_by, created_dt)",
+    values = `('${data.user_id}', '${data.field_highest_education}', '${data.field_employed}', '${data.field_Occupation}', 0, '${data.field_College}', 0, '${data.field_Organization}', '${data.field_Annual_Income}', '${data.work_location}', '${data.user}', '${datetime}')`,
     whr =
       chk_dt.suc > 0 && chk_dt.msg.length > 0
         ? `id = ${chk_dt.msg[0].id}`
@@ -399,9 +424,9 @@ ProfileRouter.get("/check_email", async (req, res) => {
   var res_dt = await db_Select(select,table_name,whr,order);
   if(res_dt.suc > 0){
     if(res_dt.msg.length > 0){
-      result = {suc: 2, msg: "Email address is already exists"}
+      result = {suc: 2, msg: "Email already exists!!"}
     }else{
-      result = {suc: 1, msg: "Please enter Email address"}
+      result = {suc: 1, msg: "Please enter Email ID"}
     }
   }else{
     result = res_dt
