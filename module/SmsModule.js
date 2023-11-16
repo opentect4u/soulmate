@@ -63,6 +63,7 @@ const sendProfile_id = (phone_no, pro_id) => {
 
 const loginOtp = (otp, phone_no) => {
     return new Promise((resolve, reject) => {
+        console.log(phone_no);
         const options1 = {
             method: 'GET',
             url: 'http://sms.digilexa.in/http-api.php',
@@ -80,6 +81,7 @@ const loginOtp = (otp, phone_no) => {
         request(options1, function (error, response, body) {
             if (error) 
             {
+                console.log(error);
                 // throw new Error(error);
                 resolve({suc:0, msg: 'OTP not send', err: error})
             }else{

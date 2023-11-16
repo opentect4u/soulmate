@@ -149,10 +149,11 @@ UserRouter.post("/user_personal_details", async (req, res) => {
         ? `marital_status = '${req_data.field_marital_status}', height = '${req_data.field_height}', 
         family_status = '${req_data.field_family_status}', family_type = '${req_data.field_family_type}', 
         family_values = '${req_data.field_family_value}', disability_flag = '${req_data.field_disability}', 
+        weight = '${req_data.field_weight}', body_type = '${req_data.field_body_type}', 
       modified_by = '${req_data.reg_name}', modified_dt = '${datetime}'`
-        : "(user_id, marital_status, height, family_status, family_type, family_values, disability_flag, created_by, created_dt)",
+        : "(user_id, marital_status, height, family_status, family_type, family_values, disability_flag, weight, body_type, created_by, created_dt)",
     values = `('${req_data.user_id}', '${req_data.field_marital_status}', '${req_data.field_height}', '${req_data.field_family_status}',
-        '${req_data.field_family_type}', '${req_data.field_family_value}', '${req_data.field_disability}',
+        '${req_data.field_family_type}', '${req_data.field_family_value}', '${req_data.field_disability}', '${req_data.field_weight}', '${req_data.field_body_type}',
         '${req_data.user}', '${datetime}')`,
     whr = req_data.id > 0 ? `id= '${req_data.id}'` : null,
     flag = req_data.id > 0 ? 1 : 0;
@@ -299,20 +300,25 @@ UserRouter.post('/login_otp', async (req, res) => {
   var data = req.body;
   data = Buffer.from(data.data, "base64").toString();
   data = JSON.parse(data);
+  console.log(data);
   var select =
-      "a.id",
-    table_name = "md_user_login a",
-    whr = `a.user_id = '${data.user_id}'`,
+      "a.id, b.active_flag",
+    table_name = "md_user_login a, td_user_profile b",
+    whr = `a.profile_id=b.id AND a.user_id = '${data}'`,
     order = null;
   var res_dt = await db_Select(select, table_name, whr, order);
   if(res_dt.suc > 0){
     if(res_dt.msg.length > 0){
-      var otp = Math.floor(1000 + Math.random() * 9000);
-      var otpRes = await loginOtp(otp, data.user_id)
-      if(otpRes.suc > 0){
-        res.send({suc:1, msg:'OTP Sent', otp: otp})
+      if(res_dt.msg[0].active_flag != 'N'){
+        var otp = Math.floor(1000 + Math.random() * 9000);
+        var otpRes = await loginOtp(otp, data)
+        if(otpRes.suc > 0){
+          res.send({suc:1, msg:'OTP Sent', otp: otp})
+        }else{
+          res.send({suc:0, msg: 'OTP not sent', otp:0})
+        }
       }else{
-        res.send({suc:0, msg: 'OTP not sent', otp:0})
+        res.send({suc:2, msg: 'Your account has been deactivated, please contact with Admin.', otp:0})
       }
     }else{
       res.send({suc:0, msg: 'User ID not found', otp:0})
