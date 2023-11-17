@@ -330,8 +330,11 @@ app.use('/subscription', subscriptionRouter)
 
 
 app.get("/test_email", async(req, res) => {
-  var mail = await SendUserEmail();
-  console.log(mail);
+  var emailId = req.query.email_id;
+  var profilelId = req.query.profile_id;
+  var userName = req.query.u_name;
+  var mail = await SendUserEmail(emailId,profilelId,userName);
+  console.log(emailId,profilelId,userName);
   res.send(mail);
 })
 

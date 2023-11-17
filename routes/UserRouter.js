@@ -1,9 +1,11 @@
-const { sendProfile_id, loginOtp } = require("../module/SmsModule");
+const { sendProfile_id, loginOtp} = require("../module/SmsModule");
+const { sendEmail} = require("../module/EmailModule");
 const { kundali, addKundaliUser } = require("./RasiRouter");
 
 const express = require("express"),
   UserRouter = express.Router(),
   dateFormat = require("dateformat"),
+nodemailer = require('nodemailer');
   request = require("request"),
   bcrypt = require("bcrypt"),
   {
@@ -298,11 +300,11 @@ UserRouter.post("/login", async (req, res) => {
 
 UserRouter.post('/login_otp', async (req, res) => {
   var data = req.body;
-  data = Buffer.from(data.data, "base64").toString();
-  data = JSON.parse(data);
+  // data = Buffer.from(data.data, "base64").toString();
+  // data = JSON.parse(data);
   console.log(data);
   var select =
-      "a.id, b.active_flag",
+      "a.id, b.active_flag, a.email_id, a.user_name",
     table_name = "md_user_login a, td_user_profile b",
     whr = `a.profile_id=b.id AND a.user_id = '${data}'`,
     order = null;
@@ -312,6 +314,7 @@ UserRouter.post('/login_otp', async (req, res) => {
       if(res_dt.msg[0].active_flag != 'N'){
         var otp = Math.floor(1000 + Math.random() * 9000);
         var otpRes = await loginOtp(otp, data)
+        var email = await sendEmail(otp, res_dt.msg[0].email_id, res_dt.msg[0].user_name)
         if(otpRes.suc > 0){
           res.send({suc:1, msg:'OTP Sent', otp: otp})
         }else{

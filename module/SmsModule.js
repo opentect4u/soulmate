@@ -1,8 +1,9 @@
+nodemailer = require('nodemailer');
 const request = require('request');
 
 const getOtp = (data) => {
     return new Promise((resolve, reject) => {
-        var otp = Math.floor(1000 + Math.random() * 9000);
+    var otp = Math.floor(1000 + Math.random() * 9000);
     const options = {
         method: 'GET',
         url: 'http://sms.digilexa.in/http-api.php',
@@ -63,7 +64,7 @@ const sendProfile_id = (phone_no, pro_id) => {
 
 const loginOtp = (otp, phone_no) => {
     return new Promise((resolve, reject) => {
-        console.log(phone_no);
+        console.log(phone_no); 
         const options1 = {
             method: 'GET',
             url: 'http://sms.digilexa.in/http-api.php',
@@ -92,4 +93,6 @@ const loginOtp = (otp, phone_no) => {
     })
 }
 
-module.exports = { getOtp, sendProfile_id, loginOtp }
+
+
+module.exports = { getOtp, sendProfile_id, loginOtp}
