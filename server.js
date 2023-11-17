@@ -329,6 +329,12 @@ app.use('/subscription', subscriptionRouter)
 // app.use('/sms', SmsRouter);
 
 
+app.get("/test_email", async(req, res) => {
+  var mail = await SendUserEmail();
+  console.log(mail);
+  res.send(mail);
+})
+
 
 // Set up a route to handle file uploads
 

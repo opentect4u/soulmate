@@ -53,6 +53,22 @@ ProfileRouter.get("/user_contact_details", async (req, res) => {
   res.send(res_dt);
 });
 
+// ProfileRouter.post("/user_contact_details", async(req, res)=>{
+//   var data = req.body,
+//   datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+// data = Buffer.from(data.data, "base64").toString();
+// data = JSON.parse(data);
+// var table_name = "td_user_profile",
+//     fields =`phone_no= '${data.field_mobile}', email_id= '${data.field_email_id}', modified_by = '${data.user}', modified_dt = '${datetime}'`
+//         "(phone_no, email_id, created_by, created_dt)",
+//     values = null,
+//     whr = data.user_id > 0 ? `id = ${data.user_id}` : null,
+//     flag = 1;
+//   var res_dt = await db_Insert(table_name, fields, values, whr, flag);
+//   res.send(res_dt);
+// })
+
 ProfileRouter.post("/user_contact_details", async(req, res)=>{
   var data = req.body,
   datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
@@ -60,15 +76,14 @@ ProfileRouter.post("/user_contact_details", async(req, res)=>{
 data = Buffer.from(data.data, "base64").toString();
 data = JSON.parse(data);
 var table_name = "td_user_profile",
-    fields =`phone_no= '${data.field_mobile}', email_id= '${data.field_email_id}', modified_by = '${data.user}', modified_dt = '${datetime}'`
-        "(phone_no, email_id, created_by, created_dt)",
+    fields =`email_id= '${data.field_email_id}', modified_by = '${data.user}', modified_dt = '${datetime}'`
+        "(email_id, created_by, created_dt)",
     values = null,
     whr = data.user_id > 0 ? `id = ${data.user_id}` : null,
     flag = 1;
   var res_dt = await db_Insert(table_name, fields, values, whr, flag);
   res.send(res_dt);
 })
-
 
 ProfileRouter.post("/user_basic_info", async (req, res) => {
   var data = req.body,
