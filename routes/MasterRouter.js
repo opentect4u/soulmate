@@ -99,9 +99,10 @@ MasterRouter.get('/lang_list', async (req, res) => {
     var data = req.query
     var select = 'id, lang_name', 
         table_name = 'md_language',
-        whr = data.id > 0 ? `id = ${id}` : null,
+        whr = data.id > 0 ? `id = ${id}` : (data.lang_name ? `lang_name LIKE "%${data.lang_name}%"` : null),
         order = null;
     var res_dt = await db_Select(select, table_name, whr, order)
+    console.log(res_dt);
     res.send({suc: 1, msg: Buffer.from(JSON.stringify(res_dt.msg), 'utf8').toString('base64')})
 })
 
@@ -172,7 +173,7 @@ MasterRouter.get('/hobbies_list', async (req, res) => {
     var data = req.query;
     var select = 'id, hobby',
     table_name = 'md_hobby',
-    whr = data.id > 0 ? `id = ${id}` : null,
+    whr = data.id > 0 ? `id = ${id}` : (data.hobby ? `hobby LIKE "%${data.hobby}%"` : null),
     order = null;
     var res_dt = await db_Select(select, table_name, whr, order)
     // console.log(res_dt);
@@ -182,9 +183,10 @@ MasterRouter.get('/hobbies_list', async (req, res) => {
 
 MasterRouter.get('/sports_list', async (req, res) => {
     var data = req.query
-    // console.log(data);
+    console.log(data);
     var select = 'id, sports', 
         table_name = 'md_sports',
+        // whr = data.id > 0 ? `id = ${id}` : (data.sports ? `sports LIKE "%${data.sports}%"` : null),
         whr = data.id > 0 ? `id = ${id}` : null,
         order = null;
     var res_dt = await db_Select(select, table_name, whr, order)
@@ -197,7 +199,7 @@ MasterRouter.get('/music_list', async (req, res) => {
     // console.log(data);
     var select = 'id, music', 
         table_name = 'md_music',
-        whr = data.id > 0 ? `id = ${id}` : null,
+        whr = data.id > 0 ? `id = ${id}` : (data.music ? `music LIKE "%${data.music}%"` : null),
         order = null;
     var res_dt = await db_Select(select, table_name, whr, order)
     // res.send(res_dt)
@@ -210,7 +212,7 @@ MasterRouter.get('/movie_list', async (req, res) => {
     // console.log(data);
     var select = 'id, movie', 
         table_name = 'md_movie',
-        whr = data.id > 0 ? `id = ${id}` : null,
+        whr = data.id > 0 ? `id = ${id}` : (data.movie ? `movie LIKE "%${data.movie}%"` : null),
         order = null;
     var res_dt = await db_Select(select, table_name, whr, order)
     // res.send(res_dt)
