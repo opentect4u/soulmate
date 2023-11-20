@@ -1,5 +1,6 @@
 // const accessToken = require('../googleAccessToken.json'),
 nodemailer = require('nodemailer');
+const request = require('request');
 
 // const SendUserEmail = (emailId) => {
     const SendUserEmail = (emailId,profilelId,userName) => {
@@ -172,7 +173,7 @@ nodemailer = require('nodemailer');
     })
 }
 
-const sendEmail = (otp,email_id,user_name) => {
+const sendLoginEmail = (otp,email_id,user_name) => {
   return new Promise((resolve, reject) => {
       
       const transporter = nodemailer.createTransport({
@@ -323,4 +324,4 @@ const sendEmail = (otp,email_id,user_name) => {
   })
 }
 
-module.exports = {SendUserEmail, sendEmail}
+module.exports = {SendUserEmail, sendLoginEmail}

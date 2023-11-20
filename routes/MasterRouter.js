@@ -102,7 +102,7 @@ MasterRouter.get('/lang_list', async (req, res) => {
         whr = data.id > 0 ? `id = ${id}` : (data.lang_name ? `lang_name LIKE "%${data.lang_name}%"` : null),
         order = null;
     var res_dt = await db_Select(select, table_name, whr, order)
-    console.log(res_dt);
+    // console.log(res_dt);
     res.send({suc: 1, msg: Buffer.from(JSON.stringify(res_dt.msg), 'utf8').toString('base64')})
 })
 

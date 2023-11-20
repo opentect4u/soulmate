@@ -406,10 +406,10 @@ ProfileRouter.post("/update_payStatus", async (req, res) => {
 
 ProfileRouter.get("/check_mobile_no", async (req, res) => {
   var data = req.query, result;
-
+  console.log(data);
   var select = 'id, phone_no',
   table_name = 'td_user_profile',
-  whr = `phone_no = ${data.phone_no}`,
+  whr = `phone_no = '${data.phone_no}'`,
   order = null;
   try{
     var res_dt = await db_Select(select,table_name,whr,order);
