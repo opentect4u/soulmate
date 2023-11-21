@@ -200,6 +200,62 @@ const getAccessTokenMaster = () => {
 			});
 		}
     })
+};
+
+const checkFieldsValue = (value, type) => {
+    return new Promise((resolve, reject) => {
+        var msg = '';
+        switch (type) {
+            case 'string':
+                if(value)
+                    if(typeof(value) === 'string')
+                        if(value != '' || value != 'null' || value != 'undefined')
+                            msg = 'valid'
+                        else
+                            msg = 'null'
+                    else
+                        msg = 'not string'
+                else
+                msg = 'undefined'
+                break;
+            case 'number':
+                if(value)
+                    if(typeof(value) === 'number')
+                        if(value > 0)
+                            msg = 'valid'
+                        else
+                            msg = 'value should greater than 0'
+                    else
+                        msg = 'not a number'
+                else
+                msg = 'undefined'
+                break;
+            case 'phone':
+                if(value)
+                    if(typeof(value) === 'number')
+                        if(value.toString().length == 10)
+                            msg = 'valid'
+                        else
+                            msg = 'value not acceptable'
+                    else
+                        msg = 'not a number'
+                else
+                msg = 'undefined'
+                break;
+            case 'date':
+                if(value)
+                    if(Object.prototype.toString.call(new Date(value)) === "[object Date]")
+                        msg = 'valid'
+                    else
+                        msg = 'not a correct date'
+                else
+                msg = 'undefined'
+                break;
+            default:
+                break;
+        }
+        resolve(msg)
+    })
 }
 
-module.exports = { db_Select, db_Insert, db_Delete, db_Check, EncryptDataToSend,GenPassword, globalValues, SunshineMatch, NumberMatch, ElementoryField, MongalField, MoonShineNotMatchField, getAccessTokenMaster }
+module.exports = { db_Select, db_Insert, db_Delete, db_Check, EncryptDataToSend,GenPassword, globalValues, SunshineMatch, NumberMatch, ElementoryField, MongalField, MoonShineNotMatchField, getAccessTokenMaster, checkFieldsValue }

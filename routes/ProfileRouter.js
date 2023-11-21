@@ -456,4 +456,37 @@ ProfileRouter.post("/send_otp", async (req, res) => {
   // res.send({ suc: 1, msg: 'Otp Sent', otp: 1234 });
   });
 
+  ProfileRouter.get("/hobby", async (req, res) => {
+    var data = req.query;
+    var res_dt = await get_hobby(data);
+    res_dt = await EncryptDataToSend(res_dt);
+    res.send(res_dt);
+  });
+
+
+  ProfileRouter.post("/update_hobby", async (req, res) => {
+    var data = req.body,
+    datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss")
+    // data = Buffer.from(data.data, "base64").toString();
+    // data = JSON.parse(data);
+    // console.log(data);
+  
+    var select = "id",
+    table_name = "td_user_hobbies",
+    whr = `user_id = ${data.user_id}`,
+    order = null;
+  var chk_dt = await db_Select(select, table_name, whr, order);
+  
+    var table_name = "td_user_hobbies",
+      fields =
+       chk_dt.suc > 0 && chk_dt.msg.length > 0
+          ? `user_id = '${user_id}', hobbies_interest = '${data.field_hobbies_interest}', sports = '${data.field_sports}', spoken_lang = '${data.field_spoken}', fav_music = '${data.field_fav_music}', movie = '${data.field_movie}', modified_by = '${data.user}', modified_dt = '${datetime}'`
+          : "(hobbies_interest, sports, spoken_lang, fav_music, movie, created_by, created_dt)",
+      values = `('${data.field_hobbies_interest}', '${data.field_sports}', '${data.field_spoken}', '${data.field_fav_music}', '${data.field_movie}', '${data.user}', '${datetime}')`,
+      whr =chk_dt.suc > 0 && chk_dt.msg.length > 0 ? `id = ${data.user_id}` : null,
+      flag =chk_dt.suc > 0 && chk_dt.msg.length > 0 ? 1 : 0;
+    var res_dt = await db_Insert(table_name, fields, values, whr, flag);
+    res.send(res_dt);
+  })
+
 module.exports = { ProfileRouter };
