@@ -309,6 +309,7 @@ UserRouter.post('/login_otp', async (req, res) => {
     whr = `a.profile_id=b.id AND a.user_id = '${data}'`,
     order = null;
   var res_dt = await db_Select(select, table_name, whr, order);
+  console.log(res_dt, 'OTP Login Data');
   if(res_dt.suc > 0){
     if(res_dt.msg.length > 0){
       if(res_dt.msg[0].active_flag != 'N'){
