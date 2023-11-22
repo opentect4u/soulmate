@@ -20,7 +20,7 @@ ServercheckRouter.post("/user_check", async(req, res) => {
             err_msg['field_mobile'] = await checkFieldsValue(data.field_mobile, 'phone')
             err_msg['field_birth_date'] = await checkFieldsValue(data.field_birth_date, 'date')
             err_msg['location_id'] = await checkFieldsValue(data.location_id, 'string')
-            var res_dt = {suc: err_msg['user'] != 'valid' && err_msg['field_mobile'] != 'valid' && err_msg['field_birth_date'] != 'valid' && err_msg['location_id'] != 'valid' ? 0 : 1, msg: err_msg}
+            var res_dt = {suc: err_msg['user'] != 'valid' || err_msg['field_mobile'] != 'valid' || err_msg['field_birth_date'] != 'valid' || err_msg['location_id'] != 'valid' ? 0 : 1, msg: err_msg}
             res.send(res_dt)
         }
     }
@@ -44,7 +44,7 @@ ServercheckRouter.post("/user_basic_details", async(req, res) => {
             err_msg['field_State'] = await checkFieldsValue(data.field_State, 'number')
             err_msg['field_mother_tong'] = await checkFieldsValue(data.field_mother_tong, 'string')
             err_msg['field_pass'] = await checkFieldsValue(data.field_pass, 'string')
-            var res_dt = {suc: err_msg['field_gender'] != 'valid' && err_msg['field_who_creat_profile'] != 'valid' && err_msg['field_email_id'] != 'valid' && err_msg['field_Country'] != 'valid' && err_msg['field_State'] != 'valid' && err_msg['field_mother_tong'] != 'valid' && err_msg['field_pass'] != 'valid' ? 0 : 1, msg: err_msg}
+            var res_dt = {suc: err_msg['field_gender'] != 'valid' || err_msg['field_who_creat_profile'] != 'valid' || err_msg['field_email_id'] != 'valid' || err_msg['field_Country'] != 'valid' || err_msg['field_State'] != 'valid' || err_msg['field_mother_tong'] != 'valid' || err_msg['field_pass'] != 'valid' ? 0 : 1, msg: err_msg}
             res.send(res_dt)
         }
     }
@@ -55,7 +55,7 @@ ServercheckRouter.post("/user_religion_details", async(req, res) => {
 
             err_msg['field_ur_religion'] = await checkFieldsValue(data.field_ur_religion, 'string')
             err_msg['field_cast'] = await checkFieldsValue(data.field_cast, 'number')
-            var res_dt = {suc: err_msg['field_ur_religion'] != 'valid' && err_msg['field_cast'] != 'valid'  ? 0 : 1, msg: err_msg}
+            var res_dt = {suc: err_msg['field_ur_religion'] != 'valid' || err_msg['field_cast'] != 'valid'  ? 0 : 1, msg: err_msg}
             res.send(res_dt)
 });
 
@@ -70,7 +70,7 @@ ServercheckRouter.post("/user_personal_details", async(req, res) => {
                     err_msg['field_family_type'] = await checkFieldsValue(data.field_family_type, 'string')
                     err_msg['field_family_value'] = await checkFieldsValue(data.field_family_value, 'string')
                     err_msg['field_disability'] = await checkFieldsValue(data.field_disability, 'string')
-                    var res_dt = {suc: err_msg['field_marital_status'] != 'valid' && err_msg['field_height'] != 'valid' && err_msg['field_weight'] != 'valid'&& err_msg['field_body_type'] != 'valid'&& err_msg['field_family_status'] != 'valid'&& err_msg['field_family_type'] != 'valid'&& err_msg['field_family_value'] != 'valid'&& err_msg['field_disability'] != 'valid' ? 0 : 1, msg: err_msg}
+                    var res_dt = {suc: err_msg['field_marital_status'] != 'valid' || err_msg['field_height'] != 'valid' || err_msg['field_weight'] != 'valid'|| err_msg['field_body_type'] != 'valid'|| err_msg['field_family_status'] != 'valid'|| err_msg['field_family_type'] != 'valid'|| err_msg['field_family_value'] != 'valid'|| err_msg['field_disability'] != 'valid' ? 0 : 1, msg: err_msg}
                     res.send(res_dt)
 });  
 
@@ -82,7 +82,7 @@ ServercheckRouter.post("/user_professional_details", async(req, res) => {
             err_msg['field_Occupation'] = await checkFieldsValue(data.field_Occupation, 'number')
             err_msg['field_Annual_Income'] = await checkFieldsValue(data.field_Annual_Income, 'string')
             err_msg['field_Work_Locatio'] = await checkFieldsValue(data.field_Work_Locatio, 'string')
-            var res_dt = {suc: err_msg['field_highest_education'] != 'valid' && err_msg['field_employed'] != 'valid' && err_msg['field_Occupation'] != 'valid'&& err_msg['field_Annual_Income'] != 'valid'&& err_msg['field_Work_Locatio'] != 'valid' ? 0 : 1, msg: err_msg}
+            var res_dt = {suc: err_msg['field_highest_education'] != 'valid' || err_msg['field_employed'] != 'valid' || err_msg['field_Occupation'] != 'valid'|| err_msg['field_Annual_Income'] != 'valid'|| err_msg['field_Work_Locatio'] != 'valid' ? 0 : 1, msg: err_msg}
             res.send(res_dt)
 }); 
 

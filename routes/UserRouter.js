@@ -449,6 +449,7 @@ UserRouter.post("/birth_details", async (req, res) => {
     }
   }
   res.send(res_dt);
-})
+});
+
 
 module.exports = { UserRouter };

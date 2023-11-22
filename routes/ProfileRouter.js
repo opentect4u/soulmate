@@ -20,8 +20,11 @@ const {
   user_basic_info,
   user_hobbies,
   user_contact_details,
+  get_hobby,
+  get_email,
 } = require("../module/ProfileModule");
 const { getOtp} = require("../module/SmsModule");
+const { SendVerifyEmail, ActiveEmail } = require("../module/EmailModule");
 
 ProfileRouter.get("/user_groom_loc", async (req, res) => {
   var data = req.query;
@@ -467,8 +470,8 @@ ProfileRouter.post("/send_otp", async (req, res) => {
   ProfileRouter.post("/update_hobby", async (req, res) => {
     var data = req.body,
     datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss")
-    // data = Buffer.from(data.data, "base64").toString();
-    // data = JSON.parse(data);
+    data = Buffer.from(data.data, "base64").toString();
+    data = JSON.parse(data);
     // console.log(data);
   
     var select = "id",
@@ -480,13 +483,36 @@ ProfileRouter.post("/send_otp", async (req, res) => {
     var table_name = "td_user_hobbies",
       fields =
        chk_dt.suc > 0 && chk_dt.msg.length > 0
-          ? `user_id = '${user_id}', hobbies_interest = '${data.field_hobbies_interest}', sports = '${data.field_sports}', spoken_lang = '${data.field_spoken}', fav_music = '${data.field_fav_music}', movie = '${data.field_movie}', modified_by = '${data.user}', modified_dt = '${datetime}'`
-          : "(hobbies_interest, sports, spoken_lang, fav_music, movie, created_by, created_dt)",
-      values = `('${data.field_hobbies_interest}', '${data.field_sports}', '${data.field_spoken}', '${data.field_fav_music}', '${data.field_movie}', '${data.user}', '${datetime}')`,
-      whr =chk_dt.suc > 0 && chk_dt.msg.length > 0 ? `id = ${data.user_id}` : null,
+          ?`hobbies_interest = '${data.field_hobbies_interest}', sports = '${data.field_sports}', fav_music = '${data.field_fav_music}', movie = '${data.field_movie}', modified_by = '${data.user}', modified_dt = '${datetime}'`
+          : "(user_id,hobbies_interest, sports,fav_music, movie, created_by, created_dt)",
+      values = `('${data.user_id}', '${data.field_hobbies_interest}', '${data.field_sports}','${data.field_fav_music}', '${data.field_movie}', '${data.user}', '${datetime}')`,
+      whr =chk_dt.suc > 0 && chk_dt.msg.length > 0 ? `user_id = ${data.user_id}` : null,
       flag =chk_dt.suc > 0 && chk_dt.msg.length > 0 ? 1 : 0;
     var res_dt = await db_Insert(table_name, fields, values, whr, flag);
     res.send(res_dt);
-  })
+  });
+  
+  ProfileRouter.post("/verify_email", async(req, res) => {
+    var data = req.body;
+    var otp = Math.floor(1000 + Math.random() * 9000);
+    var verifyEmail = await SendVerifyEmail(otp,data.email_id,data.profile_id,data.user_name);
+    // console.log(otp,data.email_id,data.profile_id,data.user_name);
+    if(verifyEmail.suc > 0){
+      res.send({suc:1, msg:'OTP has been Sent to Email', otp: otp})
+    }else{
+      res.send({suc:0, msg: 'OTP has not been Sent to Email', otp:0})
+    }
+  });
+
+ProfileRouter.post("/update_email_flag", async(req, res) => {
+  var data = req.body;
+  var table_name = `td_user_profile`,
+  fields = `email_approved_flag = '${data.email_approved_flag}'`,
+  values = null,
+  whr = `id = ${data.user_id}`,
+  flag = 1;
+  var ActiveStatus = await db_Insert(table_name, fields, values, whr, flag);
+  res.send(ActiveStatus);
+});
 
 module.exports = { ProfileRouter };

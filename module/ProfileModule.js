@@ -62,6 +62,16 @@ const user_basic_info = (data, dashboard_flag = false) => {
   })
 }
 
+const get_hobby = (data) => {
+    return new Promise (async (resolve, reject) => {
+     var select = "id,user_id,hobbies_interest,sports,fav_music,movie",
+     table_name= "td_user_hobbies",
+     whr = data.user_id > 0 ? `user_id=${data.user_id}` : null,
+     order = null;
+     var res_dt = await db_Select(select,table_name,whr,order);
+     resolve(res_dt);
+    })
+ };
 
 const user_hobbies = (data) => {
     return new Promise (async (resolve, reject) => {
@@ -88,4 +98,4 @@ const user_hobbies = (data) => {
   }
 
 
-module.exports = {db_Select, user_groom_loc, user_basic_info, user_hobbies}
+module.exports = {db_Select, user_groom_loc, user_basic_info, user_hobbies, get_hobby}
