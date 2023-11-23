@@ -294,7 +294,7 @@ UserRouter.post("/login", async (req, res) => {
         result = {suc:0, msg: 'Your account has been deactivated, please contact with Admin.'};
       }
     } else {
-      result = { suc: 0, msg: "No data found", user_data: null };
+      result = { suc: 0, msg: "This Mobile no. is not registered with us.", user_data: null };
     }
   } else {
     result = { suc: 0, msg: res_dt.msg };
@@ -330,7 +330,7 @@ UserRouter.post('/login_otp', async (req, res) => {
         res.send({suc:0, msg: 'Your account has been deactivated, please contact with Admin.', otp:0})
       }
     }else{
-      res.send({suc:0, msg: 'User ID not found', otp:0})
+      res.send({suc:0, msg: 'This Mobile no. is not registered with us', otp:0})
     }
   }else{
     res.send({suc:0, msg: res_dt.msg, otp:0})
