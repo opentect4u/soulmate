@@ -483,9 +483,9 @@ ProfileRouter.post("/send_otp", async (req, res) => {
     var table_name = "td_user_hobbies",
       fields =
        chk_dt.suc > 0 && chk_dt.msg.length > 0
-          ?`hobbies_interest = '${data.field_hobbies_interest}', sports = '${data.field_sports}', fav_music = '${data.field_fav_music}', movie = '${data.field_movie}', modified_by = '${data.user}', modified_dt = '${datetime}'`
+          ?`hobbies_interest = "${data.field_hobbies_interest}", sports = "${data.field_sports}", fav_music = "${data.field_fav_music}", movie = "${data.field_movie}", modified_by = '${data.user}', modified_dt = '${datetime}'`
           : "(user_id,hobbies_interest, sports,fav_music, movie, created_by, created_dt)",
-      values = `('${data.user_id}', '${data.field_hobbies_interest}', '${data.field_sports}','${data.field_fav_music}', '${data.field_movie}', '${data.user}', '${datetime}')`,
+      values = `('${data.user_id}', "${data.field_hobbies_interest}", "${data.field_sports}","${data.field_fav_music}", "${data.field_movie}", '${data.user}', '${datetime}')`,
       whr =chk_dt.suc > 0 && chk_dt.msg.length > 0 ? `user_id = ${data.user_id}` : null,
       flag =chk_dt.suc > 0 && chk_dt.msg.length > 0 ? 1 : 0;
     var res_dt = await db_Insert(table_name, fields, values, whr, flag);
