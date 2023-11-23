@@ -243,51 +243,55 @@ UserRouter.post("/login", async (req, res) => {
   data = JSON.parse(data);
   // console.log(data);
   var select =
-      "a.id prof_id, a.user_id, a.profile_id id, a.user_name, a.email_id user_email, a.password, a.last_login, a.pay_status pay_flag, b.plan_id, a.active_flag, b.kundali_file_name, b.rasi_id, b.nakhatra_id, b.jotok_rasi_id, b.dob, b.latt_long",
+      "a.id prof_id, a.user_id, a.profile_id id, a.user_name, a.email_id user_email, a.password, a.last_login, a.pay_status pay_flag, b.plan_id, b.kundali_file_name, b.rasi_id, b.nakhatra_id, b.jotok_rasi_id, b.dob, b.latt_long, b.active_flag",
     table_name = "md_user_login a, td_user_profile b",
-    whr = `a.profile_id=b.id AND a.user_id = '${data.user_id}' AND a.active_flag ="Y" `,
+    whr = `a.profile_id=b.id AND a.user_id = '${data.user_id}'`,
     order = null;
   var res_dt = await db_Select(select, table_name, whr, order);
   // console.log(res_dt);
   if (res_dt.suc > 0) {
     if (res_dt.msg.length > 0) {
-      if (await bcrypt.compare(data.password, res_dt.msg[0].password)) {
-        if(res_dt.msg[0].kundali_file_name){
-          if(res_dt.msg[0].rasi_id > 0 && res_dt.msg[0].nakhatra_id > 0 && res_dt.msg[0].jotok_rasi_id > 0){
-            true;
-          }else{
+      if(res_dt.msg[0].active_flag != 'N'){
+        if (await bcrypt.compare(data.password, res_dt.msg[0].password)) {
+          if(res_dt.msg[0].kundali_file_name){
+            if(res_dt.msg[0].rasi_id > 0 && res_dt.msg[0].nakhatra_id > 0 && res_dt.msg[0].jotok_rasi_id > 0){
+              true;
+            }else{
+              try{
+                var kundali_data = await addKundaliUser(res_dt.msg[0].kundali_file_name)
+                await db_Insert('td_user_profile', `rasi_id = '${kundali_data.rasi_id}', nakhatra_id = '${kundali_data.nakhatra_id}', jotok_rasi_id = '${kundali_data.jotok_rasi_id}'`, null, `id=${res_dt.msg[0].id}`, 1)
+              }catch(err){
+                console.log(err);
+              }
+            }
+          }else if(res_dt.msg[0].kundali_file_name == '' || res_dt.msg[0].kundali_file_name == null || res_dt.msg[0].kundali_file_name == undefined){
+            console.log('here');
             try{
-              var kundali_data = await addKundaliUser(res_dt.msg[0].kundali_file_name)
-              await db_Insert('td_user_profile', `rasi_id = '${kundali_data.rasi_id}', nakhatra_id = '${kundali_data.nakhatra_id}', jotok_rasi_id = '${kundali_data.jotok_rasi_id}'`, null, `id=${res_dt.msg[0].id}`, 1)
+              var BirthDate = new Date(res_dt.msg[0].dob).toISOString();
             }catch(err){
               console.log(err);
             }
+            try{
+                var kundali_data = await kundali(res_dt.msg[0].id, res_dt.msg[0].latt_long, BirthDate)
+                kundali_data.file_name ? await db_Insert('td_user_profile', `kundali_file_name='${kundali_data.file_name}', rasi_id = '${kundali_data.rasi_id}', nakhatra_id = '${kundali_data.nakhatra_id}', jotok_rasi_id = '${kundali_data.jotok_rasi_id}'`, null, `id=${res_dt.msg[0].id}`, 1) : ''
+              }catch(err){
+                console.log(err);
+              }
           }
-        }else if(res_dt.msg[0].kundali_file_name == '' || res_dt.msg[0].kundali_file_name == null || res_dt.msg[0].kundali_file_name == undefined){
-          console.log('here');
-          try{
-            var BirthDate = new Date(res_dt.msg[0].dob).toISOString();
-           }catch(err){
-            console.log(err);
-           }
-           try{
-              var kundali_data = await kundali(res_dt.msg[0].id, res_dt.msg[0].latt_long, BirthDate)
-              kundali_data.file_name ? await db_Insert('td_user_profile', `kundali_file_name='${kundali_data.file_name}', rasi_id = '${kundali_data.rasi_id}', nakhatra_id = '${kundali_data.nakhatra_id}', jotok_rasi_id = '${kundali_data.jotok_rasi_id}'`, null, `id=${res_dt.msg[0].id}`, 1) : ''
-            }catch(err){
-              console.log(err);
-            }
+          result = {
+            suc: 1,
+            msg: "successfully loggedin",
+            user_data: res_dt.msg,
+          };
+        } else {
+          result = {
+            suc: 0,
+            msg: "Please check your userid or password",
+            user_data: null,
+          };
         }
-        result = {
-          suc: 1,
-          msg: "successfully loggedin",
-          user_data: res_dt.msg,
-        };
-      } else {
-        result = {
-          suc: 0,
-          msg: "Please check your userid or password",
-          user_data: null,
-        };
+      }else{
+        result = {suc:0, msg: 'Your account has been deactivated, please contact with Admin.'};
       }
     } else {
       result = { suc: 0, msg: "No data found", user_data: null };
@@ -323,7 +327,7 @@ UserRouter.post('/login_otp', async (req, res) => {
           res.send({suc:0, msg: 'OTP not sent', otp:0})
         }
       }else{
-        res.send({suc:2, msg: 'Your account has been deactivated, please contact with Admin.', otp:0})
+        res.send({suc:0, msg: 'Your account has been deactivated, please contact with Admin.', otp:0})
       }
     }else{
       res.send({suc:0, msg: 'User ID not found', otp:0})

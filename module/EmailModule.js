@@ -195,8 +195,8 @@ const SendVerifyEmail = (otp,emailId,profilelId,userName) => {
           // subject: 'Hello from Nodemailer with OAuth2',
           // text: 'This is a test email sent from Nodemailer with OAuth2 in Node.js.',
           from: 'info@mysoulmate.co.in',
-          // to: `${emailId}`,
-          to: `tanmoy@mysoulmate.co.in`,
+          to: `${emailId}`,
+          // to: `tanmoy@mysoulmate.co.in`,
           subject: 'Verify Your Email',
           html: `<!DOCTYPE html>
           <head>
@@ -276,7 +276,7 @@ const SendVerifyEmail = (otp,emailId,profilelId,userName) => {
               
           <div style="border-radius:0; background: #fff; padding:48px 15px; text-align: left; min-height: 450px; border-radius:0 0 50px 50px;">
               <h2 style="font-weight: 300; color: #344161; font-size: 17px; margin-bottom: 35px;">Dear ${userName},</h2>
-              <p style="font-size: 17px;  margin-bottom: 35px; margin-top: 0;  line-height: 32px;">Your profile ID is ${profilelId}. Please use the verification code below on the My Soulmate Website.</p>
+              <p style="font-size: 17px;  margin-bottom: 35px; margin-top: 0;  line-height: 32px;">Your profile ID is ${profilelId}. Please use the verification code below to verify your email on the My Soulmate Website.</p>
               <h1 align="center" style= "font-size: 20px"><b>${otp}</b></h1><br>
                <p style="font-size: 17px; margin-bottom: 35px;  margin-top: 0; line-height: 32px;">If you did not initiate this request, You can ignore this email or let contact with Mysoulmate .</p>
               

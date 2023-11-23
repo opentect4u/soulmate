@@ -505,9 +505,10 @@ ProfileRouter.post("/send_otp", async (req, res) => {
   });
 
 ProfileRouter.post("/update_email_flag", async(req, res) => {
-  var data = req.body;
+  var data = req.body,
+    datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
   var table_name = `td_user_profile`,
-  fields = `email_approved_flag = '${data.email_approved_flag}'`,
+  fields = `email_approved_flag = 'Y', modified_by = '${data.user_name}', modified_dt = '${datetime}'`,
   values = null,
   whr = `id = ${data.user_id}`,
   flag = 1;
