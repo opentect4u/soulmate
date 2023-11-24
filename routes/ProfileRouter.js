@@ -76,12 +76,12 @@ ProfileRouter.post("/user_contact_details", async(req, res)=>{
   var data = req.body,
   datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
-// data = Buffer.from(data.data, "base64").toString();
-// data = JSON.parse(data);
+data = Buffer.from(data.data, "base64").toString();
+data = JSON.parse(data);
 
 var select = 'email_id',
 table_name = "td_user_profile",
-whr = `id = ${data.email_id}`,
+whr = `id = ${data.user_id}`,
 order = null;
 var chk_dt = await db_Select(select, table_name, whr, order);
 console.log(chk_dt);
