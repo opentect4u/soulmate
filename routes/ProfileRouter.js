@@ -86,7 +86,7 @@ order = null;
 var chk_dt = await db_Select(select, table_name, whr, order);
 // console.log(chk_dt);
 
-var email_flag = chk_dt.suc > 0 && chk_dt.msg.length > 0 ?  '' : `,email_approved_flag = N`
+var email_flag = chk_dt.suc > 0 && chk_dt.msg.length > 0 ? (chk_dt.msg[0].email_id == data.field_email_id ? '' : `,email_approved_flag = 'N'`) : ''
  var table_name = "td_user_profile",
     fields =`email_id= '${data.field_email_id}' ${email_flag}, modified_by = '${data.user_name}', modified_dt = '${datetime}'`,
     values = null,
