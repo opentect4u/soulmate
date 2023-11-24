@@ -8,6 +8,7 @@ const express = require('express'),
 const { fileExtLimiter } = require('../middleware/fileExtLimiter');
 const { fileSizeLimiter } = require('../middleware/fileSizeLimiter');
 const { filePayloadExists } = require('../middleware/filesPayloadExists');
+const { aadhar_okyc_send_otp, aadhar_okyc_verify } = require('../module/KycModule');
 const { db_Select, db_Delete } = require('../module/MasterModule');
 const { db_Insert } = require('../module/MasterModule');
 
@@ -136,6 +137,45 @@ KycRouter.get("/single_pic_delete", async (req, res) => {
   var res_dt = await db_Delete(table_name,whr)
   res.send(res_dt)
 });
+
+KycRouter.post('/aadhar_okyc_send_otp', async (req, res) => {
+  var data = req.body,
+    result;
+  // data = Buffer.from(data.data, "base64").toString();
+  // data = JSON.parse(data);
+  if(data.aadhar){
+    result = await aadhar_okyc_send_otp(data.aadhar)
+    if(result.status){
+      if(result.status == 'SUCCESS')
+        result = {suc: 1, msg: result}
+      else
+      result = {suc: 0, msg: result}
+    }else{
+      result = {suc: 0, msg: result}
+    }
+  }else{
+    result = {suc: 0, msg: 'No Aadhar No Found'}
+  }
+  res.send(result)
+})
+
+KycRouter.post('/aadhar_okyc_verify', async (req, res) => {
+  var data = req.body,
+    result;
+  // data = Buffer.from(data.data, "base64").toString();
+  // data = JSON.parse(data);
+  if(data.ref_id && data.otp){
+    result = await aadhar_okyc_verify(data.ref_id, data.otp)
+    if(result.status){
+      result = {suc: 1, msg: result}
+    }else{
+      result = {suc: 0, msg: result}
+    }
+  }else{
+    result = {suc: 0, msg: 'No Ref No found'}
+  }
+  res.send(result)
+})
 
 
 module.exports = {KycRouter}
