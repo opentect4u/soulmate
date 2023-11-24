@@ -76,24 +76,24 @@ ProfileRouter.post("/user_contact_details", async(req, res)=>{
   var data = req.body,
   datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
-data = Buffer.from(data.data, "base64").toString();
-data = JSON.parse(data);
+// data = Buffer.from(data.data, "base64").toString();
+// data = JSON.parse(data);
 
 var select = 'email_id',
 table_name = "td_user_profile",
 whr = `id = ${data.user_id}`,
 order = null;
 var chk_dt = await db_Select(select, table_name, whr, order);
-console.log(chk_dt);
+// console.log(chk_dt);
 
-var email_flag = chk_dt.suc > 0 && chk_dt.msg.length > 0 ?  '' : `,email_approved_flag = 'N'`
+var email_flag = chk_dt.suc > 0 && chk_dt.msg.length > 0 ?  '' : `,email_approved_flag = N`
  var table_name = "td_user_profile",
     fields =`email_id= '${data.field_email_id}' ${email_flag}, modified_by = '${data.user_name}', modified_dt = '${datetime}'`,
     values = null,
     whr = `id = ${data.user_id}`,
     flag = 1;
   var res_dt = await db_Insert(table_name, fields, values, whr, flag);
-  console.log(res_dt);
+  // console.log(res_dt);
   res.send(res_dt);
 });
 
