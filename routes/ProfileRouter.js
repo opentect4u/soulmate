@@ -183,9 +183,9 @@ ProfileRouter.post("/user_prof_info", async (req, res) => {
   var table_name = "td_user_education",
     fields =
       chk_dt.suc > 0 && chk_dt.msg.length > 0
-        ? `heigh_education = '${data.field_highest_education}', emp_type = '${data.field_employed}', occup = '${data.field_Occupation}', collage = '${data.field_College}', org_name = '${data.field_Organization}', income = '${data.field_Annual_Income}', work_location = '${data.work_location}', modified_by = '${data.user}', modified_dt = '${datetime}'`
+        ? `heigh_education = '${data.field_highest_education}', emp_type = '${data.field_employed}', occup = '${data.field_Occupation}', collage = "${data.field_College}", org_name = "${data.field_Organization}", income = '${data.field_Annual_Income}', work_location = "${data.work_location}", modified_by = '${data.user}', modified_dt = '${datetime}'`
         : "(user_id, heigh_education, emp_type, occup, collage, org_name, income, work_location, created_by, created_dt)",
-    values = `('${data.user_id}', '${data.field_highest_education}', '${data.field_employed}', '${data.field_Occupation}', 0, '${data.field_College}', 0, '${data.field_Organization}', '${data.field_Annual_Income}', '${data.work_location}', '${data.user}', '${datetime}')`,
+    values = `('${data.user_id}', '${data.field_highest_education}', '${data.field_employed}', '${data.field_Occupation}', 0, "${data.field_College}", 0, "${data.field_Organization}", '${data.field_Annual_Income}', "${data.work_location}", '${data.user}', '${datetime}')`,
     whr =
       chk_dt.suc > 0 && chk_dt.msg.length > 0
         ? `id = ${chk_dt.msg[0].id}`
@@ -369,7 +369,9 @@ ProfileRouter.post(
       datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss"),
       res_dt;
     // console.log(files);
-
+    // fs.mkdir("image", (err) => {
+    //   console.log("folder created");
+    // });
     const filepath = path.join('assets', "uploads", files["profile_img"].name),
       fileName = files["profile_img"].name;
     files["profile_img"].mv(filepath, async (err) => {
