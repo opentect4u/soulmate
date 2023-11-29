@@ -43,8 +43,8 @@ const request = require('request');
             // subject: 'Hello from Nodemailer with OAuth2',
             // text: 'This is a test email sent from Nodemailer with OAuth2 in Node.js.',
             from: 'info@mysoulmate.co.in',
-            // to: `${emailId}`,
-            to: `sayantika@synergicsoftek.in`,
+            to: `${emailId}`,
+            // to: `sayantika@synergicsoftek.in`,
             subject: 'Registration Successful',
             html: `<!DOCTYPE html>
             <head>
@@ -195,8 +195,8 @@ const SendVerifyEmail = (otp,emailId,profilelId,userName) => {
           // subject: 'Hello from Nodemailer with OAuth2',
           // text: 'This is a test email sent from Nodemailer with OAuth2 in Node.js.',
           from: 'info@mysoulmate.co.in',
-          // to: `${emailId}`,
-          to: `sayantika@synergicsoftek.in`,
+          to: `${emailId}`,
+          // to: `sayantika@synergicsoftek.in`,
           subject: 'Verify Your Email',
           html: `<!DOCTYPE html>
           <head>
@@ -348,8 +348,8 @@ const sendLoginEmail = (otp,email_id,user_name) => {
           // subject: 'Hello from Nodemailer with OAuth2',
           // text: 'This is a test email sent from Nodemailer with OAuth2 in Node.js.',
           from: 'info@mysoulmate.co.in',
-          // to: `${email_id}`,
-          to: `sayantika@synergicsoftek.in`,
+          to: `${email_id}`,
+          // to: `sayantika@synergicsoftek.in`,
           subject: 'Login OTP Successful',
           html: `<!DOCTYPE html>
           <head>

@@ -505,8 +505,12 @@ ProfileRouter.post("/send_otp", async (req, res) => {
   
   ProfileRouter.post("/verify_email", async(req, res) => {
     var data = req.body;
+    data = Buffer.from(data.data, "base64").toString();
+    data = JSON.parse(data);
+    // console.log(data);
     var otp = Math.floor(1000 + Math.random() * 9000);
     var verifyEmail = await SendVerifyEmail(otp,data.email_id,data.profile_id,data.user_name);
+    // console.log(verifyEmail);
     // console.log(otp,data.email_id,data.profile_id,data.user_name);
     if(verifyEmail.suc > 0){
       res.send({suc:1, msg:'OTP has been Sent to Email', otp: otp})
