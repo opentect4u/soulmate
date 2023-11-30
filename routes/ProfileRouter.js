@@ -24,7 +24,7 @@ const {
   get_email,
 } = require("../module/ProfileModule");
 const { getOtp} = require("../module/SmsModule");
-const { SendVerifyEmail, ActiveEmail } = require("../module/EmailModule");
+const { SendVerifyEmail, ActiveEmail, ContactUserEmail } = require("../module/EmailModule");
 
 ProfileRouter.get("/user_groom_loc", async (req, res) => {
   var data = req.query;
@@ -530,5 +530,13 @@ ProfileRouter.post("/update_email_flag", async(req, res) => {
   var ActiveStatus = await db_Insert(table_name, fields, values, whr, flag);
   res.send(ActiveStatus);
 });
+
+ProfileRouter.post("/search_email", async(req, res) => {
+  var data = req.body,
+  data = Buffer.from(data.data, "base64").toString();
+  data = JSON.parse(data);
+  var ContactEmail = await ContactUserEmail(data.id,data.profile_id,data.user_name,data.frm_email,data.to_email);
+  res.send(ContactEmail);
+})
 
 module.exports = { ProfileRouter };
