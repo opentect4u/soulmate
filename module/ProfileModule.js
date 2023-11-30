@@ -95,7 +95,8 @@ const user_hobbies = (data) => {
         res_dt = {suc: 1, msg: hobbie_data}
        resolve(res_dt)
    })
-  }
+  };
+  
 
 
 module.exports = {db_Select, user_groom_loc, user_basic_info, user_hobbies, get_hobby}
