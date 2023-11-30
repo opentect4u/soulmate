@@ -532,11 +532,16 @@ ProfileRouter.post("/update_email_flag", async(req, res) => {
 });
 
 ProfileRouter.post("/search_email", async(req, res) => {
-  var data = req.body,
+  var data = req.body;
   data = Buffer.from(data.data, "base64").toString();
   data = JSON.parse(data);
   var ContactEmail = await ContactUserEmail(data.id,data.profile_id,data.user_name,data.frm_email,data.to_email);
-  res.send(ContactEmail);
-})
+  // console.log(data.user_name);
+  if(ContactEmail.suc > 0){
+    res.send({suc:1, msg:'Email sent successfully'})
+  }else{
+    res.send({suc:0, msg: 'Email not sent'})
+  }
+});
 
 module.exports = { ProfileRouter };

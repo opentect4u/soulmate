@@ -497,7 +497,7 @@ const ContactUserEmail = (id,profilelId,userName,frm_email,to_email) => {
           from: 'info@mysoulmate.co.in',
           to: `${to_email}`,
           // to: `sayantika@synergicsoftek.in`,
-          subject: 'Invitation from' `${userName}`| 'My Soul Mate',
+          subject: `Invitation from ${userName} | My Soul Mate`,
           html: `<!DOCTYPE html>
           <head>
           <meta charset="utf-8">
@@ -576,12 +576,11 @@ const ContactUserEmail = (id,profilelId,userName,frm_email,to_email) => {
               
           <div style="border-radius:0; background: #fff; padding:48px 15px; text-align: left; min-height: 450px; border-radius:0 0 50px 50px;">
               <h2 style="font-weight: 300; color: #344161; font-size: 17px; margin-bottom: 35px;">Greetings,</h2>
-              <p style="font-size: 17px;  margin-bottom: 35px; margin-top: 0;  line-height: 32px;">I'm ${userName}(${profilelId}), and you can reach me at ${frm_email}. Your profile has caught my attention, and I would like to know more about you. Feel free to get in touch for further communication.</p>
+              <p style="font-size: 17px;  margin-bottom: 35px; margin-top: 0;  line-height: 32px;">I'm ${userName} (${profilelId}), and you can reach me at ${frm_email}. Your profile has caught my attention, and I would like to know more about you. Feel free to get in touch for further communication.</p>
               
-              <p style="font-size: 17px;  margin-bottom: 35px; margin-top: 0;  line-height: 32px;">To visit my profile click on this link: <a href="http://soulmate.opentech4u.co.in/#/portfolio_view/${id}">View Profile</a></p>
+              <p style="font-size: 17px;  margin-bottom: 35px; margin-top: 0;  line-height: 32px;">To visit my profile click on this link: <a href="http://soulmate.opentech4u.co.in/#/portfolio_view/${id}/M">View Profile</a></p>
            
-              <p style="font-size: 17px; margin-bottom: 35px;  margin-top: 0; line-height: 32px;"><b>Disclaimer</b>As a user of My Soul Mate, I agree that information about me will be used for the purpose of matching me with other members. This platform is not a dating website; its focus is on guiding me to find a life partner through numerological and astrological insights. I willingly grant consent to My Soul Mate for this purpose, and in the event of any future occurrences, the platform bears no responsibility for subsequent outcomes.</p>
-              
+
               <p style="font-size: 17px; margin-bottom: 35px;  margin-top: 0; line-height: 32px;">Thank you,<br>
                My Soulmate Team</p>
           </div>
@@ -618,10 +617,10 @@ const ContactUserEmail = (id,profilelId,userName,frm_email,to_email) => {
       transporter.sendMail(mailOptions, (error, info) => {
           if (error) {
               console.error('Error sending email:', error);
-              resolve(error)
+              resolve({suc:0, msg: error})
           } else {
               console.log('Email sent:', info.response);
-              resolve(info)
+              resolve({suc:1, msg: 'Email sent successfully'})
           }
       });    
   })
