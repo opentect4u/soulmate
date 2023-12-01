@@ -139,6 +139,30 @@ var res_dt = await db_Insert(table_name,fields,values,whr,flag);
 res.send(res_dt)
 })
 
+// UserRouter.post("/user_personal_details", async (req, res) => {
+//   var req_data = req.body,
+//     datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+//   req_data = Buffer.from(req_data.data, "base64").toString();
+//   req_data = JSON.parse(req_data);
+//   var table_name = "td_user_p_dtls",
+//     fields =
+//       req_data.id > 0
+//         ? `marital_status = '${req_data.field_marital_status}', height = '${req_data.field_height}', 
+//         blood_group = '${req_data.field_blood_group}', family_status = '${req_data.field_family_status}', family_type = '${req_data.field_family_type}', 
+//         family_values = '${req_data.field_family_value}', disability_flag = '${req_data.field_disability}', 
+//         weight = '${req_data.field_weight}', body_type = '${req_data.field_body_type}', 
+//       modified_by = '${req_data.reg_name}', modified_dt = '${datetime}'`
+//         : "(user_id, marital_status, height, blood_group, family_status, family_type, family_values, disability_flag, weight, body_type, created_by, created_dt)",
+//     values = `('${req_data.user_id}', '${req_data.field_marital_status}', '${req_data.field_height}', '${req_data.field_blood_group}', '${req_data.field_family_status}',
+//         '${req_data.field_family_type}', '${req_data.field_family_value}', '${req_data.field_disability}', '${req_data.field_weight}', '${req_data.field_body_type}',
+//         '${req_data.user}', '${datetime}')`,
+//     whr = req_data.id > 0 ? `id= '${req_data.id}'` : null,
+//     flag = req_data.id > 0 ? 1 : 0;
+//   var res_dt = await db_Insert(table_name, fields, values, whr, flag);
+//   res.send(res_dt);
+// });
+
 UserRouter.post("/user_personal_details", async (req, res) => {
   var req_data = req.body,
     datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");

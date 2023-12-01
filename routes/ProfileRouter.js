@@ -463,6 +463,7 @@ ProfileRouter.get("/check_email", async (req, res) => {
   res.send(result);
 });
 
+
 ProfileRouter.post("/send_otp", async (req, res) => {
   var data = req.body;
   var otp_dt = await getOtp(data);
