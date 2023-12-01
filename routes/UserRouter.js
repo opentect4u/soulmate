@@ -322,7 +322,7 @@ UserRouter.post('/login_otp', async (req, res) => {
         var email = await sendLoginEmail(otp, res_dt.msg[0].email_id, res_dt.msg[0].user_name)
         console.log(email);
         if(otpRes.suc > 0){
-          res.send({suc:1, msg:'OTP Sent', otp: otp})
+          res.send({suc:1, msg:'OTP Sent', otp: Buffer.from(otp.toString(), 'utf8').toString('base64')})
         }else{
           res.send({suc:0, msg: 'OTP not sent', otp:0})
         }

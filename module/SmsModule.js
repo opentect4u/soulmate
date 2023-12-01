@@ -26,7 +26,7 @@ const getOtp = (data) => {
           resolve({suc:0, msg: 'OTP not send', err: error})
         }else{
           console.log(body);
-          resolve({ suc: 1, msg: 'Otp Sent', otp: otp })
+          resolve({ suc: 1, msg: 'Otp Sent', otp: Buffer.from(otp.toString(), 'utf8').toString('base64')})
         }
       });
     })
