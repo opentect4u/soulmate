@@ -8,7 +8,7 @@ const express = require('express'),
 const { fileExtLimiter } = require('../middleware/fileExtLimiter');
 const { fileSizeLimiter } = require('../middleware/fileSizeLimiter');
 const { filePayloadExists } = require('../middleware/filesPayloadExists');
-const { aadhar_okyc_send_otp, aadhar_okyc_verify, pan_okyc_verify } = require('../module/KycModule');
+const { aadhar_okyc_send_otp, aadhar_okyc_verify } = require('../module/KycModule');
 const { db_Select, db_Delete } = require('../module/MasterModule');
 const { db_Insert } = require('../module/MasterModule');
 
@@ -141,9 +141,8 @@ KycRouter.get("/single_pic_delete", async (req, res) => {
 KycRouter.post('/aadhar_okyc_send_otp', async (req, res) => {
   var data = req.body,
     result;
-  data = Buffer.from(data.data, "base64").toString();
-  data = JSON.parse(data);
-  console.log(data);
+  // data = Buffer.from(data.data, "base64").toString();
+  // data = JSON.parse(data);
   if(data.aadhaar){
     result = await aadhar_okyc_send_otp(data.aadhaar)
     if(result.status){
@@ -167,25 +166,22 @@ KycRouter.post('/aadhar_okyc_verify', async (req, res) => {
   data = JSON.parse(data);
   if(data.ref_id && data.otp){
     result = await aadhar_okyc_verify(data.ref_id, data.otp)
-  if(result.status){
-    if(result.status == 'SUCCESS')
+    if(result.status){
       result = {suc: 1, msg: result}
-    else
-    result = {suc: 0, msg: result}
+    }else{
+      result = {suc: 0, msg: result}
+    }
   }else{
-    result = {suc: 0, msg: result}
+    result = {suc: 0, msg: 'No Ref Number found'}
   }
-}else{
-  result = {suc: 0, msg: 'No Ref Number Found'}
-}
   res.send(result)
-});
+})
 
 KycRouter.post('/pan_okyc_verify', async (req, res) => {
   var data = req.body,
     result;
-  data = Buffer.from(data.data, "base64").toString();
-  data = JSON.parse(data);
+  // data = Buffer.from(data.data, "base64").toString();
+  // data = JSON.parse(data);
   console.log(data);
   if(data.pan){
     result = await pan_okyc_verify(data.pan)
@@ -202,6 +198,5 @@ KycRouter.post('/pan_okyc_verify', async (req, res) => {
   }
   res.send(result)
 })
-
 
 module.exports = {KycRouter}
