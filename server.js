@@ -191,7 +191,7 @@ app.use((req, res, next) => {
   // console.log(req.path, req.path.split("/")[1], req.headers.referer);
   // if (req.path.split('/')[1] != 'err') {
     // console.log(req.path, req.headers.referer);
-  if (req.path != "/") {
+  if (req.path != "/" && req.path != "/payRes") {
     if (req.path.split("/")[1] == "uploads") {
       if (req.headers.referer && req.headers.referer == "http://localhost:4200/") {
         next();
