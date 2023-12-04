@@ -8,7 +8,7 @@ const express = require('express'),
 const { fileExtLimiter } = require('../middleware/fileExtLimiter');
 const { fileSizeLimiter } = require('../middleware/fileSizeLimiter');
 const { filePayloadExists } = require('../middleware/filesPayloadExists');
-const { aadhar_okyc_send_otp, aadhar_okyc_verify } = require('../module/KycModule');
+const { aadhar_okyc_send_otp, aadhar_okyc_verify, pan_okyc_verify } = require('../module/KycModule');
 const { db_Select, db_Delete } = require('../module/MasterModule');
 const { db_Insert } = require('../module/MasterModule');
 
@@ -180,15 +180,26 @@ KycRouter.post('/aadhar_okyc_verify', async (req, res) => {
   res.send(result)
 });
 
-// KycRouter.post("/pan_okyc_verify",async (req, res) => {
-//   var data = req.body,
-//   result;
-// data = Buffer.from(data.data, "base64").toString();
-// data = JSON.parse(data);
-// if(data.pan){
-//   result = await pan_details(data.pan)
-// }
-// })
+KycRouter.post('/pan_okyc_verify', async (req, res) => {
+  var data = req.body,
+    result;
+  data = Buffer.from(data.data, "base64").toString();
+  data = JSON.parse(data);
+  if(data.pan){
+    result = await pan_okyc_verify(data.pan)
+    if(result.status){
+      if(result.status == 'SUCCESS')
+        result = {suc: 1, msg: result}
+      else
+      result = {suc: 0, msg: result}
+    }else{
+      result = {suc: 0, msg: result}
+    }
+  }else{
+    result = {suc: 0, msg: 'No Pan Number Found'}
+  }
+  res.send(result)
+})
 
 
 module.exports = {KycRouter}
