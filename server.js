@@ -336,6 +336,7 @@ app.get("/test_email", async(req, res) => {
   var profilelId = req.query.profile_id;
   var userName = req.query.u_name;
   var mail = await SendUserEmail(emailId,profilelId,userName);
+  mail = await EncryptDataToSend(mail);
   console.log(emailId,profilelId,userName);
   res.send(mail);
 })

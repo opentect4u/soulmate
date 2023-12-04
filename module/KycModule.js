@@ -50,6 +50,7 @@ module.exports = {
 
     pan_okyc_verify: (pan) => {
         return new Promise((resolve, reject) => {
+            var request = require('request');
             var options = {
               'method': 'POST',
               'url': `${process.env.KYC_END_POINT}/offline-aadhaar/verify`,
