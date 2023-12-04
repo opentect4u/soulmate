@@ -141,10 +141,11 @@ KycRouter.get("/single_pic_delete", async (req, res) => {
 KycRouter.post('/aadhar_okyc_send_otp', async (req, res) => {
   var data = req.body,
     result;
-  data = Buffer.from(data.data, "base64").toString();
-  data = JSON.parse(data);
-  if(data.aadhar){
-    result = await aadhar_okyc_send_otp(data.aadhar)
+  // data = Buffer.from(data.data, "base64").toString();
+  // data = JSON.parse(data);
+  console.log(data);
+  if(data.aadhaar){
+    result = await aadhar_okyc_send_otp(data.aadhaar)
     if(result.status){
       if(result.status == 'SUCCESS')
         result = {suc: 1, msg: result}
@@ -185,6 +186,7 @@ KycRouter.post('/pan_okyc_verify', async (req, res) => {
     result;
   data = Buffer.from(data.data, "base64").toString();
   data = JSON.parse(data);
+  console.log(data);
   if(data.pan){
     result = await pan_okyc_verify(data.pan)
     if(result.status){
