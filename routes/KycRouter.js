@@ -166,14 +166,17 @@ KycRouter.post('/aadhar_okyc_verify', async (req, res) => {
   data = JSON.parse(data);
   if(data.ref_id && data.otp){
     result = await aadhar_okyc_verify(data.ref_id, data.otp)
-    if(result.status){
+  if(result.status){
+    if(result.status == 'SUCCESS')
       result = {suc: 1, msg: result}
-    }else{
-      result = {suc: 0, msg: result}
-    }
+    else
+    result = {suc: 0, msg: result}
   }else{
-    result = {suc: 0, msg: 'No Ref No found'}
+    result = {suc: 0, msg: result}
   }
+}else{
+  result = {suc: 0, msg: 'No Ref Number Found'}
+}
   res.send(result)
 })
 
