@@ -729,7 +729,7 @@ const SendForgetPwdEmail = (emailId,profilelId,userName) => {
               <p style="font-size: 17px;  margin-bottom: 35px; margin-top: 0;  line-height: 32px;">You can reset the password by clicking the link below.</p>
 
            
-              <p style="font-size: 17px; margin-bottom: 35px;  margin-top: 0; line-height: 32px;">If you didnot request to reset password,please let us know immediately by replying to this ${emailId} mail.</p>
+              <p style="font-size: 17px; margin-bottom: 35px;  margin-top: 0; line-height: 32px;">If you didnot request to reset password,please let us know immediately by replying to this mail ${emailId}.</p>
               
               <p style="font-size: 17px; margin-bottom: 35px;  margin-top: 0; line-height: 32px;">Expire the link after 24 hrs.</p>
 

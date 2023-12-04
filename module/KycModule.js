@@ -53,10 +53,10 @@ module.exports = {
             var request = require('request');
             var options = {
               'method': 'POST',
-              'url': `${process.env.KYC_END_POINT}/offline-aadhaar/verify`,
+              'url': `${process.env.verification/pan}/pan_verification`,
               'headers': {
-                'x-client-id': process.env.KYC_CLIENT_ID,
-                'x-client-secret': process.env.KYC_CLIENT_SECRET,
+                'x-client-id': 'CF10068897CLG8M9AH58I0HD1UNVGG',
+                'x-client-secret':'cfsk_ma_test_3f9507d43b76340b2eaabc8f2009229a_55dd50bb',
                 'Content-Type': 'application/json'
               },
               body: JSON.stringify({
