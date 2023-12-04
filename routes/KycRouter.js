@@ -180,8 +180,8 @@ KycRouter.post('/aadhar_okyc_verify', async (req, res) => {
 KycRouter.post('/pan_okyc_verify', async (req, res) => {
   var data = req.body,
     result;
-  data = Buffer.from(data.data, "base64").toString();
-  data = JSON.parse(data);
+  // data = Buffer.from(data.data, "base64").toString();
+  // data = JSON.parse(data);
   console.log(data);
   if(data.pan){
     result = await pan_okyc_verify(data.pan)

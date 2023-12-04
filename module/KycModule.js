@@ -53,7 +53,7 @@ module.exports = {
             var request = require('request');
             var options = {
               'method': 'POST',
-              'url': `${process.env.verification/pan}/pan_verification`,
+              'url': `${process.env.KYC_END_POINT}/verification/pan`,
               'headers': {
                 'x-client-id': 'CF10068897CLG8M9AH58I0HD1UNVGG',
                 'x-client-secret':'cfsk_ma_test_3f9507d43b76340b2eaabc8f2009229a_55dd50bb',
