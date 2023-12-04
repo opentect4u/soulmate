@@ -724,7 +724,7 @@ const SendForgetPwdEmail = (emailId,profilelId,userName) => {
               
           <div style="border-radius:0; background: #fff; padding:48px 15px; text-align: left; min-height: 450px; border-radius:0 0 50px 50px;">
               <h2 style="font-weight: 300; color: #344161; font-size: 17px; margin-bottom: 35px;">Dear ${userName},</h2>
-              <p style="font-size: 17px;  margin-bottom: 35px; margin-top: 0;  line-height: 32px;">We have received a request to reset the password for your Mysoulmate account with profile ID ${profilelId}.</p>
+              <p style="font-size: 17px;  margin-bottom: 35px; margin-top: 0;  line-height: 32px;">We have received a request to reset the password for your Mysoulmate account with profile ID <b>${profilelId}</b>.</p>
               
               <p style="font-size: 17px;  margin-bottom: 35px; margin-top: 0;  line-height: 32px;">You can reset the password by clicking the link below.</p>
 
