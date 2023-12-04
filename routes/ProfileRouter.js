@@ -108,9 +108,9 @@ ProfileRouter.post("/user_basic_info", async (req, res) => {
   var table_name = "td_user_profile",
     fields =
       data.user_id > 0
-        ? `u_name = '${data.field_name}', ac_for = '${data.field_who_creat_profile}', gender = '${data.field_gender}', mother_tong = '${data.field_mother_tong}', modified_by = '${data.user}', modified_dt = '${datetime}'`
-        : "(u_name, phone_no, ac_for, gender, mother_tong, created_by, created_dt)",
-    values = `('${data.field_name}', '${data.field_mobile}', '${data.field_who_creat_profile}', '${data.field_gender}', '${data.field_mother_tong}', '${data.user}', '${datetime}')`,
+        ? `ac_for = '${data.field_who_creat_profile}', gender = '${data.field_gender}', mother_tong = '${data.field_mother_tong}', modified_by = '${data.user}', modified_dt = '${datetime}'`
+        : "(phone_no, ac_for, gender, mother_tong, created_by, created_dt)",
+    values = `('${data.field_mobile}', '${data.field_who_creat_profile}', '${data.field_gender}', '${data.field_mother_tong}', '${data.user}', '${datetime}')`,
     whr = data.user_id > 0 ? `id = ${data.user_id}` : null,
     flag = data.user_id > 0 ? 1 : 0;
   var res_dt = await db_Insert(table_name, fields, values, whr, flag);
@@ -137,6 +137,47 @@ ProfileRouter.post("/user_basic_info", async (req, res) => {
   }
   res.send(res_dt);
 });
+
+// ProfileRouter.post("/user_basic_info", async (req, res) => {
+//   var data = req.body,
+//     datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+//   data = Buffer.from(data.data, "base64").toString();
+//   data = JSON.parse(data);
+//   console.log(data);
+
+//   var table_name = "td_user_profile",
+//     fields =
+//       data.user_id > 0
+//         ? `u_name = '${data.field_name}', ac_for = '${data.field_who_creat_profile}', gender = '${data.field_gender}', mother_tong = '${data.field_mother_tong}', modified_by = '${data.user}', modified_dt = '${datetime}'`
+//         : "(u_name, phone_no, ac_for, gender, mother_tong, created_by, created_dt)",
+//     values = `('${data.field_name}', '${data.field_mobile}', '${data.field_who_creat_profile}', '${data.field_gender}', '${data.field_mother_tong}', '${data.user}', '${datetime}')`,
+//     whr = data.user_id > 0 ? `id = ${data.user_id}` : null,
+//     flag = data.user_id > 0 ? 1 : 0;
+//   var res_dt = await db_Insert(table_name, fields, values, whr, flag);
+
+//   if (res_dt.suc > 0) {
+//     var select = "id",
+//       table_name = "td_user_p_dtls",
+//       whr = `user_id = ${data.user_id}`,
+//       order = null;
+//     var chk_dt = await db_Select(select, table_name, whr, order);
+
+//     var table_name = "td_user_p_dtls",
+//       fields =
+//         chk_dt.suc > 0 && chk_dt.msg.length > 0
+//           ? `marital_status = '${data.field_marital_status}', height = '${data.field_height}', weight = '${data.field_weight}', disability_flag = '${data.field_disability}', body_type = '${data.field_body_type}', drinking_habbits = '${data.field_Drinking_Habits}', age = '${data.field_age}', eating_habbits = '${data.field_Eating_Habits}', smoking_habbits = '${data.field_Smoking_Habits}', modified_by = '${data.user}', modified_dt = '${datetime}'`
+//           : "(user_id, marital_status, height, weight, disability_flag, body_type, drinking_habbits, age, eating_habbits, smoking_habbits, created_by, created_dt)",
+//       values = `('${data.user_id}', '${data.field_marital_status}', '${data.field_height}', '${data.field_weight}', '${data.field_disability}', '${data.field_body_type}', '${data.field_Drinking_Habits}', '${data.field_age}', '${data.field_Eating_Habits}', '${data.field_Smoking_Habits}', '${data.user}', '${datetime}')`,
+//       whr =
+//         chk_dt.suc > 0 && chk_dt.msg.length > 0
+//           ? `id = ${chk_dt.msg[0].id}`
+//           : null,
+//       flag = chk_dt.suc > 0 && chk_dt.msg.length > 0 ? 1 : 0;
+//     res_dt = await db_Insert(table_name, fields, values, whr, flag);
+//   }
+//   res.send(res_dt);
+// });
 
 ProfileRouter.post("/user_groom_loc", async (req, res) => {
   var data = req.body,
