@@ -8,7 +8,7 @@ const express = require('express'),
 const { fileExtLimiter } = require('../middleware/fileExtLimiter');
 const { fileSizeLimiter } = require('../middleware/fileSizeLimiter');
 const { filePayloadExists } = require('../middleware/filesPayloadExists');
-const { aadhar_okyc_send_otp, aadhar_okyc_verify } = require('../module/KycModule');
+const { aadhar_okyc_send_otp, aadhar_okyc_verify, pan_okyc_verify } = require('../module/KycModule');
 const { db_Select, db_Delete } = require('../module/MasterModule');
 const { db_Insert } = require('../module/MasterModule');
 
@@ -180,8 +180,8 @@ KycRouter.post('/aadhar_okyc_verify', async (req, res) => {
 KycRouter.post('/pan_okyc_verify', async (req, res) => {
   var data = req.body,
     result;
-  data = Buffer.from(data.data, "base64").toString();
-  data = JSON.parse(data);
+  // data = Buffer.from(data.data, "base64").toString();
+  // data = JSON.parse(data);
   console.log(data);
   if(data.pan){
     result = await pan_okyc_verify(data.pan)
