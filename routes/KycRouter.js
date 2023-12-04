@@ -178,7 +178,17 @@ KycRouter.post('/aadhar_okyc_verify', async (req, res) => {
   result = {suc: 0, msg: 'No Ref Number Found'}
 }
   res.send(result)
-})
+});
+
+// KycRouter.post("/pan_okyc_verify",async (req, res) => {
+//   var data = req.body,
+//   result;
+// data = Buffer.from(data.data, "base64").toString();
+// data = JSON.parse(data);
+// if(data.pan){
+//   result = await pan_details(data.pan)
+// }
+// })
 
 
 module.exports = {KycRouter}

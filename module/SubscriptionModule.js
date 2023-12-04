@@ -3,7 +3,7 @@ const { db_Select } = require("./MasterModule");
 
 const subscription_dtls = (data) => {
     return new Promise (async(resolve, reject) => {
-        var select = "a.id,a.pay_name,b.sub_id,b.actual_price,b.discount,b.amount,b.tennure_period",
+        var select = "a.id,a.pay_name',',b.sub_id,b.actual_price,b.discount,b.amount,b.tennure_period",
         table_name = 'md_subscription a,md_subscription_pay_dtls b',
         whr = data.id > 0 ? `a.id = b.sub_id AND a.id =${data.id}` : `a.id = b.sub_id`,
         order = null;
