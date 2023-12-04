@@ -767,14 +767,14 @@ const SendForgetPwdEmail = (emailId,profilelId,userName) => {
       };
       
       transporter.sendMail(mailOptions, (error, info) => {
-          if (error) {
-              console.error('Error sending email:', error);
-              resolve(error)
-          } else {
-              console.log('Email sent:', info.response);
-              resolve(info)
-          }
-      });    
+        if (error) {
+            console.error('Error sending email:', error);
+            resolve({suc:0, msg: error})
+        } else {
+            console.log('Email sent:', info.response);
+            resolve({suc:1, msg: 'Email sent successfully'})
+        }
+    });  
   })
 }
 
