@@ -643,8 +643,8 @@ const SendForgetPwdEmail = (emailId,profilelId,userName) => {
       });
       const mailOptions = {
           from: 'info@mysoulmate.co.in',
-          // to: `${emailId}`,
-          to: `sayantika@synergicsoftek.in`,
+          to: `${emailId}`,
+          // to: `sayantika@synergicsoftek.in`,
           subject: 'Do you want to reset your Password?',
           html: `<!DOCTYPE html>
           <head>
