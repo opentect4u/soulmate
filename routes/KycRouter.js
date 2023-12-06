@@ -24,45 +24,45 @@ const { db_Insert } = require('../module/MasterModule');
     })
 
 
-    KycRouter.post('/update_doc_list', 
-    fileUpload({ crereateParentPath: true }),
-    filePayloadExists,
-    fileExtLimiter(['.png','.jpg','.jpeg','.pdf', '.docx', '.doc']),
-    fileSizeLimiter, async (req, res) => {
+    // KycRouter.post('/update_doc_list', 
+    // fileUpload({ crereateParentPath: true }),
+    // filePayloadExists,
+    // fileExtLimiter(['.png','.jpg','.jpeg','.pdf', '.docx', '.doc']),
+    // fileSizeLimiter, async (req, res) => {
 
-        var data = req.body,
-        files = req.files,
-        datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss"), res_dt;
-        console.log(files);
-        // data = Buffer.from(data.data, "base64").toString();
-        // data = JSON.parse(data);
-        // for(let key in files){
-        //     console.log(key);
-            const filepath = path.join('assets', 'uploads', files['kyc_img'].name),
-                fileName = files['kyc_img'].name;
-            files['kyc_img'].mv(filepath, async (err) => {
-                if (err) {
-                    res.status(500).send({ status: 'error', message: err})
-                }
-                else{
-                    var select = 'id',
-                        table_name = 'td_user_kyc_list',
-                        whr = `user_id = ${data.user_id}`,
-                        order = null;
-                    var kyc_dt = await db_Select(select, table_name, whr, order)
+    //     var data = req.body,
+    //     files = req.files,
+    //     datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss"), res_dt;
+    //     console.log(files);
+    //     // data = Buffer.from(data.data, "base64").toString();
+    //     // data = JSON.parse(data);
+    //     // for(let key in files){
+    //     //     console.log(key);
+    //         const filepath = path.join('assets', 'uploads', files['kyc_img'].name),
+    //             fileName = files['kyc_img'].name;
+    //         files['kyc_img'].mv(filepath, async (err) => {
+    //             if (err) {
+    //                 res.status(500).send({ status: 'error', message: err})
+    //             }
+    //             else{
+    //                 var select = 'id',
+    //                     table_name = 'td_user_kyc_list',
+    //                     whr = `user_id = ${data.user_id}`,
+    //                     order = null;
+    //                 var kyc_dt = await db_Select(select, table_name, whr, order)
 
-                    var table_name = 'td_user_kyc_list',
-                    fields = kyc_dt.suc > 0 && kyc_dt.msg.length > 0 ? `doc_type = '${data.doc_type}', file_path = '${fileName}', modified_by = '${data.user}', modified_dt = '${datetime}'` :
-                        '(user_id, doc_type, file_path, created_by, created_dt)',
-                    values = `('${data.user_id}', '${data.doc_type}', '${fileName}', '${data.user}', '${datetime}')`,
-                    whr = kyc_dt.suc > 0 && kyc_dt.msg.length > 0 ? `id = ${kyc_dt.msg[0].id}` : null,
-                    flag = kyc_dt.suc > 0 && kyc_dt.msg.length > 0 ? 1 : 0;
-                    res_dt = await db_Insert(table_name, fields, values, whr, flag)
-                }
-                res.send(res_dt)
-            })
-        // }
-    })
+    //                 var table_name = 'td_user_kyc_list',
+    //                 fields = kyc_dt.suc > 0 && kyc_dt.msg.length > 0 ? `doc_type = '${data.doc_type}', file_path = '${fileName}', modified_by = '${data.user}', modified_dt = '${datetime}'` :
+    //                     '(user_id, doc_type, file_path, created_by, created_dt)',
+    //                 values = `('${data.user_id}', '${data.doc_type}', '${fileName}', '${data.user}', '${datetime}')`,
+    //                 whr = kyc_dt.suc > 0 && kyc_dt.msg.length > 0 ? `id = ${kyc_dt.msg[0].id}` : null,
+    //                 flag = kyc_dt.suc > 0 && kyc_dt.msg.length > 0 ? 1 : 0;
+    //                 res_dt = await db_Insert(table_name, fields, values, whr, flag)
+    //             }
+    //             res.send(res_dt)
+    //         })
+    //     // }
+    // })
 
     KycRouter.get('/get_profile_pic', async (req, res) => {
       var data = req.query
@@ -180,8 +180,8 @@ KycRouter.post('/aadhar_okyc_verify', async (req, res) => {
 KycRouter.post('/pan_okyc_verify', async (req, res) => {
   var data = req.body,
     result;
-  // data = Buffer.from(data.data, "base64").toString();
-  // data = JSON.parse(data);
+  data = Buffer.from(data.data, "base64").toString();
+  data = JSON.parse(data);
   console.log(data);
   if(data.pan){
     result = await pan_okyc_verify(data.pan)
@@ -198,5 +198,17 @@ KycRouter.post('/pan_okyc_verify', async (req, res) => {
   }
   res.send(result)
 })
+
+KycRouter.post("/update_kyc_flag", async (req, res) => {
+  var data = req.body;
+  datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+  var table_name = `td_user_profile`,
+  fields = `kyc_type= '${data.field_kyc_type}', profile_verify_flag = 'Y', modified_by = '${data.user_name}', modified_dt = '${datetime}'`,
+  values = null,
+  whr = `id = ${data.user_id}`,
+  flag = 1;
+  var KycStatus = await db_Insert(table_name, fields, values, whr, flag);
+  res.send(KycStatus);
+});
 
 module.exports = {KycRouter}

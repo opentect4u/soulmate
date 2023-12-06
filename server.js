@@ -191,7 +191,7 @@ app.use((req, res, next) => {
   // console.log(req.path, req.path.split("/")[1], req.headers.referer);
   // if (req.path.split('/')[1] != 'err') {
     // console.log(req.path, req.headers.referer);
-  if (req.path != "/" && req.path != "/payRes") {
+  if (req.path != "/" && req.path != "/payRes" && req.path != '/testPayReq') {
     if (req.path.split("/")[1] == "uploads") {
       if (req.headers.referer && req.headers.referer == "http://localhost:4200/") {
         next();
@@ -316,6 +316,7 @@ const sendMail = require("./controllers/sendMail");
 const { SendUserEmail } = require("./module/EmailModule");
 const { subscriptionRouter } = require("./routes/SubscriptionRouter");
 const { ServercheckRouter } = require("./routes/ServercheckRouter");
+const { PaymentRouter } = require("./routes/PaymentRouter");
 // const { SmsRouter } = require("./routes/SmsRouter");
 
 app.get("/email", sendMail);
@@ -328,6 +329,7 @@ app.use('/partner', PartnerRouter);
 app.use('/kyc', KycRouter);
 app.use('/subscription', subscriptionRouter);
 app.use('/server', ServercheckRouter);
+app.use(PaymentRouter)
 // app.use('/sms', SmsRouter);
 
 

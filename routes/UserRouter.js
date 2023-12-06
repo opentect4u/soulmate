@@ -267,7 +267,7 @@ UserRouter.post("/login", async (req, res) => {
   data = JSON.parse(data);
   // console.log(data);
   var select =
-      "a.id prof_id, a.user_id, a.profile_id id, b.profile_id profile_code, a.user_name, a.email_id user_email, a.password, a.last_login, a.pay_status pay_flag, b.plan_id, b.kundali_file_name, b.rasi_id, b.nakhatra_id, b.jotok_rasi_id, b.dob, b.latt_long, b.active_flag",
+      "a.id prof_id, a.user_id, a.profile_id id, b.profile_id profile_code, a.user_name, a.email_id user_email, a.password, a.last_login, a.pay_status pay_flag, b.plan_id, b.kundali_file_name, b.rasi_id, b.nakhatra_id, b.jotok_rasi_id, b.dob, b.latt_long, b.active_flag, b.profile_verify_flag",
     table_name = "md_user_login a, td_user_profile b",
     whr = `a.profile_id=b.id AND a.user_id = '${data.user_id}'`,
     order = null;
