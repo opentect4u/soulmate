@@ -778,7 +778,7 @@ const SendForgetPwdEmail = (emailId,profilelId,userName) => {
   })
 }
 
-const SendPaymentEmail = (emailId,profilelId,userName) => {
+const SendPaymentEmail = (emailId,userName,order_status,order_id,tnx_date,amount,pay_name) => {
   return new Promise((resolve, reject) => {
       const transporter = nodemailer.createTransport({
       host: 'email-smtp.ap-south-1.amazonaws.com',
@@ -876,14 +876,16 @@ const SendPaymentEmail = (emailId,profilelId,userName) => {
               
           <div style="border-radius:0; background: #fff; padding:48px 15px; text-align: left; min-height: 450px; border-radius:0 0 50px 50px;">
               <h2 style="font-weight: 300; color: #344161; font-size: 17px; margin-bottom: 35px;">Dear ${userName},</h2>
-              <p style="font-size: 17px;  margin-bottom: 35px; margin-top: 0;  line-height: 32px;">Thank you for your payment.Please refer details of this transaction:</p><br>
-              <p style="font-size: 17px;  margin-bottom: 35px; margin-top: 0;  line-height: 32px;"><b>Payment Status :</b></p>
+              <p style="font-size: 17px;  margin-bottom: 35px; margin-top: 0;  line-height: 32px;">Thank you for your payment.Please refer details of this transaction:</p>
+              <p style="font-size: 17px;  margin-bottom: 35px; margin-top: 0;  line-height: 32px;"><b>Payment Status : </b>${order_status}<br>
+              <b>Order ID : </b>${order_id}<br>
+              <b>Order Date : </b>${tnx_date}<br>
+              <b>Membership Name : </b>${pay_name}<br>
+              <b>Amount (Rs.) : </b>${amount}</p>
               
-              <p style="font-size: 17px;  margin-bottom: 35px; margin-top: 0;  line-height: 32px;">You can reset the password by clicking the link below.</p>
+              <p style="font-size: 17px;  margin-bottom: 35px; margin-top: 0;  line-height: 32px;">Kindly Note:<br>
 
-           
-              <p style="font-size: 17px; margin-bottom: 35px;  margin-top: 0; line-height: 32px;">If you didnot request to reset password,please let us know immediately by replying to this mail ${emailId}.</p>
-              
+              To print your E-Receipt or after a successful payment, please visit the portal at https://mysoulmate.co.in/#/home.</p>
 
               <p style="font-size: 17px; margin-bottom: 35px;  margin-top: 0; line-height: 32px;">Thank you,<br>
                My Soulmate Team</p>

@@ -603,9 +603,10 @@ ProfileRouter.post("/forget_email", async (req, res) => {
 
 ProfileRouter.post("/payment_email", async (req, res) => {
   var data = req.body;
-  // data = Buffer.from(data.data, "base64").toString();
-  // data = JSON.parse(data);
-  var PaymentEmail = await SendPaymentEmail(data.email_id,data.profile_id,data.user_name);
+  data = Buffer.from(data.data, "base64").toString();
+  data = JSON.parse(data);
+  var PaymentEmail = await SendPaymentEmail(data.email_id,data.user_name,data.order_status,data.order_id,data.tnx_date,data.amount,data.pay_name);
+  // console.log(data.email_id,data.user_name,data.order_status,data.order_id,data.tnx_date,data.amount,data.pay_name)
   if(PaymentEmail.suc > 0){
     res.send({suc:1, msg: 'Email sent successfully'})
   }else {
