@@ -24,7 +24,7 @@ const {
   get_email,
 } = require("../module/ProfileModule");
 const { getOtp} = require("../module/SmsModule");
-const { SendVerifyEmail, ActiveEmail, ContactUserEmail, SendForgetPwdEmail } = require("../module/EmailModule");
+const { SendVerifyEmail, ActiveEmail, ContactUserEmail, SendForgetPwdEmail, SendPaymentEmail } = require("../module/EmailModule");
 
 ProfileRouter.get("/user_groom_loc", async (req, res) => {
   var data = req.query;
@@ -595,6 +595,18 @@ ProfileRouter.post("/forget_email", async (req, res) => {
   // data = JSON.parse(data);
   var ForgetEmail = await SendForgetPwdEmail(data.email_id,data.profile_id,data.user_name);
   if(ForgetEmail.suc > 0){
+    res.send({suc:1, msg: 'Email sent successfully'})
+  }else {
+    res.send({suc:0, msg: 'Email not sent'})
+  }
+});
+
+ProfileRouter.post("/payment_email", async (req, res) => {
+  var data = req.body;
+  // data = Buffer.from(data.data, "base64").toString();
+  // data = JSON.parse(data);
+  var PaymentEmail = await SendPaymentEmail(data.email_id,data.profile_id,data.user_name);
+  if(PaymentEmail.suc > 0){
     res.send({suc:1, msg: 'Email sent successfully'})
   }else {
     res.send({suc:0, msg: 'Email not sent'})
