@@ -917,7 +917,13 @@ const SendPaymentEmail = (emailId,userName,order_status,order_id,tnx_date,amount
               
           
           </body>
-          </html>`
+          </html>`,
+          attachments: [
+            {
+              filename: 'file.pdf', // Name to be displayed in the email
+              content: pdfAttachment,
+            },
+          ],
       };
       
       transporter.sendMail(mailOptions, (error, info) => {
