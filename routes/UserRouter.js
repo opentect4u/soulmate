@@ -223,7 +223,7 @@ UserRouter.post("/user_about", async (req, res) => {
     flag = 1;
   var res_dt = await db_Insert(table_name, fields, values, whr, flag);
   var select =
-      "id, kundali_file_name, rasi_id, nakhatra_id, jotok_rasi_id, dob, latt_long",
+      "id, kundali_file_name, rasi_id, nakhatra_id, jotok_rasi_id, dob, latt_long, profile_verify_flag",
     table_name = "td_user_profile",
     whr = `id = '${req_data.user_id}'`,
     order = null;
@@ -263,11 +263,12 @@ UserRouter.post("/user_about", async (req, res) => {
 UserRouter.post("/login", async (req, res) => {
   var data = req.body,
     result;
+    datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
   data = Buffer.from(data.data, "base64").toString();
   data = JSON.parse(data);
   // console.log(data);
   var select =
-      "a.id prof_id, a.user_id, a.profile_id id, b.profile_id profile_code, a.user_name, a.email_id user_email, a.password, a.last_login, a.pay_status pay_flag, b.plan_id, b.kundali_file_name, b.rasi_id, b.nakhatra_id, b.jotok_rasi_id, b.dob, b.latt_long, b.active_flag, b.profile_verify_flag",
+      "a.id prof_id, a.user_id, a.profile_id id, b.profile_id profile_code, a.user_name, a.email_id user_email, a.password, a.last_login, a.pay_status pay_flag, b.plan_id, b.kundali_file_name, b.rasi_id, b.nakhatra_id, b.jotok_rasi_id, b.dob, b.latt_long, b.active_flag, b.profile_verify_flag, IF(b.plan_id > 0, (SELECT c.pay_name FROM md_subscription c WHERE b.plan_id=c.id), 'Free') pay_name",
     table_name = "md_user_login a, td_user_profile b",
     whr = `a.profile_id=b.id AND a.user_id = '${data.user_id}'`,
     order = null;
@@ -277,6 +278,11 @@ UserRouter.post("/login", async (req, res) => {
     if (res_dt.msg.length > 0) {
       if(res_dt.msg[0].active_flag != 'N'){
         if (await bcrypt.compare(data.password, res_dt.msg[0].password)) {
+          try{
+            await db_Insert('md_user_login', `last_login="${datetime}"`, null, `user_id=${res_dt.msg[0].user_id}`, 1)
+          }catch(err){
+            console.log(err);
+          }
           if(res_dt.msg[0].kundali_file_name){
             if(res_dt.msg[0].rasi_id > 0 && res_dt.msg[0].nakhatra_id > 0 && res_dt.msg[0].jotok_rasi_id > 0){
               true;
@@ -369,7 +375,7 @@ UserRouter.post('/get_login_data', async (req, res) => {
   data = JSON.parse(data);
   // console.log(data);
   var select =
-      "a.id prof_id, a.user_id, a.profile_id id, a.user_name, a.email_id user_email, a.password, a.last_login, a.pay_status pay_flag, b.plan_id, a.active_flag, b.kundali_file_name, b.rasi_id, b.nakhatra_id, b.jotok_rasi_id, b.dob, b.latt_long",
+      "a.id prof_id, a.user_id, a.profile_id id, a.user_name, a.email_id user_email, a.password, a.last_login, a.pay_status pay_flag, b.plan_id, a.active_flag, b.kundali_file_name, b.rasi_id, b.nakhatra_id, b.jotok_rasi_id, b.dob, b.latt_long, IF(b.plan_id > 0, (SELECT c.pay_name FROM md_subscription c WHERE b.plan_id=c.id), 'Free') pay_name",
     table_name = "md_user_login a, td_user_profile b",
     whr = `a.profile_id=b.id AND a.user_id = '${data.user_id}' AND a.active_flag ="Y" `,
     order = null;

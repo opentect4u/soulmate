@@ -90,7 +90,7 @@ const JotokMatch = (hus_rasi_id, wif_rasi_id) => {
     var res_dt = await db_Select(select, table_name, whr, order);
     if (res_dt.suc > 0 && res_dt.msg.length > 0) {
       var marks = res_dt.msg[0].marks;
-      console.log(marks);
+      // console.log(marks);
       // marks = marks > 0 ? (globalValues.each_marks / globalValues.jotok_max) * marks : 0
       if (marks <= 36 && marks >= 30) {
         result = 20;
@@ -130,7 +130,7 @@ const JotokMatch = (hus_rasi_id, wif_rasi_id) => {
 };
 
 const ElementMatch = (filePath) => {
-  console.log(filePath);
+  // console.log(filePath);
   return new Promise((resolve, reject) => {
     try {
       fs.readFile(path.join('raw_data', filePath), 'utf8', (err, jsonData) => {

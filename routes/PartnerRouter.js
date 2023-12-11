@@ -37,7 +37,7 @@ PartnerRouter.post("/update_partner", async (req, res) =>{
     whr = `user_id = ${data.user_id}`,                                                                                                                                                                               
     order = null;
     var dt = await db_Select(select, table_name, whr, order)
-    console.log(dt);
+    // console.log(dt);
     var table_name = "td_user_partner_pref",
     fields = dt.suc > 0 && dt.msg.length > 0 ? 
     `age_frm = '${data.field_frm_age > 0 ? data.field_frm_age : 0}', 
@@ -53,7 +53,7 @@ PartnerRouter.post("/update_partner", async (req, res) =>{
     res.send(res_dt);
 })
 
-PartnerRouter.get("/partner_match", async (req, res) => {
+PartnerRouter.get("/partner_match_old", async (req, res) => {
   var result = [], result_dt;
   var data = req.query;
   var select = "a.id, a.user_id, a.age_frm, a.age_to, a.marital_status, a.mother_tounge, a.religion, a.city_id location, a.country_id, a.state_id ,b.profile_id, b.gender, b.dob, b.jotok_rasi_id, b.rasi_id, b.kundali_file_name, b.gender own_gender, b.country_id own_country, b.state_id own_state, b.city_id own_city",
@@ -80,7 +80,7 @@ PartnerRouter.get("/partner_match", async (req, res) => {
     // var own_element_val = await ElementMatch(pref_dt.msg[0].kundali_file_name),
     var own_element_val = await ElementMatch(pref_dt.msg[0].kundali_file_name),
     own_ele_name;
-    console.log('Own Ele', own_element_val);
+    // console.log('Own Ele', own_element_val);
     if(own_element_val.length > 0){
       own_ele_name = [...own_element_val.map(dt=>dt.flag)]
       own_ele_name = own_ele_name.join('')
@@ -152,7 +152,7 @@ PartnerRouter.get("/partner_match", async (req, res) => {
             }else{
               partner_ele_name = EleFields.flag
             }
-          console.log('Element P: ', basic_info.msg[0].u_name, EleFields, 'Own Element: ', own_element_val);
+          // console.log('Element P: ', basic_info.msg[0].u_name, EleFields, 'Own Element: ', own_element_val);
           var elementMarks = await calculateElementMarks(own_ele_name, partner_ele_name)
           // console.log(elementMarks);
           elementMarks = elementMarks.suc > 0 ? (elementMarks.msg.length > 0 ? elementMarks.msg[0].marks : 0) : 0 // Marks Filed
@@ -180,7 +180,7 @@ PartnerRouter.get("/partner_match", async (req, res) => {
           var SunShineMatch = await SunshineNumberMatch(own_rashi, partner_rashi, dateFormat(basic_info.msg[0].dob, 'dd'), pref_dt.msg[0].dob)
           
           var tot_match_marks = Math.round(jotok_match + elementMarks + mongal_marks + moonShineMatch + SunShineMatch);
-          console.log(basic_info.msg[0].u_name, 'Total Marks', jotok_match, elementMarks, mongal_marks, moonShineMatch, SunShineMatch);
+          // console.log(basic_info.msg[0].u_name, 'Total Marks', jotok_match, elementMarks, mongal_marks, moonShineMatch, SunShineMatch);
 
           
           var hobbies = await user_hobbies({user_id:rdt.id});
@@ -205,6 +205,193 @@ PartnerRouter.get("/partner_match", async (req, res) => {
             mongal_marks,
             moonShineMatch,
             SunShineMatch
+          }
+          result.push(result_partner)
+        }catch(err){
+          console.log('ERR ID', rdt.id);
+          console.log(err);
+        }
+      }
+      result_dt = {suc: 1, msg: result}
+    }else{
+      result_dt = {suc: 1, msg: []}
+    }
+  }else{
+    result_dt = pref_dt
+  }
+
+  // function* streamChunks() {
+  //   const chunkSize = 5;
+  //   for (let i = 0; i < result_dt.msg.length; i += chunkSize) {
+  //     yield result_dt.msg.slice(i, i + chunkSize);
+  //   }
+  // }
+  // res.setHeader('Content-Type', 'application/json');
+  // try{
+  //   for (const chunk of streamChunks()) {
+  //     res.write(JSON.stringify(chunk));
+  //     // res.flush();
+  //   }
+  // }catch(err){
+  //   console.log(err);
+  // }
+  // res.end();
+  // res.send(res_dt)
+  // res.send(result)
+  res.send(result_dt)
+});
+
+// PartnerRouter.get("/partner_match", async (req, res) => {
+//   var result = [], result_dt;
+//   var data = req.query;
+//   var select = "a.id, a.user_id, a.age_frm, a.age_to, a.marital_status, a.mother_tounge, a.religion, a.city_id location, a.country_id, a.state_id ,b.profile_id, b.gender, b.dob, b.jotok_rasi_id, b.rasi_id, b.kundali_file_name, b.gender own_gender, b.country_id own_country, b.state_id own_state, b.city_id own_city",
+//     table_name = "td_user_profile b LEFT JOIN td_user_partner_pref a ON b.id=a.user_id",
+//     whr = `b.id=${data.user_id}`,
+//     order = null;
+//   var pref_dt = await db_Select(select, table_name, whr, order);
+//   // console.log('Pref', pref_dt);
+
+//   if(pref_dt.suc > 0 && pref_dt.msg.length > 0){
+//     var select = "a.id, a.dob, a.gender",
+//     table_name = "td_user_profile a LEFT JOIN td_user_p_dtls b ON a.id=b.user_id",
+//     whr = `a.kundali_file_name IS NOT NULL`
+//     order = `GROUP BY a.id 
+//     HAVING a.gender != '${pref_dt.msg[0].gender}' 
+//     ${pref_dt.msg[0].age_frm > 0 || pref_dt.msg[0].age_to > 0 ?
+//     (`${pref_dt.msg[0].age_frm > 0 ? `AND DATE_FORMAT(from_days(datediff(now(), a.dob)), '%Y')+0 >= ${pref_dt.msg[0].age_frm}` : ''} 
+//       ${pref_dt.msg[0].age_to > 0 ? `AND DATE_FORMAT(from_days(datediff(now(), dob)), '%Y')+0 <= ${pref_dt.msg[0].age_to}` : ''}`
+//     ) :
+//     (pref_dt.msg[0].dob ? 
+//       (pref_dt.msg[0].own_gender != 'M' ? 
+//       `AND DATE_FORMAT(from_days(datediff(now(), a.dob)), '%Y')+0 >= DATE_FORMAT(from_days(datediff(now(), '${dateFormat(pref_dt.msg[0].dob, 'yyyy-mm-dd HH:MM:ss')}')), '%Y')+0` : 
+//       `AND DATE_FORMAT(from_days(datediff(now(), a.dob)), '%Y')+0 <= DATE_FORMAT(from_days(datediff(now(), '${dateFormat(pref_dt.msg[0].dob, 'yyyy-mm-dd HH:MM:ss')}')), '%Y')+0`) : 
+//     '')} ${data.max >= 0 && data.min >= 0 ? `LIMIT ${data.min >= 0 ? data.min : 0}${data.max > 0 ? `, ${data.max}` : ''}` : ''}`;
+//     var res_dt = await db_Select(select, table_name, whr, order);
+//     // console.log('PDt', res_dt);
+
+//     if(res_dt.suc > 0 && res_dt.msg.length > 0){
+//       for(let rdt of res_dt.msg){
+//         try{
+//           var groom_loc = await user_groom_loc({user_id:rdt.id});
+//           // console.log(groom_loc);
+//           var basic_info = await user_basic_info({user_id:rdt.id});
+//           var hobbies = await user_hobbies({user_id:rdt.id});
+
+//           var result_partner = {
+//             groom_location : {
+//               "value" : groom_loc.msg
+//             },
+//             basic_information : {
+//               "value" : basic_info.msg
+//             },
+//             hobbies : {
+//               "value" :  hobbies.msg
+//             },
+//             sun_shine_rashi_match: 0,
+//             numeric_match: 0,
+//             jotok_marks: 0,
+//             astro_match_marks: 0,
+//             elementValues: [],
+//             mongal_dasha: 0,
+//             jotok_match: 0, 
+//             elementMarks: 0,
+//             mongal_marks: 0,
+//             moonShineMatch: 0,
+//             SunShineMatch: 0
+//           }
+//           result.push(result_partner)
+//         }catch(err){
+//           console.log('ERR ID', rdt.id);
+//           console.log(err);
+//         }
+//       }
+//       result_dt = {suc: 1, msg: result}
+//     }else{
+//       result_dt = {suc: 1, msg: []}
+//     }
+//   }else{
+//     result_dt = pref_dt
+//   }
+
+//   // function* streamChunks() {
+//   //   const chunkSize = 5;
+//   //   for (let i = 0; i < result_dt.msg.length; i += chunkSize) {
+//   //     yield result_dt.msg.slice(i, i + chunkSize);
+//   //   }
+//   // }
+//   // res.setHeader('Content-Type', 'application/json');
+//   // try{
+//   //   for (const chunk of streamChunks()) {
+//   //     res.write(JSON.stringify(chunk));
+//   //     // res.flush();
+//   //   }
+//   // }catch(err){
+//   //   console.log(err);
+//   // }
+//   // res.end();
+//   // res.send(res_dt)
+//   // res.send(result)
+//   res.send(result_dt)
+// });
+
+
+PartnerRouter.get("/partner_match", async (req, res) => {
+  var result = [], result_dt;
+  var data = req.query;
+  var select = "a.id, a.user_id, a.age_frm, a.age_to, a.marital_status, a.mother_tounge, a.religion, a.city_id location, a.country_id, a.state_id ,b.profile_id, b.gender, b.dob, b.jotok_rasi_id, b.rasi_id, b.kundali_file_name, b.gender own_gender, b.country_id own_country, b.state_id own_state, b.city_id own_city",
+    table_name = "td_user_profile b LEFT JOIN td_user_partner_pref a ON b.id=a.user_id",
+    whr = `b.id=${data.user_id}`,
+    order = null;
+  var pref_dt = await db_Select(select, table_name, whr, order);
+  // console.log('Pref', pref_dt);
+
+  if(pref_dt.suc > 0 && pref_dt.msg.length > 0){
+    var select = "a.id, a.dob, a.gender,c.last_login,a.pay_flag",
+    table_name = "td_user_profile a LEFT JOIN td_user_p_dtls b ON a.id=b.user_id LEFT JOIN md_user_login c ON a.id = c.profile_id",
+    whr = `a.kundali_file_name IS NOT NULL`
+    order = `GROUP BY a.id , ORDER BY c.last_login desc,a.pay_flag;
+    HAVING a.gender != '${pref_dt.msg[0].gender}' 
+    ${pref_dt.msg[0].age_frm > 0 || pref_dt.msg[0].age_to > 0 ?
+    (`${pref_dt.msg[0].age_frm > 0 ? `AND DATE_FORMAT(from_days(datediff(now(), a.dob)), '%Y')+0 >= ${pref_dt.msg[0].age_frm}` : ''} 
+      ${pref_dt.msg[0].age_to > 0 ? `AND DATE_FORMAT(from_days(datediff(now(), dob)), '%Y')+0 <= ${pref_dt.msg[0].age_to}` : ''}`
+    ) :
+    (pref_dt.msg[0].dob ? 
+      (pref_dt.msg[0].own_gender != 'M' ? 
+      `AND DATE_FORMAT(from_days(datediff(now(), a.dob)), '%Y')+0 >= DATE_FORMAT(from_days(datediff(now(), '${dateFormat(pref_dt.msg[0].dob, 'yyyy-mm-dd HH:MM:ss')}')), '%Y')+0` : 
+      `AND DATE_FORMAT(from_days(datediff(now(), a.dob)), '%Y')+0 <= DATE_FORMAT(from_days(datediff(now(), '${dateFormat(pref_dt.msg[0].dob, 'yyyy-mm-dd HH:MM:ss')}')), '%Y')+0`) : 
+    '')} ${data.max >= 0 && data.min >= 0 ? `LIMIT ${data.min >= 0 ? data.min : 0}${data.max > 0 ? `, ${data.max}` : ''}` : ''}`;
+    var res_dt = await db_Select(select, table_name, whr, order);
+    // console.log('PDt', res_dt);
+
+    if(res_dt.suc > 0 && res_dt.msg.length > 0){
+      for(let rdt of res_dt.msg){
+        try{
+          var groom_loc = await user_groom_loc({user_id:rdt.id});
+          // console.log(groom_loc);
+          var basic_info = await user_basic_info({user_id:rdt.id});
+          var hobbies = await user_hobbies({user_id:rdt.id});
+
+          var result_partner = {
+            groom_location : {
+              "value" : groom_loc.msg
+            },
+            basic_information : {
+              "value" : basic_info.msg
+            },
+            hobbies : {
+              "value" :  hobbies.msg
+            },
+            sun_shine_rashi_match: 0,
+            numeric_match: 0,
+            jotok_marks: 0,
+            astro_match_marks: 0,
+            elementValues: [],
+            mongal_dasha: 0,
+            jotok_match: 0, 
+            elementMarks: 0,
+            mongal_marks: 0,
+            moonShineMatch: 0,
+            SunShineMatch: 0
           }
           result.push(result_partner)
         }catch(err){
@@ -268,7 +455,7 @@ PartnerRouter.post("/partner_match_search", async (req, res) => {
     // var own_element_val = await ElementMatch(pref_dt.msg[0].kundali_file_name),
     var own_element_val = await ElementMatch(pref_dt.msg[0].kundali_file_name),
     own_ele_name;
-    console.log('Own Ele', own_element_val);
+    // console.log('Own Ele', own_element_val);
     if(own_element_val.length > 0){
       own_ele_name = [...own_element_val.map(dt=>dt.flag)]
       own_ele_name = own_ele_name.join('')
@@ -301,7 +488,7 @@ PartnerRouter.post("/partner_match_search", async (req, res) => {
       `AND DATE_FORMAT(from_days(datediff(now(), a.dob)), '%Y')+0 <= DATE_FORMAT(from_days(datediff(now(), '${dateFormat(pref_dt.msg[0].dob, 'yyyy-mm-dd HH:MM:ss')}')), '%Y')+0`) : 
     '')} ${data.max >= 0 && data.min >= 0 ? `LIMIT ${data.min >= 0 ? data.min : 0}${data.max > 0 ? `, ${data.max}` : ''}` : ''}`;
     var res_dt = await db_Select(select, table_name, whr, order);
-    console.log('PDt', res_dt);
+    // console.log('PDt', res_dt);
 
     if(res_dt.suc > 0 && res_dt.msg.length > 0){
       for(let rdt of res_dt.msg){
@@ -327,7 +514,7 @@ PartnerRouter.post("/partner_match_search", async (req, res) => {
             }else{
               partner_ele_name = EleFields.flag
             }
-          console.log('Element P: ', basic_info.msg[0].u_name, EleFields, 'Own Element: ', own_element_val);
+          // console.log('Element P: ', basic_info.msg[0].u_name, EleFields, 'Own Element: ', own_element_val);
           var elementMarks = await calculateElementMarks(own_ele_name, partner_ele_name)
           // console.log(elementMarks);
           elementMarks = elementMarks.suc > 0 ? (elementMarks.msg.length > 0 ? elementMarks.msg[0].marks : 0) : 0 // Marks Filed
@@ -355,7 +542,7 @@ PartnerRouter.post("/partner_match_search", async (req, res) => {
           var SunShineMatch = await SunshineNumberMatch(own_rashi, partner_rashi, dateFormat(basic_info.msg[0].dob, 'dd'), pref_dt.msg[0].dob)
           
           var tot_match_marks = Math.round(jotok_match + elementMarks + mongal_marks + moonShineMatch + SunShineMatch);
-          console.log(basic_info.msg[0].u_name, 'Total Marks', jotok_match, elementMarks, mongal_marks, moonShineMatch, SunShineMatch);
+          // console.log(basic_info.msg[0].u_name, 'Total Marks', jotok_match, elementMarks, mongal_marks, moonShineMatch, SunShineMatch);
 
           
           var hobbies = await user_hobbies({user_id:rdt.id});
@@ -565,6 +752,7 @@ PartnerRouter.get('/partner_match_marks', async (req, res) => {
 
   // OWN DETAILS //
   var data = req.query;
+  console.log(data);
   var select = "b.gender, b.rasi_id, b.dob, b.jotok_rasi_id, b.kundali_file_name",
   table_name = "td_user_profile b",
   whr = `b.id=${data.own_id}`,
@@ -573,6 +761,7 @@ PartnerRouter.get('/partner_match_marks', async (req, res) => {
   // console.log(own_dt);
 
   if(own_dt.suc > 0 && own_dt.msg.length > 0){
+    var own_info = await user_basic_info({user_id:data.own_id});
     var own_moonshine_name = await MoonShineName(own_dt.msg[0].rasi_id)
     var own_rashi = await partner_match(own_dt.msg[0].dob),
       own_rashi_name = own_rashi.suc > 0 ? (own_rashi.msg.length > 0 ? own_rashi.msg[0].rashi : '') : '';
@@ -596,6 +785,7 @@ PartnerRouter.get('/partner_match_marks', async (req, res) => {
 
     // PARTNER DETAILS //
     var partner_info = await user_basic_info({user_id:data.partner_id});
+    var partner_groom_loc = await user_groom_loc({user_id:data.partner_id});
     var partner_moonshine_name = await MoonShineName(partner_info.msg[0].rasi_id)
     var partner_rashi = await partner_match(partner_info.msg[0].dob),
       partner_rashi_name = partner_rashi.suc > 0 ? (partner_rashi.msg.length > 0 ? partner_rashi.msg[0].rashi : '') : '';
@@ -638,23 +828,39 @@ PartnerRouter.get('/partner_match_marks', async (req, res) => {
     // var tot_match_marks = Math.round(rashi_match + number_match + jotok_match)
     // console.log('Marks Values', jotok_match , elementMarks , mongal_marks , moonShineMatch , SunShineMatch);
     var tot_match_marks = Math.round(jotok_match + elementMarks + mongal_marks + moonShineMatch + SunShineMatch);
-    console.log('Total Marks', jotok_match, elementMarks, mongal_marks, moonShineMatch, SunShineMatch);
+    // console.log('Total Marks', jotok_match, elementMarks, mongal_marks, moonShineMatch, SunShineMatch);
 
         
     // PARTNER DETAILS END //
 
     res.send({
+      suc: 1,
       'own': {
+        name: own_info.msg[0].u_name,
+        dob: own_info.msg[0].dob,
+        gender: own_info.msg[0].gender,
+        place_of_birth: own_info.msg[0].location_id,
         rashi: own_rashi_name,
         mongal_dasha: own_mongal_dosh,
         element_name: own_element_name,
         moon_shine_name: own_moonshine_name.suc > 0 && own_moonshine_name.msg.length > 0 ? own_moonshine_name.msg[0].rashi : ''
       },
       'partner': {
+        name: partner_info.msg[0].u_name,
+        dob: partner_info.msg[0].dob,
+        gender: partner_info.msg[0].gender,
+        place_of_birth: partner_info.msg[0].location_id,
         rashi: partner_rashi_name,
         mongal_dasha: partner_mongol_dosha,
         element_name: partner_element_name,
-        moon_shine_name: partner_moonshine_name.suc > 0 && partner_moonshine_name.msg.length > 0 ? partner_moonshine_name.msg[0].rashi : ''
+        moon_shine_name: partner_moonshine_name.suc > 0 && partner_moonshine_name.msg.length > 0 ? partner_moonshine_name.msg[0].rashi : '',
+        jotok_match, elementMarks, mongal_marks, moonShineMatch, SunShineMatch,
+        groom_location : {
+          "value" : partner_groom_loc.msg
+        },
+        basic_information : {
+          "value" : partner_info.msg
+        },
       },
       total_marks: tot_match_marks
     })

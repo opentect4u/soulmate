@@ -185,16 +185,13 @@ KycRouter.post('/pan_okyc_verify', async (req, res) => {
   console.log(data);
   if(data.pan){
     result = await pan_okyc_verify(data.pan)
-    if(result.status){
-      if(result.status == 'SUCCESS')
-        result = {suc: 1, msg: result}
-      else
-      result = {suc: 0, msg: result}
+    if(result.suc > 0){
+      result = {suc: 1, msg: result.msg}
     }else{
-      result = {suc: 0, msg: result}
+      result = {suc: 0, msg: result.msg}
     }
   }else{
-    result = {suc: 0, msg: 'No Pan Number Found'}
+    result = {suc: 0, msg: 'No Pan Number found'}
   }
   res.send(result)
 })

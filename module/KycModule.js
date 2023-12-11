@@ -65,9 +65,14 @@ module.exports = {
             
             };
             request(options, function (error, response) {
-              if (error) throw new Error(error);
-              console.log(response.body);
-              resolve(JSON.parse(response.body))
+              if (error) {
+                console.log(error);
+                resolve({suc:0, msg: error})
+                // throw new Error(error);
+              }else{
+                console.log(response.body);
+                resolve({suc: 1, msg: JSON.parse(response.body)})
+              }
             });
         })
     }   

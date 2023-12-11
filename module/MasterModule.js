@@ -258,4 +258,12 @@ const checkFieldsValue = (value, type) => {
     })
 }
 
-module.exports = { db_Select, db_Insert, db_Delete, db_Check, EncryptDataToSend,GenPassword, globalValues, SunshineMatch, NumberMatch, ElementoryField, MongalField, MoonShineNotMatchField, getAccessTokenMaster, checkFieldsValue }
+const getOrderMaxId = (fin_year) => {
+ return new Promise(async (resolve, reject) => {
+    var select = 'ifnull(max(id),0) + 1 max_id', table_name = 'td_payment_request', whr = `financial_yr = ${fin_year}`, order = null;
+var res_dt = await db_Select(select, table_name, whr, order);
+resolve(res_dt)
+ })
+}
+
+module.exports = { db_Select, db_Insert, db_Delete, db_Check, EncryptDataToSend,GenPassword, globalValues, SunshineMatch, NumberMatch, ElementoryField, MongalField, MoonShineNotMatchField, getAccessTokenMaster, checkFieldsValue, getOrderMaxId }

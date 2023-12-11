@@ -191,7 +191,7 @@ app.use((req, res, next) => {
   // console.log(req.path, req.path.split("/")[1], req.headers.referer);
   // if (req.path.split('/')[1] != 'err') {
     // console.log(req.path, req.headers.referer);
-  if (req.path != "/" && req.path != "/payRes" && req.path != '/testPayReq') {
+  if (req.path != "/" && req.path != "/payRes" && req.path != '/PayReq') {
     if (req.path.split("/")[1] == "uploads") {
       if (req.headers.referer && req.headers.referer == "http://localhost:4200/") {
         next();
@@ -307,8 +307,8 @@ app.get("/", async (req, res) => {
   //     arr.push(planet)
   // }
   // console.log(path.join('/accessToken.json'));
-  var otp = Math.floor(1000 + Math.random() * 9000);
-  console.log(encodeURIComponent(`Dear User, ${otp} is your OTP for Registration in My Soul Mate. OTP is valid for 5 minutes. For security reasons, DO NOT share this OTP with anyone -My Soul Mate`));
+  // var otp = Math.floor(1000 + Math.random() * 9000);
+  // console.log(encodeURIComponent(`Dear User, ${otp} is your OTP for Registration in My Soul Mate. OTP is valid for 5 minutes. For security reasons, DO NOT share this OTP with anyone -My Soul Mate`));
   res.send('lala')
 });
 
