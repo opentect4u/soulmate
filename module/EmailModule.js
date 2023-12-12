@@ -1,6 +1,11 @@
 // const accessToken = require('../googleAccessToken.json'),
 nodemailer = require('nodemailer');
 const request = require('request');
+const pdf = require('html-pdf');
+const fileUpload = require('express-fileupload');
+
+// Use express-fileupload middleware
+// app.use(fileUpload());
 
 // const SendUserEmail = (emailId) => {
     const SendUserEmail = (emailId,profilelId,userName) => {
@@ -793,6 +798,14 @@ const SendPaymentEmail = (emailId,userName,order_status,order_id,tnx_date,amount
       rejectUnauthorized: true
   }
       });
+
+    // Serve a simple form for file upload
+    // app.get('/', (req, res) => {
+    // res.sendFile(__dirname + '/index.html');
+    // });
+
+    // Handle file upload and send email
+
       const mailOptions = {
           from: 'info@mysoulmate.co.in',
           // to: `${emailId}`,

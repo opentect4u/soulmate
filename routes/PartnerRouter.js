@@ -349,7 +349,7 @@ PartnerRouter.get("/partner_match", async (req, res) => {
     var select = "a.id, a.dob, a.gender,c.last_login,a.pay_flag",
     table_name = "td_user_profile a LEFT JOIN td_user_p_dtls b ON a.id=b.user_id LEFT JOIN md_user_login c ON a.id = c.profile_id",
     whr = `a.kundali_file_name IS NOT NULL`
-    order = `GROUP BY a.id;
+    order = `GROUP BY a.id
     HAVING a.gender != '${pref_dt.msg[0].gender}' 
     ${pref_dt.msg[0].age_frm > 0 || pref_dt.msg[0].age_to > 0 ?
     (`${pref_dt.msg[0].age_frm > 0 ? `AND DATE_FORMAT(from_days(datediff(now(), a.dob)), '%Y')+0 >= ${pref_dt.msg[0].age_frm}` : ''} 
