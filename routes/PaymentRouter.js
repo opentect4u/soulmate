@@ -12,7 +12,8 @@ const { reqEncrypt, reqDecrypt } = require('../module/ccavutil');
 // client_suc_redirect_url = 'http://soulmate.opentech4u.co.in/#/paymentResponse';
 
 var client_fail_redirect_url = 'https://mysoulmate.co.in/#/paymentGetway',
-client_suc_redirect_url = 'https://mysoulmate.co.in/#/paymentResponse';
+client_suc_redirect_url = 'https://mysoulmate.co.in/#/paymentResponse',
+redirect_url = 'https://api.mysoulmate.co.in/payRes';
 
 PaymentRouter.post('/encReqData', async (req, res) => {
     var workingKey = process.env.WORKING_KEY,		//Put in the 32-Bit key shared by CCAvenues.
@@ -66,7 +67,7 @@ PaymentRouter.get('/PayReq', async (req, res) => {
         flag = 0;
     var req_dt = await db_Insert(table_name, fields, values, whr, flag)
     if(req_dt.suc > 0){
-        var body = `merchant_id=${merchant_id}&order_id=${encodeURIComponent(order_id)}&currency=${data.currency}&amount=${data.amount}&redirect_url=${data.redirect_url}&cancel_url=${data.cancel_url}&language=${data.language}&billing_name=${data.billing_name}&billing_address=${data.billing_address}&billing_city=${data.billing_city}&billing_state=${data.billing_state}&billing_zip=${data.billing_zip}&billing_country=${data.billing_country}&billing_tel=${data.billing_tel}&billing_email=${data.billing_email}&delivery_name=${data.delivery_name}&delivery_address=${data.delivery_address}&delivery_city=${data.delivery_city}&delivery_state=${data.delivery_state}&delivery_zip=${data.delivery_zip}&delivery_country=${data.delivery_country}&delivery_tel=${data.delivery_tel}&merchant_param1=${data.merchant_param1}&merchant_param2=${data.merchant_param2}&merchant_param3=${data.merchant_param3}&merchant_param4=${data.merchant_param4}&merchant_param5=${data.merchant_param5}&promo_code=&customer_identifier=`;
+        var body = `merchant_id=${merchant_id}&order_id=${encodeURIComponent(order_id)}&currency=${data.currency}&amount=${data.amount}&redirect_url=${redirect_url}&cancel_url=${redirect_url}&language=${data.language}&billing_name=${data.billing_name}&billing_address=${data.billing_address}&billing_city=${data.billing_city}&billing_state=${data.billing_state}&billing_zip=${data.billing_zip}&billing_country=${data.billing_country}&billing_tel=${data.billing_tel}&billing_email=${data.billing_email}&delivery_name=${data.delivery_name}&delivery_address=${data.delivery_address}&delivery_city=${data.delivery_city}&delivery_state=${data.delivery_state}&delivery_zip=${data.delivery_zip}&delivery_country=${data.delivery_country}&delivery_tel=${data.delivery_tel}&merchant_param1=${data.merchant_param1}&merchant_param2=${data.merchant_param2}&merchant_param3=${data.merchant_param3}&merchant_param4=${data.merchant_param4}&merchant_param5=${data.merchant_param5}&promo_code=&customer_identifier=`;
         // console.log(body);
         // var body = 'merchant_id=2985958&order_id=1701766066698&currency=INR&amount=6400&redirect_url=http://202.21.38.178:3000/payRes&cancel_url=http://202.21.38.178:3000/payRes&language=EN&billing_name=asd&billing_address=asd&billing_city=asd&billing_state=sd&billing_zip=1223&billing_country=asd&billing_tel=12345678987&billing_email=as@gmail.com&delivery_name=asd&delivery_address=asd&delivery_city=asd&delivery_state=sd&delivery_zip=1223&delivery_country=asd&delivery_tel=12345678987&merchant_param1=&merchant_param2=&merchant_param3=&merchant_param4=&merchant_param5=&promo_code=&customer_identifier=';
         encRequest = reqEncrypt(body,workingKey);
