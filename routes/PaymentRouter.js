@@ -72,8 +72,7 @@ PaymentRouter.get('/PayReq', async (req, res) => {
         encRequest = reqEncrypt(body,workingKey);
         // console.log(encRequest, accessCode);
         // formbody = '<form id="nonseamless" method="post" name="redirect" action="https://test.ccavenue.com/transaction/transaction.do?command=initiateTransaction"> <input type="hidden" id="encRequest" name="encRequest" value="' + encRequest + '"><input type="hidden" name="access_code" id="access_code" value="' + accessCode + '"><script language="javascript">document.redirect.submit();</script></form>';
-        formbody = '<form id="nonseamless" method="post" name="redirect" action="https://secure.ccavenue.com/transaction/transaction.do?command=initiateTransaction"> <input type="hidden" id="encRequest" name="encRequest" value="' + encRequest + '"><input type="hidden" name="access_code" id="access_code" value="' + accessCode + '"><script language="javascript">document.redirect.submit();</script></form>';
-        
+        formbody = '<form id="nonseamless" method="post" name="redirect" action="'+ process.env.CCAVENUE_URL +'/transaction/transaction.do?command=initiateTransaction"> <input type="hidden" id="encRequest" name="encRequest" value="' + encRequest + '"><input type="hidden" name="access_code" id="access_code" value="' + accessCode + '"><script language="javascript">document.redirect.submit();</script></form>';
         // formbody = '<iframe src="https://test.ccavenue.com/transaction/transaction.do?command=initiateTransaction&encRequest=' + encRequest + '&access_code=' + accessCode + '" id="paymentFrame" width="482" height="450" frameborder="0" scrolling="No" ></iframe>'
         // console.log(encRequest);
         // res.send({suc: req_dt.suc > 0 ? 1 : 0, msg: encRequest})
@@ -106,29 +105,38 @@ PaymentRouter.post('/payRes', async (req, res) => {
         // console.log(Object.keys(dt));
         newResDt[Object.keys(dt)[0]] = Object.values(dt)[0]
     }
-    console.log(newResDt, 'new Data');
+    // console.log(new Date(newResDt.trans_date), 'new Data');
+    var trans_date;
     try{
-        var table_name = 'td_payment_request',
-            fields = `tracking_id = "${newResDt.tracking_id}", bank_ref_no = "${newResDt.bank_ref_no}", order_status = "${newResDt.order_status}", failure_message = "${newResDt.failure_message}", payment_mode = "${newResDt.payment_mode}", status_code = "${newResDt.status_code}", status_message = "${newResDt.status_message}", vault = "${newResDt.vault}", offer_type = "${newResDt.offer_type}", offer_code = "${newResDt.offer_code}", discount_value = "${newResDt.discount_value}", mer_amount = "${newResDt.mer_amount}", eci_value = "${newResDt.eci_value}", response_code = "${newResDt.response_code}", billing_notes = "${newResDt.billing_notes}", trans_rec_date = "${dateFormat(newResDt.trans_date != 'null' ? new Date(newResDt.trans_date) : new Date(), 'yyyy-mm-dd HH:MM:ss')}", modified_by = "${newResDt.billing_name}", modified_dt = "${datetime}"`,
-            values = null,
-            whr = `order_id = '${newResDt.order_id}'`,
-            flag = 1;
-        var req_dt = await db_Insert(table_name, fields, values, whr, flag)
+        if(newResDt.trans_date != 'null'){
+            if(isNaN(Date.parse(newResDt.trans_date))){
+                const [tDate, tTime] = newResDt.trans_date.split(' ');
+                // console.log(tDate, tTime);
+                trans_date = new Date(tDate.split('/')[2], tDate.split('/')[1]-1, tDate.split('/')[0], tTime.split(':')[0], tTime.split(':')[1], tTime.split(':')[2])
+                // console.log(trans_date);
+                trans_date = dateFormat(trans_date, 'yyyy-mm-dd HH:MM:ss')
+            }else{
+                trans_date = dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss')
+            }
+        }else{
+            trans_date = dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss')
+        }
     }catch(err){
-        console.log('Error in trans_date', newResDt.trans_date, err);
-        var table_name = 'td_payment_request',
-            fields = `tracking_id = "${newResDt.tracking_id}", bank_ref_no = "${newResDt.bank_ref_no}", order_status = "${newResDt.order_status}", failure_message = "${newResDt.failure_message}", payment_mode = "${newResDt.payment_mode}", status_code = "${newResDt.status_code}", status_message = "${newResDt.status_message}", vault = "${newResDt.vault}", offer_type = "${newResDt.offer_type}", offer_code = "${newResDt.offer_code}", discount_value = "${newResDt.discount_value}", mer_amount = "${newResDt.mer_amount}", eci_value = "${newResDt.eci_value}", response_code = "${newResDt.response_code}", billing_notes = "${newResDt.billing_notes}", trans_rec_date = "${dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss')}", modified_by = "${newResDt.billing_name}", modified_dt = "${datetime}"`,
-            values = null,
-            whr = `order_id = '${newResDt.order_id}'`,
-            flag = 1;
-        var req_dt = await db_Insert(table_name, fields, values, whr, flag)
+        console.log('Wrond DateFormat', newResDt.trans_date, err);
+        trans_date = dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss')
     }
+    var table_name = 'td_payment_request',
+        fields = `tracking_id = "${newResDt.tracking_id}", bank_ref_no = "${newResDt.bank_ref_no}", order_status = "${newResDt.order_status}", failure_message = "${newResDt.failure_message}", payment_mode = "${newResDt.payment_mode}", status_code = "${newResDt.status_code}", status_message = "${newResDt.status_message}", vault = "${newResDt.vault}", offer_type = "${newResDt.offer_type}", offer_code = "${newResDt.offer_code}", discount_value = "${newResDt.discount_value}", mer_amount = "${newResDt.mer_amount}", eci_value = "${newResDt.eci_value}", response_code = "${newResDt.response_code}", billing_notes = "${newResDt.billing_notes}", trans_rec_date = "${trans_date}", modified_by = "${newResDt.billing_name}", modified_dt = "${datetime}"`,
+        values = null,
+        whr = `order_id = '${newResDt.order_id}'`,
+        flag = 1;
+    var req_dt = await db_Insert(table_name, fields, values, whr, flag)
     // console.log(newResDt, 'trans_rec_date');
     if(newResDt.status_message == 'Y'){
         var chk_dt = await db_Select('a.order_id, a.pack_id, a.customer_identifier user_id, c.tennure_period period', 'td_payment_request a, md_subscription b, md_subscription_pay_dtls c', `a.pack_id=b.id AND b.id=c.sub_id AND a.order_id = '${newResDt.order_id}'`, null)
         if(chk_dt.suc > 0){
-            var tnx_date = new Date(newResDt.trans_date),
-            expire_dt = new Date(newResDt.trans_date);
+            var tnx_date = new Date(trans_date),
+            expire_dt = new Date(trans_date);
             expire_dt = expire_dt.setDate(expire_dt.getDay() + (30 * parseInt(chk_dt.msg[0].period > 0 ? chk_dt.msg[0].period : 0)))
             var table_name = 'td_user_payment',
                 fields = `(user_id, order_id, tnx_date, plan_id, active_dt, expire_dt, amount, created_by, created_dt)`,
