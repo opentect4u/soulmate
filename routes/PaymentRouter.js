@@ -149,7 +149,7 @@ PaymentRouter.post('/payRes', async (req, res) => {
         }
     }
     // res.send(newResDt)
-    res.redirect(`${client_suc_redirect_url}/${newResDt.status_message == 'Y' ? 1 : 0}/${newResDt.order_id}`)
+    res.redirect(`${client_suc_redirect_url}/${newResDt.order_status == 'Success' ? 1 : 0}/${newResDt.order_id}`)
 })
 
 PaymentRouter.post('/get_pay_response', async (req, res) => {
