@@ -133,7 +133,7 @@ PaymentRouter.post('/payRes', async (req, res) => {
         flag = 1;
     var req_dt = await db_Insert(table_name, fields, values, whr, flag)
     // console.log(newResDt, 'trans_rec_date');
-    if(newResDt.status_message == 'Y'){
+    if(newResDt.order_status == 'Success'){
         var chk_dt = await db_Select('a.order_id, a.pack_id, a.customer_identifier user_id, c.tennure_period period', 'td_payment_request a, md_subscription b, md_subscription_pay_dtls c', `a.pack_id=b.id AND b.id=c.sub_id AND a.order_id = '${newResDt.order_id}'`, null)
         if(chk_dt.suc > 0){
             var tnx_date = new Date(trans_date),
