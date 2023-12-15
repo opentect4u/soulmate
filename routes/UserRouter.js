@@ -217,7 +217,7 @@ UserRouter.post("/user_about", async (req, res) => {
   req_data = JSON.parse(req_data);
   // console.log(req_data);
   var table_name = "td_user_profile",
-    fields = `about_us = "${req_data.field_About_us}", modified_by = '${req_data.user}', modified_dt = '${datetime}'`,
+    fields = `about_us = "${req_data.field_About_us}" ${req_data.field_disclaimer ? `, disclaimer = '${req_data.field_disclaimer}'` : '' } ${req_data.field_policy ? `, policy = '${req_data.field_policy}'` : ''}, modified_by = '${req_data.user}', modified_dt = '${datetime}'`,
     values = null,
     whr = `id= '${req_data.user_id}'`,
     flag = 1;

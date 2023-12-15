@@ -548,19 +548,19 @@ ProfileRouter.post("/send_otp", async (req, res) => {
   
   ProfileRouter.post("/verify_email", async(req, res) => {
     var data = req.body;
+    // console.log(data);
     data = Buffer.from(data.data, "base64").toString();
     data = JSON.parse(data);
-    // console.log(data);
     var otp = Math.floor(1000 + Math.random() * 9000);
 
     var verifyEmail = await SendVerifyEmail(otp,data.email_id,data.profile_id,data.user_name);
     // console.log(verifyEmail);
-    // console.log(otp,data.email_id,data.profile_id,data.user_name);
+    console.log(otp,data.email_id,data.profile_id,data.user_name);
     if(verifyEmail.suc > 0){
       // res.send({suc:1, msg:'OTP has been Sent to Email', otp: Buffer.from(otp.toString(), 'utf8').toString('base64')})
-      res.send({suc:1, msg:'OTP has been Sent to Email', otp: otp})
+      res.send({suc:1, msg:'OTP has been Sent to your registered email id', otp: otp})
     }else{
-      res.send({suc:0, msg: 'OTP has not been Sent to Email', otp:0})
+      res.send({suc:0, msg: 'OTP has not been Sent to your registered email id', otp:0})
     }
   });
 
@@ -603,9 +603,9 @@ ProfileRouter.post("/forget_email", async (req, res) => {
 
 ProfileRouter.post("/payment_email", async (req, res) => {
   var data = req.body;
-  data = Buffer.from(data.data, "base64").toString();
-  data = JSON.parse(data);
-  var PaymentEmail = await SendPaymentEmail(data.email_id,data.user_name,data.order_status,data.order_id,data.tnx_date,data.amount,data.pay_name);
+  // data = Buffer.from(data.data, "base64").toString();
+  // data = JSON.parse(data);
+  var PaymentEmail = await SendPaymentEmail(data.email_id,data.user_name,data.order_id,data.pay_name,data.amount,data.tennure_month);
   // console.log(data.email_id,data.user_name,data.order_status,data.order_id,data.tnx_date,data.amount,data.pay_name)
   if(PaymentEmail.suc > 0){
     res.send({suc:1, msg: 'Email sent successfully'})
