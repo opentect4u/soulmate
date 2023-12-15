@@ -801,8 +801,8 @@ const SendPaymentEmail = (emailId,userName,order_id,pay_name,amount,tennure_mont
 
       const mailOptions = {
           from: 'info@mysoulmate.co.in',
-          // to: `${emailId}`,
-          to: `sayantika@synergicsoftek.in`,
+          to: `${emailId}`,
+          // to: `sayantika@synergicsoftek.in`,
           subject: `${userName}, thank you for your payment`,
           html: `<html>
           <head>
