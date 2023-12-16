@@ -271,7 +271,7 @@ UserRouter.post("/login", async (req, res) => {
       "a.id prof_id, a.user_id, a.profile_id id, b.profile_id profile_code, a.user_name, a.email_id user_email, a.password, a.last_login, a.pay_status pay_flag, b.plan_id, b.kundali_file_name, b.rasi_id, b.nakhatra_id, b.jotok_rasi_id, b.dob, b.latt_long, b.active_flag, b.profile_verify_flag, IF(b.plan_id > 0, (SELECT c.pay_name FROM md_subscription c WHERE b.plan_id=c.id), 'Free') pay_name",
     table_name = "md_user_login a, td_user_profile b",
     whr = `a.profile_id=b.id AND a.user_id = '${data.user_id}'`,
-    order = null;
+    order = `HAVING a.user_id > 0`;
   var res_dt = await db_Select(select, table_name, whr, order);
   // console.log(res_dt);
   if (res_dt.suc > 0) {

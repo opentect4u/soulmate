@@ -338,9 +338,13 @@ PartnerRouter.get("/partner_match_old", async (req, res) => {
 PartnerRouter.get("/partner_match", async (req, res) => {
   var result = [], result_dt;
   var data = req.query;
-  var select = "a.id, a.user_id, a.age_frm, a.age_to, a.marital_status, a.mother_tounge, a.religion, a.city_id location, a.country_id, a.state_id ,b.profile_id, b.gender, b.dob, b.jotok_rasi_id, b.rasi_id, b.kundali_file_name, b.gender own_gender, b.country_id own_country, b.state_id own_state, b.city_id own_city",
-    table_name = "td_user_profile b LEFT JOIN td_user_partner_pref a ON b.id=a.user_id",
-    whr = `b.id=${data.user_id}`,
+  // var select = "a.id, a.user_id, a.age_frm, a.age_to, a.marital_status, a.mother_tounge, a.religion, a.city_id location, a.country_id, a.state_id ,b.profile_id, b.gender, b.dob, b.jotok_rasi_id, b.rasi_id, b.kundali_file_name, b.gender own_gender, b.country_id own_country, b.state_id own_state, b.city_id own_city",
+  //   table_name = "td_user_profile b LEFT JOIN td_user_partner_pref a ON b.id=a.user_id",
+  //   whr = `b.id=${data.user_id}`,
+  //   order = null;
+  var select = "0 id, '' user_id, '' age_frm, '' age_to, '' marital_status, '' mother_tounge, '' religion, '' location, '' country_id, '' state_id ,a.profile_id, a.gender, a.dob, a.jotok_rasi_id, a.rasi_id, a.kundali_file_name, a.gender own_gender, a.country_id own_country, a.state_id own_state, a.city_id own_city",
+    table_name = "td_user_profile a",
+    whr = `a.id=${data.user_id}`,
     order = null;
   var pref_dt = await db_Select(select, table_name, whr, order);
   // console.log('Pref', pref_dt);
@@ -348,7 +352,7 @@ PartnerRouter.get("/partner_match", async (req, res) => {
   if(pref_dt.suc > 0 && pref_dt.msg.length > 0){
     var select = "a.id, a.dob, a.gender,c.last_login,a.pay_flag",
     table_name = "td_user_profile a LEFT JOIN td_user_p_dtls b ON a.id=b.user_id LEFT JOIN md_user_login c ON a.id = c.profile_id",
-    whr = `a.kundali_file_name IS NOT NULL`
+    whr = `a.kundali_file_name IS NOT NULL AND a.active_flag = 'Y'`
     order = `GROUP BY a.id
     HAVING a.gender != '${pref_dt.msg[0].gender}' 
     ${pref_dt.msg[0].age_frm > 0 || pref_dt.msg[0].age_to > 0 ?
@@ -371,6 +375,15 @@ PartnerRouter.get("/partner_match", async (req, res) => {
           var basic_info = await user_basic_info({user_id:rdt.id});
           var hobbies = await user_hobbies({user_id:rdt.id});
 
+          try{
+            var partner_moon_mangal_marks = await checkMoonMongalDosh(basic_info.msg[0].kundali_file_name),
+              partner_asc_mangal_marks = await checkAscMongalDosh(basic_info.msg[0].kundali_file_name);
+  
+            var Mongol_dosha = partner_moon_mangal_marks + partner_asc_mangal_marks;
+          }catch(err){
+            console.log(err);
+          }
+
           var result_partner = {
             groom_location : {
               "value" : groom_loc.msg
@@ -386,7 +399,7 @@ PartnerRouter.get("/partner_match", async (req, res) => {
             jotok_marks: 0,
             astro_match_marks: 0,
             elementValues: [],
-            mongal_dasha: 0,
+            mongal_dasha: Mongol_dosha,
             jotok_match: 0, 
             elementMarks: 0,
             mongal_marks: 0,
