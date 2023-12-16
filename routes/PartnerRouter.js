@@ -375,38 +375,40 @@ PartnerRouter.get("/partner_match", async (req, res) => {
           var basic_info = await user_basic_info({user_id:rdt.id});
           var hobbies = await user_hobbies({user_id:rdt.id});
 
-          try{
-            var partner_moon_mangal_marks = await checkMoonMongalDosh(basic_info.msg[0].kundali_file_name),
-              partner_asc_mangal_marks = await checkAscMongalDosh(basic_info.msg[0].kundali_file_name);
+          if(basic_info.suc > 0 && basic_info.msg.length > 0){
+            try{
+              var partner_moon_mangal_marks = await checkMoonMongalDosh(basic_info.msg[0].kundali_file_name),
+                partner_asc_mangal_marks = await checkAscMongalDosh(basic_info.msg[0].kundali_file_name);
+    
+              var Mongol_dosha = partner_moon_mangal_marks + partner_asc_mangal_marks;
+            }catch(err){
+              console.log(err);
+            }
   
-            var Mongol_dosha = partner_moon_mangal_marks + partner_asc_mangal_marks;
-          }catch(err){
-            console.log(err);
+            var result_partner = {
+              groom_location : {
+                "value" : groom_loc.msg
+              },
+              basic_information : {
+                "value" : basic_info.msg
+              },
+              hobbies : {
+                "value" :  hobbies.msg
+              },
+              sun_shine_rashi_match: 0,
+              numeric_match: 0,
+              jotok_marks: 0,
+              astro_match_marks: 0,
+              elementValues: [],
+              mongal_dasha: Mongol_dosha,
+              jotok_match: 0, 
+              elementMarks: 0,
+              mongal_marks: 0,
+              moonShineMatch: 0,
+              SunShineMatch: 0
+            }
+            result.push(result_partner)
           }
-
-          var result_partner = {
-            groom_location : {
-              "value" : groom_loc.msg
-            },
-            basic_information : {
-              "value" : basic_info.msg
-            },
-            hobbies : {
-              "value" :  hobbies.msg
-            },
-            sun_shine_rashi_match: 0,
-            numeric_match: 0,
-            jotok_marks: 0,
-            astro_match_marks: 0,
-            elementValues: [],
-            mongal_dasha: Mongol_dosha,
-            jotok_match: 0, 
-            elementMarks: 0,
-            mongal_marks: 0,
-            moonShineMatch: 0,
-            SunShineMatch: 0
-          }
-          result.push(result_partner)
         }catch(err){
           console.log('ERR ID', rdt.id);
           console.log(err);
