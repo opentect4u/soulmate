@@ -7,7 +7,8 @@ const { db_Insert, db_Select, getOrderMaxId } = require('../module/MasterModule'
 const { reqEncrypt, reqDecrypt } = require('../module/ccavutil');
 
 // var client_fail_redirect_url = 'http://localhost:4200/#/paymentGetway',
-// client_suc_redirect_url = 'http://localhost:4200/#/paymentResponse';
+// client_suc_redirect_url = 'http://localhost:4200/#/paymentResponse',
+// redirect_url = 'https://api.mysoulmate.co.in/payRes';
 
 // var client_fail_redirect_url = 'http://soulmate.opentech4u.co.in/#/paymentGetway',
 // client_suc_redirect_url = 'http://soulmate.opentech4u.co.in/#/paymentResponse';

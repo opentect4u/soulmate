@@ -3,6 +3,9 @@ fs = require('fs'),
 path = require('path'),
 request = require("request"),
 dateFormat = require("dateformat");
+ CryptoJS = require('crypto-js')
+const secretKey = 'S#O!*U8L0M3A9T7e!2&0#2$3S9Y4N3E$R7g8i2C';
+
 
 const db_Select = (select, table_name, whr, order) => {
     var tb_whr = whr ? `WHERE ${whr}` : "";
@@ -86,6 +89,14 @@ const EncryptDataToSend = (data) => {
         var res_dt = data;
         res_dt = {suc:res_dt.suc, msg: res_dt.suc > 0 ? Buffer.from(JSON.stringify(res_dt.msg), 'utf8').toString('base64') : res_dt.msg }
         resolve(res_dt)
+    })
+}
+
+const Encrypt = (data) => {
+    return new Promise((resolve, reject) =>{
+        const ciphertext = CryptoJS.AES.encrypt(data, secretKey).toString();
+        console.log(data, ciphertext);
+       resolve(ciphertext)
     })
 }
 
@@ -266,4 +277,4 @@ resolve(res_dt)
  })
 }
 
-module.exports = { db_Select, db_Insert, db_Delete, db_Check, EncryptDataToSend,GenPassword, globalValues, SunshineMatch, NumberMatch, ElementoryField, MongalField, MoonShineNotMatchField, getAccessTokenMaster, checkFieldsValue, getOrderMaxId }
+module.exports = { db_Select, db_Insert, db_Delete, db_Check, EncryptDataToSend,GenPassword, globalValues, SunshineMatch, NumberMatch, ElementoryField, MongalField, MoonShineNotMatchField, getAccessTokenMaster, checkFieldsValue, getOrderMaxId, Encrypt }

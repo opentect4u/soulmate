@@ -1,6 +1,7 @@
 const { sendProfile_id, loginOtp} = require("../module/SmsModule");
 const { kundali, addKundaliUser } = require("./RasiRouter");
 const { sendLoginEmail} = require("../module/EmailModule");
+const { Encrypt } = require("../module/MasterModule");
 
 const express = require("express"),
   UserRouter = express.Router(),
@@ -353,7 +354,7 @@ UserRouter.post('/login_otp', async (req, res) => {
         console.log(email);
         if(otpRes.suc > 0){
           // res.send({suc:1, msg:'OTP Sent', otp: Buffer.from(otp.toString(), 'utf8').toString('base64')})
-          res.send({suc:1, msg:'OTP Sent', otp: otp})
+          res.send({suc:1, msg:'OTP Sent', otp: await Encrypt(otp.toString())});
         }else{
           res.send({suc:0, msg: 'OTP not sent', otp:0})
         }

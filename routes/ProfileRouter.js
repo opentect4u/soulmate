@@ -14,6 +14,7 @@ const {
   EncryptDataToSend,
   db_Insert,
   db_Delete,
+  Encrypt,
 } = require("../module/MasterModule");
 const {
   user_groom_loc,
@@ -508,8 +509,8 @@ ProfileRouter.get("/check_email", async (req, res) => {
 ProfileRouter.post("/send_otp", async (req, res) => {
   var data = req.body;
   var otp_dt = await getOtp(data);
-  // res.send({ suc: 1, msg: 'Otp Sent', otp:  Buffer.from(otp_dt.toString(), 'utf8').toString('base64') });
-  res.send(otp_dt);
+  res.send({ suc: 1, msg: 'Otp Sent', otp:  await Encrypt(otp_dt.otp.toString())});
+  // res.send(otp_dt);
   // res.send({ suc: 1, msg: 'Otp Sent', otp: 1234 });
   });
 
@@ -552,13 +553,13 @@ ProfileRouter.post("/send_otp", async (req, res) => {
     data = Buffer.from(data.data, "base64").toString();
     data = JSON.parse(data);
     var otp = Math.floor(1000 + Math.random() * 9000);
-
+    
     var verifyEmail = await SendVerifyEmail(otp,data.email_id,data.profile_id,data.user_name);
     // console.log(verifyEmail);
     console.log(otp,data.email_id,data.profile_id,data.user_name);
     if(verifyEmail.suc > 0){
       // res.send({suc:1, msg:'OTP has been Sent to Email', otp: Buffer.from(otp.toString(), 'utf8').toString('base64')})
-      res.send({suc:1, msg:'OTP has been Sent to your registered email id', otp: otp})
+      res.send({suc:1, msg:'OTP has been Sent to your registered email id', otp: await Encrypt(otp.toString())});
     }else{
       res.send({suc:0, msg: 'OTP has not been Sent to your registered email id', otp:0})
     }
