@@ -3,6 +3,10 @@ fs = require('fs'),
 path = require('path'),
 request = require("request"),
 dateFormat = require("dateformat");
+const CryptoJS = require('crypto-js');
+
+// Replace 'yourSecretKey' with a strong secret key
+const secretKey = 'S#O!*U8L0M3A9T7e!2&0#2$3S9Y4N3E$R7g8i2C';
 
 const db_Select = (select, table_name, whr, order) => {
     var tb_whr = whr ? `WHERE ${whr}` : "";
@@ -86,6 +90,13 @@ const EncryptDataToSend = (data) => {
         var res_dt = data;
         res_dt = {suc:res_dt.suc, msg: res_dt.suc > 0 ? Buffer.from(JSON.stringify(res_dt.msg), 'utf8').toString('base64') : res_dt.msg }
         resolve(res_dt)
+    })
+}
+
+const Encrypt = (data) => {
+    return new Promise((resolve, reject) =>{
+        const ciphertext = CryptoJS.AES.encrypt(data, secretKey).toString();
+       resolve(ciphertext)
     })
 }
 
@@ -264,6 +275,32 @@ const getOrderMaxId = (fin_year) => {
 var res_dt = await db_Select(select, table_name, whr, order);
 resolve(res_dt)
  })
+};
+
+const updateData = {
+    '1': 'All Immages',
+    '2': 'In my own words' ,
+    '3': 'Birth Details',
+    '4': 'Basic Details',
+    '5': 'Contact Details',
+    '6': 'Religion Information',
+    '7': 'Grooms Location',
+    '8': 'Professional Information',
+    '9': 'Family Details',
+    '10': 'Hobbies',
+    '11': 'About Family',
+};
+
+const updateStatus = (prof_id, edite_flag, chk_flag, user, dt, id = 0) => {
+    return new Promise(async (resolve, reject) => {
+        var table_name = 'td_check_update',
+        fileds = id > 0 ? `check_flag = '${chk_flag}',modified_by = '${user}',modified_dt = '${dt}'` : `(profile_id,edite_flag,check_flag)`, 
+        values = `('${prof_id}', '${edite_flag}', '${chk_flag}')`,
+        whr = id > 0 ? `id=${id}` : null,
+        flag = id > 0 ? 1 : 0;
+        var res_dt = await db_Insert(table_name, fileds, values, whr, flag)
+        resolve(res_dt)
+    })
 }
 
-module.exports = { db_Select, db_Insert, db_Delete, db_Check, EncryptDataToSend,GenPassword, globalValues, SunshineMatch, NumberMatch, ElementoryField, MongalField, MoonShineNotMatchField, getAccessTokenMaster, checkFieldsValue, getOrderMaxId }
+module.exports = { db_Select, db_Insert, db_Delete, db_Check, EncryptDataToSend,GenPassword, globalValues, SunshineMatch, NumberMatch, ElementoryField, MongalField, MoonShineNotMatchField, getAccessTokenMaster, checkFieldsValue, getOrderMaxId, Encrypt, updateData, updateStatus }

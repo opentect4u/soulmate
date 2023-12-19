@@ -1,4 +1,4 @@
-const { db_Select } = require('../module/MasterModule');
+const { db_Select, db_Insert } = require('../module/MasterModule');
 
 const express = require('express'),
     MasterRouter = express.Router(),
@@ -219,4 +219,4 @@ MasterRouter.get('/movie_list', async (req, res) => {
     res.send({suc: 1, msg: Buffer.from(JSON.stringify(res_dt.msg), 'utf8').toString('base64')})
 });
 
-module.exports = { MasterRouter, getNakhatra, getJotukRashiId };
+module.exports = { MasterRouter,getNakhatra, getJotukRashiId };

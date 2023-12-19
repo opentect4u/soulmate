@@ -217,11 +217,14 @@ UserRouter.post("/user_about", async (req, res) => {
   req_data = JSON.parse(req_data);
   // console.log(req_data);
   var table_name = "td_user_profile",
-    fields = `about_us = "${req_data.field_About_us}", modified_by = '${req_data.user}', modified_dt = '${datetime}'`,
+    fields = `about_us = "${req_data.field_About_us}", view_flag = 'N', modified_by = '${req_data.user}', modified_dt = '${datetime}'`,
     values = null,
     whr = `id= '${req_data.user_id}'`,
     flag = 1;
   var res_dt = await db_Insert(table_name, fields, values, whr, flag);
+
+  console.log(res_dt);
+
   var select =
       "id, kundali_file_name, rasi_id, nakhatra_id, jotok_rasi_id, dob, latt_long, profile_verify_flag",
     table_name = "td_user_profile",

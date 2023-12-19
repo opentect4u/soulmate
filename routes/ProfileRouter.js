@@ -14,6 +14,7 @@ const {
   EncryptDataToSend,
   db_Insert,
   db_Delete,
+  Encrypt,
 } = require("../module/MasterModule");
 const {
   user_groom_loc,
@@ -25,6 +26,7 @@ const {
 } = require("../module/ProfileModule");
 const { getOtp} = require("../module/SmsModule");
 const { SendVerifyEmail, ActiveEmail, ContactUserEmail, SendForgetPwdEmail, SendPaymentEmail } = require("../module/EmailModule");
+const { reqEncrypt } = require("../module/ccavutil");
 
 ProfileRouter.get("/user_groom_loc", async (req, res) => {
   var data = req.query;
@@ -508,8 +510,8 @@ ProfileRouter.get("/check_email", async (req, res) => {
 ProfileRouter.post("/send_otp", async (req, res) => {
   var data = req.body;
   var otp_dt = await getOtp(data);
-  // res.send({ suc: 1, msg: 'Otp Sent', otp:  Buffer.from(otp_dt.toString(), 'utf8').toString('base64') });
-  res.send(otp_dt);
+  res.send({ suc: 1, msg: 'Otp Sent', otp:  Encrypt(otp_dt)});
+  // res.send(otp_dt);
   // res.send({ suc: 1, msg: 'Otp Sent', otp: 1234 });
   });
 
