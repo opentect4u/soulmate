@@ -453,6 +453,8 @@ const CalculateMongalMarks = (frmMonMark, toMonMark) => {
     mongal_marks = 0
    }else if ((frmMonMark == 100 && toMonMark == 0) || (frmMonMark == 100 && toMonMark == 0)) {
     mongal_marks = 0
+   }else if ((frmMonMark == 100 && toMonMark == 100) || (frmMonMark == 100 && toMonMark == 100)) {
+    mongal_marks = 20
    }
    resolve(mongal_marks)
   })

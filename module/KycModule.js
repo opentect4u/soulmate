@@ -14,11 +14,10 @@ module.exports = {
                 body: JSON.stringify({
                   "aadhaar_number": aadhar
                 })
-              
             };
             request(options, function (error, response) {
                 if (error) throw new Error(error);
-                console.log(response.body);
+                // console.log(response.body);
                 resolve(JSON.parse(response.body))
             });
         })
@@ -42,7 +41,7 @@ module.exports = {
               };
             request(options, function (error, response) {
                 if (error) throw new Error(error);
-                console.log(response.body);
+                // console.log(response.body);
                 resolve(JSON.parse(response.body))
             });
         })
@@ -53,10 +52,11 @@ module.exports = {
             var request = require('request');
             var options = {
               'method': 'POST',
-              'url': `${process.env.KYC_END_POINT}/verification/pan`,
+              'url': `${process.env.KYC_END_POINT}/pan`,
               'headers': {
-                'x-client-id': 'CF10068897CLG8M9AH58I0HD1UNVGG',
-                'x-client-secret':'cfsk_ma_test_3f9507d43b76340b2eaabc8f2009229a_55dd50bb',
+                'x-client-id': process.env.KYC_CLIENT_ID,
+                'x-client-secret': process.env.KYC_CLIENT_SECRET,
+                'x-api-version': '2022-10-26',
                 'Content-Type': 'application/json'
               },
               body: JSON.stringify({
@@ -64,13 +64,14 @@ module.exports = {
               })
             
             };
+            // console.log(options);
             request(options, function (error, response) {
               if (error) {
                 console.log(error);
                 resolve({suc:0, msg: error})
                 // throw new Error(error);
               }else{
-                console.log(response.body);
+                // console.log(response.body);
                 resolve({suc: 1, msg: JSON.parse(response.body)})
               }
             });

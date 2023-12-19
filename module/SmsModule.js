@@ -23,7 +23,7 @@ const getOtp = (data) => {
         if (error) 
         {
           // throw new Error(error);
-          resolve({suc:0, msg: 'OTP not send', err: error})
+          resolve({suc:0, msg: 'OTP not send', err: error, otp: 0})
         }else{
           console.log(body);
           resolve({ suc: 1, msg: 'Otp Sent', otp: otp })
