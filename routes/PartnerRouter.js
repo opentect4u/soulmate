@@ -354,7 +354,7 @@ PartnerRouter.get("/partner_match", async (req, res) => {
     table_name = "td_user_profile a LEFT JOIN td_user_p_dtls b ON a.id=b.user_id LEFT JOIN md_user_login c ON a.id = c.profile_id",
     // whr = `a.kundali_file_name IS NOT NULL`,
     whr = `a.kundali_file_name IS NOT NULL 
-    AND a.active_flag = 'Y' AND a.gender != '${pref_dt.msg[0].gender}'
+    AND a.active_flag = 'Y' AND a.view_flag = 'Y' AND a.gender != '${pref_dt.msg[0].gender}'
     ${(pref_dt.msg[0].own_gender != 'M' ? 
       `AND DATE_FORMAT(from_days(datediff(now(), a.dob)), '%Y')+0 >= DATE_FORMAT(from_days(datediff(now(), '${dateFormat(pref_dt.msg[0].dob, "yyyy-mm-dd HH:MM:ss")}')), '%Y')+0` : 
       `AND DATE_FORMAT(from_days(datediff(now(), a.dob)), '%Y')+0 <= DATE_FORMAT(from_days(datediff(now(), '${dateFormat(pref_dt.msg[0].dob, "yyyy-mm-dd HH:MM:ss")}')), '%Y')+0`)}`,
