@@ -1,7 +1,7 @@
 const { sendProfile_id, loginOtp} = require("../module/SmsModule");
 const { kundali, addKundaliUser } = require("./RasiRouter");
 const { sendLoginEmail} = require("../module/EmailModule");
-const { Encrypt } = require("../module/MasterModule");
+const { Encrypt, updateStatus } = require("../module/MasterModule");
 
 const express = require("express"),
   UserRouter = express.Router(),
@@ -129,14 +129,19 @@ UserRouter.post("/user_caste", async(req, res) => {
     datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     req_data = Buffer.from(req_data.data, "base64").toString();
     req_data = JSON.parse(req_data);
+    // console.log(req_data);
     var table_name = "td_user_profile",
     fields =   req_data.user_id > 0
-            ? `caste_id = '${req_data.field_cast }', religion = '${req_data.field_ur_religion}', modified_by = '${req_data.user}', modified_dt = '${datetime}'`
+            ? `caste_id = '${req_data.field_cast }', religion = '${req_data.field_ur_religion}', view_flag = 'N',modified_by = '${req_data.user}', modified_dt = '${datetime}'`
             : "(caste_id, religion, created_by, created_dt)",
     values = `('${req_data.field_cast }','${req_data.field_ur_religion}','${req_data.user},'${datetime}')`,
     whr = req_data.user_id > 0 ? `id= '${req_data.user_id}'` : null,
     flag = req_data.user_id > 0 ? 1 : 0;
 var res_dt = await db_Insert(table_name,fields,values,whr,flag);
+
+if(res_dt.suc > 0){
+  var religion_data = await updateStatus(req_data.user_id,req_data.edite_Flag,'U',req_data.user,req_data.timeStamp)
+}
 res.send(res_dt)
 })
 
@@ -214,8 +219,8 @@ UserRouter.post("/user_about", async (req, res) => {
   var req_data = req.body;
   // res.send(req.body);
     datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-  req_data = Buffer.from(req_data.data, "base64").toString();
-  req_data = JSON.parse(req_data);
+    req_data = Buffer.from(req_data.data, "base64").toString();
+    req_data = JSON.parse(req_data);
   // console.log(req_data);
   var table_name = "td_user_profile",
     fields = `about_us = "${req_data.field_About_us}", view_flag = 'N', modified_by = '${req_data.user}', modified_dt = '${datetime}'`,
@@ -223,8 +228,10 @@ UserRouter.post("/user_about", async (req, res) => {
     whr = `id= '${req_data.user_id}'`,
     flag = 1;
   var res_dt = await db_Insert(table_name, fields, values, whr, flag);
-
-  console.log(res_dt);
+  
+  if(res_dt.suc > 0){
+    var update_data = await updateStatus(req_data.user_id,req_data.edite_Flag,'U',req_data.user,dateFormat(req_data.timeStamp, "yyyy-mm-dd HH:MM:ss"))
+  }
 
   var select =
       "id, kundali_file_name, rasi_id, nakhatra_id, jotok_rasi_id, dob, latt_long, profile_verify_flag",
@@ -466,10 +473,11 @@ UserRouter.post("/birth_details", async (req, res) => {
   var data = req.body;
   data = Buffer.from(data.data, "base64").toString();
   data = JSON.parse(data);
+  console.log(data);
 
   var datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
   var table_name = "td_user_profile",
-  fields = `dob = '${dateFormat(data.field_birth_date, "yyyy-mm-dd HH:MM:ss")}', location_id = '${data.location_id}', latt_long = '${data.latt_long}', modified_by = '${data.user}', modified_dt = '${datetime}'`,
+  fields = `dob = '${dateFormat(data.field_birth_date, "yyyy-mm-dd HH:MM:ss")}', location_id = '${data.location_id}', latt_long = '${data.latt_long}', view_flag = 'N', modified_by = '${data.user}', modified_dt = '${datetime}'`,
   values = null,
   whr = `id=${data.user_id}`;
   flag = 1;
@@ -484,6 +492,11 @@ UserRouter.post("/birth_details", async (req, res) => {
       var kundali_data = await kundali(data.user_id, data.latt_long, BirthDate)
       kundali_data.file_name ? await db_Insert('td_user_profile', `kundali_file_name='${kundali_data.file_name}', rasi_id = '${kundali_data.rasi_id}', nakhatra_id = '${kundali_data.nakhatra_id}', jotok_rasi_id = '${kundali_data.jotok_rasi_id}'`, null, `id=${data.user_id}`, 1) : ''
     }catch(err){
+      console.log(err);
+    }
+    try{
+      var birth_data = await updateStatus(data.user_id,data.edite_Flag,'U',data.user,dateFormat(data.timeStamp, "yyyy-mm-dd HH:MM:ss"))
+    }catch{
       console.log(err);
     }
   }

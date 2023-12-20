@@ -15,7 +15,8 @@ const {
   db_Insert,
   db_Delete,
   Encrypt,
-  Encrypt,
+  updateStatus,
+  updateViewFlag,
 } = require("../module/MasterModule");
 const {
   user_groom_loc,
@@ -81,7 +82,7 @@ ProfileRouter.post("/user_contact_details", async(req, res)=>{
 
 data = Buffer.from(data.data, "base64").toString();
 data = JSON.parse(data);
-
+console.log(data);
 var select = 'email_id',
 table_name = "td_user_profile",
 whr = `id = ${data.user_id}`,
@@ -91,12 +92,17 @@ var chk_dt = await db_Select(select, table_name, whr, order);
 
 var email_flag = chk_dt.suc > 0 && chk_dt.msg.length > 0 ? (chk_dt.msg[0].email_id == data.field_email_id ? '' : `,email_approved_flag = 'N'`) : ''
  var table_name = "td_user_profile",
-    fields =`email_id= '${data.field_email_id}' ${email_flag}, modified_by = '${data.user_name}', modified_dt = '${datetime}'`,
+    fields =`email_id= '${data.field_email_id}' ${email_flag}, view_flag = 'N', modified_by = '${data.user_name}', modified_dt = '${datetime}'`,
     values = null,
     whr = `id = ${data.user_id}`,
     flag = 1;
   var res_dt = await db_Insert(table_name, fields, values, whr, flag);
   // console.log(res_dt);
+ 
+  if(res_dt.suc > 0){
+    var contact_data = await updateStatus(data.user_id,data.edite_Flag,'U',data.user,dateFormat(data.timeStamp, "yyyy-mm-dd HH:MM:ss"))
+  }
+
   res.send(res_dt);
 });
 
@@ -106,17 +112,21 @@ ProfileRouter.post("/user_basic_info", async (req, res) => {
 
   data = Buffer.from(data.data, "base64").toString();
   data = JSON.parse(data);
-  console.log(data);
+  // console.log(data);
 
   var table_name = "td_user_profile",
     fields =
       data.user_id > 0
-        ? `ac_for = '${data.field_who_creat_profile}', gender = '${data.field_gender}', mother_tong = '${data.field_mother_tong}', modified_by = '${data.user}', modified_dt = '${datetime}'`
+        ? `ac_for = '${data.field_who_creat_profile}', gender = '${data.field_gender}', mother_tong = '${data.field_mother_tong}', view_flag = 'N', modified_by = '${data.user}', modified_dt = '${datetime}'`
         : "(phone_no, ac_for, gender, mother_tong, created_by, created_dt)",
     values = `('${data.field_mobile}', '${data.field_who_creat_profile}', '${data.field_gender}', '${data.field_mother_tong}', '${data.user}', '${datetime}')`,
     whr = data.user_id > 0 ? `id = ${data.user_id}` : null,
     flag = data.user_id > 0 ? 1 : 0;
   var res_dt = await db_Insert(table_name, fields, values, whr, flag);
+
+  if(res_dt.suc > 0){
+    var basic_data = await updateStatus(data.user_id,data.edite_Flag,'U',data.user,dateFormat(data.timeStamp, "yyyy-mm-dd HH:MM:ss"))
+  }
 
   if (res_dt.suc > 0) {
     var select = "id",
@@ -188,7 +198,7 @@ ProfileRouter.post("/user_groom_loc", async (req, res) => {
 
   data = Buffer.from(data.data, "base64").toString();
   data = JSON.parse(data);
-
+//  console.log(data);
   var select = "id",
     table_name = "td_user_profile",
     whr = `id = ${data.user_id}`,
@@ -199,7 +209,7 @@ ProfileRouter.post("/user_groom_loc", async (req, res) => {
   var table_name = "td_user_profile",
     fields =
       chk_dt.suc > 0 && chk_dt.msg.length > 0
-        ? `country_id = '${data.field_Country}', state_id = '${data.field_State > 0 ? data.field_State : 0}', modified_by = '${data.user}', modified_dt = '${datetime}'`
+        ? `country_id = '${data.field_Country}', state_id = '${data.field_State > 0 ? data.field_State : 0}', view_flag = 'N', modified_by = '${data.user}', modified_dt = '${datetime}'`
         : "(country_id, state_id,created_by, created_dt)",
     values = `('${data.field_Country}', '${data.field_State > 0 ? data.field_State : 0}', 0, '${data.user}', '${datetime}')`,
     whr =
@@ -208,6 +218,11 @@ ProfileRouter.post("/user_groom_loc", async (req, res) => {
         : null,
     flag = chk_dt.suc > 0 && chk_dt.msg.length > 0 ? 1 : 0;
   var res_dt = await db_Insert(table_name, fields, values, whr, flag);
+
+  if(res_dt.suc > 0){
+    var groom_data = await updateStatus(data.user_id,data.edite_Flag,'U',data.user,dateFormat(data.timeStamp, "yyyy-mm-dd HH:MM:ss"))
+  }
+
   res.send(res_dt);
 });
 
@@ -217,7 +232,7 @@ ProfileRouter.post("/user_prof_info", async (req, res) => {
 
   data = Buffer.from(data.data, "base64").toString();
   data = JSON.parse(data);
-
+  // console.log(data);
   var select = "id",
     table_name = "td_user_education",
     whr = `user_id = ${data.user_id}`,
@@ -236,6 +251,12 @@ ProfileRouter.post("/user_prof_info", async (req, res) => {
         : null,
     flag = chk_dt.suc > 0 && chk_dt.msg.length > 0 ? 1 : 0;
   var res_dt = await db_Insert(table_name, fields, values, whr, flag);
+
+  if(res_dt.suc > 0){
+    var flag = await updateViewFlag(data.user_id)
+    var professional_data = await updateStatus(data.user_id,data.edite_Flag,'U',data.user,dateFormat(data.timeStamp, "yyyy-mm-dd HH:MM:ss"))
+  }
+
   res.send(res_dt);
 });
 
@@ -245,7 +266,7 @@ ProfileRouter.post("/family_dtls", async (req, res) => {
 
   data = Buffer.from(data.data, "base64").toString();
   data = JSON.parse(data);
-
+//  console.log(data);
   var select = "id",
     table_name = "td_user_p_dtls",
     // whr = `user_id = ${data.user_id}`,
@@ -265,6 +286,11 @@ ProfileRouter.post("/family_dtls", async (req, res) => {
         : null,
     flag = chk_dt.suc > 0 && chk_dt.msg.length > 0 ? 1 : 0;
   var res_dt = await db_Insert(table_name, fields, values, whr, flag);
+
+  if(res_dt.suc > 0){
+    var flag_1 = await updateViewFlag(data.user_id)
+    var family_data = await updateStatus(data.user_id,data.edite_Flag,'U',data.user,dateFormat(data.timeStamp, "yyyy-mm-dd HH:MM:ss"))
+  }
   res.send(res_dt);
 });
 
@@ -274,7 +300,7 @@ ProfileRouter.post("/about_family", async (req, res) => {
 
   data = Buffer.from(data.data, "base64").toString();
   data = JSON.parse(data);
-
+// console.log(data);
   var select = "id",
     table_name = "td_user_p_dtls",
     whr = `user_id = ${data.user_id}`,
@@ -293,6 +319,12 @@ ProfileRouter.post("/about_family", async (req, res) => {
         : null,
     flag = chk_dt.suc > 0 && chk_dt.msg.length > 0 ? 1 : 0;
   var res_dt = await db_Insert(table_name, fields, values, whr, flag);
+
+  if(res_dt.suc > 0){
+    var flag_2 = await updateViewFlag(data.user_id)
+    var about_data = await updateStatus(data.user_id,data.edite_Flag,'U',data.user,dateFormat(data.timeStamp, "yyyy-mm-dd HH:MM:ss"))
+  }
+
   res.send(res_dt);
 });
 
@@ -529,7 +561,7 @@ ProfileRouter.post("/send_otp", async (req, res) => {
     datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss")
     data = Buffer.from(data.data, "base64").toString();
     data = JSON.parse(data);
-    // console.log(data);
+    console.log(data);
   
     var select = "id",
     table_name = "td_user_hobbies",
@@ -546,6 +578,11 @@ ProfileRouter.post("/send_otp", async (req, res) => {
       whr =chk_dt.suc > 0 && chk_dt.msg.length > 0 ? `user_id = ${data.user_id}` : null,
       flag =chk_dt.suc > 0 && chk_dt.msg.length > 0 ? 1 : 0;
     var res_dt = await db_Insert(table_name, fields, values, whr, flag);
+
+    if(res_dt.suc > 0){
+      var flag_3 = await updateViewFlag(data.user_id)
+      var hobbies_data = await updateStatus(data.user_id,data.edite_Flag,'U',data.user,dateFormat(data.timeStamp, "yyyy-mm-dd HH:MM:ss"))
+    }
     res.send(res_dt);
   });
   

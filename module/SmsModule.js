@@ -17,9 +17,10 @@ const getOtp = (data) => {
         },
         headers: {Accept: '*/*'}
       };
-      console.log(options.qs);
+      // console.log(options.qs);
     
       request(options, function (error, response, body) {
+        console.log(response);
         if (error) 
         {
           // throw new Error(error);

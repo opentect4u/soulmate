@@ -92,6 +92,14 @@ const EncryptDataToSend = (data) => {
     })
 }
 
+const Encrypt = (data) => {
+    return new Promise((resolve, reject) =>{
+        const ciphertext = CryptoJS.AES.encrypt(data, secretKey).toString();
+        console.log(data, ciphertext);
+       resolve(ciphertext)
+    })
+}
+
 var tot_match = 5
 const globalValues = {
     jotok_max: 38,
@@ -286,13 +294,25 @@ const updateData = {
 const updateStatus = (prof_id, edite_flag, chk_flag, user, dt, id = 0) => {
     return new Promise(async (resolve, reject) => {
         var table_name = 'td_check_update',
-        fileds = id > 0 ? `check_flag = '${chk_flag}',modified_by = '${user}',modified_dt = '${dt}'` : `(profile_id,edite_flag,check_flag)`, 
-        values = `('${prof_id}', '${edite_flag}', '${chk_flag}')`,
+        fileds = id > 0 ? `check_flag = '${chk_flag}'` : `(profile_id,edite_flag,check_flag,modified_by,modified_dt)`, 
+        values = `('${prof_id}', '${updateData[edite_flag]}', '${chk_flag}' , '${user}', '${dt}')`,
         whr = id > 0 ? `id=${id}` : null,
         flag = id > 0 ? 1 : 0;
         var res_dt = await db_Insert(table_name, fileds, values, whr, flag)
         resolve(res_dt)
     })
+};
+
+const updateViewFlag = (id) => {
+    return new Promise(async (resolve, reject) => {
+        var table_name = 'td_user_profile',
+        fields = `view_flag = 'N'`,
+        values = null,
+        whr = `id = ${id}`,
+        flag = 1;
+        var res_dt = await db_Insert(table_name,fields,values,whr,flag)
+        resolve(res_dt)
+    })
 }
 
-module.exports = { db_Select, db_Insert, db_Delete, db_Check, EncryptDataToSend,GenPassword, globalValues, SunshineMatch, NumberMatch, ElementoryField, MongalField, MoonShineNotMatchField, getAccessTokenMaster, checkFieldsValue, getOrderMaxId }
+module.exports = { db_Select, db_Insert, db_Delete, db_Check, EncryptDataToSend,GenPassword, globalValues, SunshineMatch, NumberMatch, ElementoryField, MongalField, MoonShineNotMatchField, getAccessTokenMaster, checkFieldsValue, getOrderMaxId , updateStatus, updateViewFlag, Encrypt}
