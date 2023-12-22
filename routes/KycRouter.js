@@ -3,13 +3,14 @@ const express = require('express'),
     request = require("request"),
     dateFormat = require("dateformat"),
     fileUpload = require("express-fileupload"),
+    fs = require('fs'),
     path = require('path');
 
 const { fileExtLimiter } = require('../middleware/fileExtLimiter');
 const { fileSizeLimiter } = require('../middleware/fileSizeLimiter');
 const { filePayloadExists } = require('../middleware/filesPayloadExists');
 const { aadhar_okyc_send_otp, aadhar_okyc_verify, pan_okyc_verify } = require('../module/KycModule');
-const { db_Select, db_Delete } = require('../module/MasterModule');
+const { db_Select, db_Delete, updateViewFlag, updateStatus } = require('../module/MasterModule');
 const { db_Insert } = require('../module/MasterModule');
 
     KycRouter.get('/doc_list', async (req, res) => {
@@ -77,9 +78,16 @@ const { db_Insert } = require('../module/MasterModule');
     KycRouter.post('/profile_pic', 
     fileUpload({ crereateParentPath: true }), (req, res) => {
         var data = req.body, res_dt;
+        console.log(data);
         datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
         if (!req.files || Object.keys(req.files).length === 0){
           return res.status(400).send('No files were uploaded...');
+        }
+
+        var dir = 'assets/uploads',
+            sub_dir = `${dir}/${data.user_id}`;
+        if (!fs.existsSync(sub_dir)) {
+          fs.mkdirSync(sub_dir);
         }
       
         // Loop through uploaded files
@@ -92,37 +100,47 @@ const { db_Insert } = require('../module/MasterModule');
           // console.log(uploadPath);
           if(Array.isArray(file)){
             for(let fl of file){
-               var uploadPath = path.join('assets', 'uploads', `${data.user_id}_${fl.name}`)
-               fl.mv(uploadPath, function (err)  {
+               var uploadPath = path.join(sub_dir,`${data.user_id}_${fl.name}`)
+               fl.mv(uploadPath, async function (err)  {
                  if (err) {
-                  return  res_dt = {suc:0, msg: err}// res.status(500).send(err);
+                  res_dt = {suc:0, msg: err}// res.status(500).send(err);
                  }else{
-                  let fileName = `${data.user_id}_${fl.name}`
+                  let fileName = `${data.user_id}/${data.user_id}_${fl.name}`
                   // var sql = `INSERT INTO TD_USER_PROFILE_IMAGE (user_id, file_path) VALUES ('${data.user_id}', '${fileName}')`
                    var table_name = 'td_user_profile_image',
                    fields = '(user_id, file_path, created_by, created_dt)',
                    values = `('${data.user_id}','${fileName}', '${data.user}', '${datetime}')`,
                     whr =  null ,
                     flag =  0;
-                    res_dt = db_Insert(table_name, fields, values, whr, flag)
+                    res_dt = await db_Insert(table_name, fields, values, whr, flag)
+                    if(res_dt.suc > 0){
+                      await updateViewFlag(data.user_id)
+                      await updateStatus(data.user_id,data.edite_Flag,'U',data.user,dateFormat(data.timeStamp, "yyyy-mm-dd HH:MM:ss"))
+                    }
                  }
       
        });
              }
           }else{
-            var uploadPath = path.join('assets', 'uploads', `${data.user_id}_${file.name}`)
-            file.mv(uploadPath, function (err)  {
+            var uploadPath = path.join(sub_dir, `${data.user_id}_${file.name}`)
+            file.mv(uploadPath, async function (err)  {
               if (err) {
-              return  res.status(500).send(err);
+                console.log(err);
+                res_dt = {suc:0, msg: err};
               }else{
-                let fileName = `${data.user_id}_${file.name}`
+                let fileName = `${data.user_id}/${data.user_id}_${file.name}`
                 // var sql = `INSERT INTO TD_USER_PROFILE_IMAGE (user_id, file_path) VALUES ('${data.user_id}', '${fileName}')`
                 var table_name = 'td_user_profile_image',
                 fields = '(user_id, file_path, created_by, created_dt)',
                 values = `('${data.user_id}','${fileName}', '${data.user}', '${datetime}')`,
-                       whr =  null ,
+                       whr =  null , 
                        flag =  0;
-                       res_dt = db_Insert(table_name, fields, values, whr, flag)
+                       res_dt = await db_Insert(table_name, fields, values, whr, flag)
+                       console.log(res_dt);
+                       if(res_dt.suc > 0){
+                       await updateViewFlag(data.user_id)
+                       await updateStatus(data.user_id,data.edite_Flag,'U',data.user,dateFormat(data.timeStamp, "yyyy-mm-dd HH:MM:ss"))
+                      }
                }
             });
           }

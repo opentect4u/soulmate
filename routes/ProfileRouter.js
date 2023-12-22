@@ -3,7 +3,7 @@ const express = require("express"),
   dateFormat = require("dateformat"),
   fileUpload = require("express-fileupload"),
   path = require("path");
-
+  fs = require('fs');
   const request = require('request');
 
 const { fileExtLimiter } = require("../middleware/fileExtLimiter");
@@ -422,6 +422,7 @@ ProfileRouter.post("/user_hobbies", async (req, res) => {
 
 ProfileRouter.get("/profile_pic", async (req, res) => {
   var data = req.query;
+  console.log(data);
   var select = "id, file_path",
     table_name = "td_user_profile",
     whr = data.user_id > 0 ? `id = ${data.user_id}` : null,
@@ -431,6 +432,7 @@ ProfileRouter.get("/profile_pic", async (req, res) => {
     suc: 1,
     msg: Buffer.from(JSON.stringify(res_dt.msg), "utf8").toString("base64"),
   });
+  // res.send(res_dt)
 });
 
 ProfileRouter.post(
@@ -448,8 +450,17 @@ ProfileRouter.post(
     // fs.mkdir("image", (err) => {
     //   console.log("folder created");
     // });
-    const filepath = path.join('assets', "uploads", files["profile_img"].name),
+
+    
+       var dir = 'assets/uploads',
+        file_dir = `${dir}/${data.user_id}`;
+      if (!fs.existsSync(file_dir)) {
+       fs.mkdirSync(file_dir);
+      }
+    const filepath = path.join(file_dir, files["profile_img"].name),
+    // var uploadPath = path.join(sub_dir, `${data.user_id}_${file.name}`)
       fileName = files["profile_img"].name;
+      console.log(fileName,filepath);
     files["profile_img"].mv(filepath, async (err) => {
       if (err) {
         res.status(500).send({ status: 0, message: err });
@@ -461,16 +472,18 @@ ProfileRouter.post(
         // var kyc_dt = await db_Select(select, table_name, whr, order)
 
         var table_name = "td_user_profile",
-          fields = `file_path = '${fileName}', modified_by = '${data.user}', modified_dt = '${datetime}'`,
+          fields = `file_path = '${fileName}', view_flag = 'N', modified_by = '${data.user}', modified_dt = '${datetime}'`,
           values = null,
           whr = `id= '${data.user_id}'`,
           flag = 1;
         res_dt = await db_Insert(table_name, fields, values, whr, flag);
+        if(res_dt.suc > 0){
+          var update_data = await updateStatus(data.user_id,data.edite_Flag,'U',data.user,dateFormat(data.timeStamp, "yyyy-mm-dd HH:MM:ss"))
+        }
+      
         res.send(res_dt);
       }
     });
-
-    // }
   }
 );
 
