@@ -460,7 +460,7 @@ ProfileRouter.post(
     const filepath = path.join(file_dir, files["profile_img"].name),
     // var uploadPath = path.join(sub_dir, `${data.user_id}_${file.name}`)
       fileName = files["profile_img"].name;
-      console.log(fileName,filepath);
+      // console.log(fileName,filepath);
     files["profile_img"].mv(filepath, async (err) => {
       if (err) {
         res.status(500).send({ status: 0, message: err });
@@ -478,7 +478,7 @@ ProfileRouter.post(
           flag = 1;
         res_dt = await db_Insert(table_name, fields, values, whr, flag);
         if(res_dt.suc > 0){
-          var update_data = await updateStatus(data.user_id,data.edite_Flag,'U',data.user,dateFormat(data.timeStamp, "yyyy-mm-dd HH:MM:ss"))
+         await updateStatus(data.user_id,data.edite_Flag,'U',data.user,dateFormat(data.timeStamp, "yyyy-mm-dd HH:MM:ss"))
         }
       
         res.send(res_dt);
