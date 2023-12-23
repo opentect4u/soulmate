@@ -459,7 +459,7 @@ ProfileRouter.post(
       }
     const filepath = path.join(file_dir, files["profile_img"].name),
     // var uploadPath = path.join(sub_dir, `${data.user_id}_${file.name}`)
-      fileName = files["profile_img"].name;
+      fileName = `${data.user_id}/${files["profile_img"].name}`;
       // console.log(fileName,filepath);
     files["profile_img"].mv(filepath, async (err) => {
       if (err) {
