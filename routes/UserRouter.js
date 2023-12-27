@@ -132,7 +132,7 @@ UserRouter.post("/user_caste", async(req, res) => {
     // console.log(req_data);
     var table_name = "td_user_profile",
     fields =   req_data.user_id > 0
-            ? `caste_id = '${req_data.field_cast }', religion = '${req_data.field_ur_religion}', view_flag = 'N',modified_by = '${req_data.user}', modified_dt = '${datetime}'`
+            ? `caste_id = '${req_data.field_cast}', religion = '${req_data.field_ur_religion}', view_flag = 'N',modified_by = '${req_data.user}', modified_dt = '${datetime}'`
             : "(caste_id, religion, created_by, created_dt)",
     values = `('${req_data.field_cast }','${req_data.field_ur_religion}','${req_data.user},'${datetime}')`,
     whr = req_data.user_id > 0 ? `id= '${req_data.user_id}'` : null,
@@ -140,7 +140,7 @@ UserRouter.post("/user_caste", async(req, res) => {
 var res_dt = await db_Insert(table_name,fields,values,whr,flag);
 
 if(res_dt.suc > 0){
-  var religion_data = await updateStatus(req_data.user_id,req_data.edite_Flag,'U',req_data.user,dateFormat(req_data.timeStamp, "yyyy-mm-dd HH:MM:ss"))
+  var religion_data = req_data.edite_Flag > 0 ? await updateStatus(req_data.user_id,req_data.edite_Flag,'U',req_data.user,dateFormat(req_data.timeStamp, "yyyy-mm-dd HH:MM:ss")) : ''
 }
 res.send(res_dt)
 })
@@ -230,7 +230,7 @@ UserRouter.post("/user_about", async (req, res) => {
   var res_dt = await db_Insert(table_name, fields, values, whr, flag);
   
   if(res_dt.suc > 0){
-    var update_data = await updateStatus(req_data.user_id,req_data.edite_Flag,'U',req_data.user,dateFormat(req_data.timeStamp, "yyyy-mm-dd HH:MM:ss"))
+    var update_data = req_data.edite_Flag > 0 ? await updateStatus(req_data.user_id,req_data.edite_Flag,'U',req_data.user,dateFormat(req_data.timeStamp, "yyyy-mm-dd HH:MM:ss")) : ''
   }
 
   var select =

@@ -100,7 +100,7 @@ var email_flag = chk_dt.suc > 0 && chk_dt.msg.length > 0 ? (chk_dt.msg[0].email_
   // console.log(res_dt);
  
   if(res_dt.suc > 0){
-    var contact_data = await updateStatus(data.user_id,data.edite_Flag,'U',data.user,dateFormat(data.timeStamp, "yyyy-mm-dd HH:MM:ss"))
+    var contact_data = data.edite_Flag > 0 ? await updateStatus(data.user_id,data.edite_Flag,'U',data.user,dateFormat(data.timeStamp, "yyyy-mm-dd HH:MM:ss")) : ''
   }
 
   res.send(res_dt);
@@ -125,7 +125,7 @@ ProfileRouter.post("/user_basic_info", async (req, res) => {
   var res_dt = await db_Insert(table_name, fields, values, whr, flag);
 
   if(res_dt.suc > 0){
-    var basic_data = await updateStatus(data.user_id,data.edite_Flag,'U',data.user,dateFormat(data.timeStamp, "yyyy-mm-dd HH:MM:ss"))
+    var basic_data = data.edite_Flag > 0 ? await updateStatus(data.user_id,data.edite_Flag,'U',data.user,dateFormat(data.timeStamp, "yyyy-mm-dd HH:MM:ss")) : ''
   }
 
   if (res_dt.suc > 0) {
@@ -220,7 +220,7 @@ ProfileRouter.post("/user_groom_loc", async (req, res) => {
   var res_dt = await db_Insert(table_name, fields, values, whr, flag);
 
   if(res_dt.suc > 0){
-    var groom_data = await updateStatus(data.user_id,data.edite_Flag,'U',data.user,dateFormat(data.timeStamp, "yyyy-mm-dd HH:MM:ss"))
+    var groom_data = data.edite_Flag > 0 ? await updateStatus(data.user_id,data.edite_Flag,'U',data.user,dateFormat(data.timeStamp, "yyyy-mm-dd HH:MM:ss")) : ''
   }
 
   res.send(res_dt);
@@ -254,7 +254,7 @@ ProfileRouter.post("/user_prof_info", async (req, res) => {
 
   if(res_dt.suc > 0){
     var flag = await updateViewFlag(data.user_id)
-    var professional_data = await updateStatus(data.user_id,data.edite_Flag,'U',data.user,dateFormat(data.timeStamp, "yyyy-mm-dd HH:MM:ss"))
+    var professional_data = data.edite_Flag > 0 ? await updateStatus(data.user_id,data.edite_Flag,'U',data.user,dateFormat(data.timeStamp, "yyyy-mm-dd HH:MM:ss")) : ''
   }
 
   res.send(res_dt);
@@ -289,7 +289,7 @@ ProfileRouter.post("/family_dtls", async (req, res) => {
 
   if(res_dt.suc > 0){
     var flag_1 = await updateViewFlag(data.user_id)
-    var family_data = await updateStatus(data.user_id,data.edite_Flag,'U',data.user,dateFormat(data.timeStamp, "yyyy-mm-dd HH:MM:ss"))
+    var family_data = data.edite_Flag > 0 ? await updateStatus(data.user_id,data.edite_Flag,'U',data.user,dateFormat(data.timeStamp, "yyyy-mm-dd HH:MM:ss")) : ''
   }
   res.send(res_dt);
 });
@@ -322,7 +322,7 @@ ProfileRouter.post("/about_family", async (req, res) => {
 
   if(res_dt.suc > 0){
     var flag_2 = await updateViewFlag(data.user_id)
-    var about_data = await updateStatus(data.user_id,data.edite_Flag,'U',data.user,dateFormat(data.timeStamp, "yyyy-mm-dd HH:MM:ss"))
+    var about_data = data.edite_Flag > 0 ? await updateStatus(data.user_id,data.edite_Flag,'U',data.user,dateFormat(data.timeStamp, "yyyy-mm-dd HH:MM:ss")) : ''
   }
 
   res.send(res_dt);
