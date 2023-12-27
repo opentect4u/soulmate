@@ -140,7 +140,7 @@ UserRouter.post("/user_caste", async(req, res) => {
 var res_dt = await db_Insert(table_name,fields,values,whr,flag);
 
 if(res_dt.suc > 0){
-  var religion_data = await updateStatus(req_data.user_id,req_data.edite_Flag,'U',req_data.user,req_data.timeStamp)
+  var religion_data = await updateStatus(req_data.user_id,req_data.edite_Flag,'U',req_data.user,dateFormat(req_data.timeStamp, "yyyy-mm-dd HH:MM:ss"))
 }
 res.send(res_dt)
 })
