@@ -7,6 +7,20 @@ path = require("path");
 
 ServercheckRouter.post("/user_check", async(req, res) => {
     var data = req.body, err_msg={};
+    const birthdate = new Date(data.field_birth_date);
+    //calculate month difference from current date in time
+    var month_diff = Date.now() - birthdate.getTime();
+    //convert the calculated difference in date format
+    var age_dt = new Date(month_diff); 
+     //extract year from date    
+     var year = age_dt.getUTCFullYear();
+    
+     //now calculate the age of the user
+     var age = Math.abs(year - 1970);
+
+     console.log(age);
+    
+
   console.log(Object.prototype.toString.call(new Date(data.field_birth_date)));
     var chk_pro_dt = await db_Check('id', 'td_user_profile', `phone_no='${data.field_mobile}'`)
     if(chk_pro_dt.msg > 0){
@@ -16,12 +30,16 @@ ServercheckRouter.post("/user_check", async(req, res) => {
         if(chk_user_dt.msg > 0){
             res.send({suc:0, msg: 'Phone no already exist'})
         }else{
+            if (age < 18) {
+                res.send({suc: 0, msg: 'You must be 18 or older to access this Website.'});
+            } else {
             err_msg['user'] = await checkFieldsValue(data.user, 'string')
             err_msg['field_mobile'] = await checkFieldsValue(data.field_mobile, 'phone')
             err_msg['field_birth_date'] = await checkFieldsValue(data.field_birth_date, 'date')
-            err_msg['location_id'] = await checkFieldsValue(data.location_id, 'string')
-            var res_dt = {suc: err_msg['user'] != 'valid' || err_msg['field_mobile'] != 'valid' || err_msg['field_birth_date'] != 'valid' || err_msg['location_id'] != 'valid' ? 0 : 1, msg: err_msg}
-            res.send(res_dt)
+                err_msg['location_id'] = await checkFieldsValue(data.location_id, 'string')
+                var res_dt = {suc: err_msg['user'] != 'valid' || err_msg['field_mobile'] != 'valid' || err_msg['field_birth_date'] != 'valid' || err_msg['location_id'] != 'valid' ? 0 : 1, msg: err_msg}
+                res.send(res_dt)
+            }
         }
     }
 });

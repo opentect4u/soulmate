@@ -338,6 +338,7 @@ PartnerRouter.get("/partner_match_old", async (req, res) => {
 PartnerRouter.get("/partner_match", async (req, res) => {
   var result = [], result_dt;
   var data = req.query;
+  console.log(data);
   // var select = "a.id, a.user_id, a.age_frm, a.age_to, a.marital_status, a.mother_tounge, a.religion, a.city_id location, a.country_id, a.state_id ,b.profile_id, b.gender, b.dob, b.jotok_rasi_id, b.rasi_id, b.kundali_file_name, b.gender own_gender, b.country_id own_country, b.state_id own_state, b.city_id own_city",
   //   table_name = "td_user_profile b LEFT JOIN td_user_partner_pref a ON b.id=a.user_id",
   //   whr = `b.id=${data.user_id}`,
@@ -346,6 +347,10 @@ PartnerRouter.get("/partner_match", async (req, res) => {
     table_name = "td_user_profile a",
     whr = `a.id=${data.user_id}`,
     order = null;
+  // var select = "profile_id, gender, dob, jotok_rasi_id, rasi_id, kundali_file_name, gender own_gender, country_id own_country, state_id own_state, city_id own_city",
+  // table_name = "td_user_profile",
+  // whr = null,
+  // order = null;
   var pref_dt = await db_Select(select, table_name, whr, order);
   // console.log('Pref', pref_dt);
 
