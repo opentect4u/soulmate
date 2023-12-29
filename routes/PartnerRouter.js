@@ -7,7 +7,7 @@ const express = require('express'),
 // const { promises } = require('nodemailer/lib/xoauth2');
 const { db_Select, EncryptDataToSend, db_Insert} = require('../module/MasterModule');
 const { user_groom_loc, user_basic_info, user_hobbies } = require('../module/ProfileModule');
-const { partner_match, RashiMatch, NumberMatchWithDate, JotokMatch, ElementMatch, MongalMatch, MoonshineMatch, calculateElementMarks, CalculateMongalMarks,  SunshineNumberMatch, checkAscMongalDosh, checkMoonMongalDosh, MoonShineName} = require('../module/PartnerModel');
+const { partner_match, RashiMatch, NumberMatchWithDate, JotokMatch, ElementMatch, MongalMatch, MoonshineMatch, calculateElementMarks, CalculateMongalMarks,  SunshineNumberMatch, checkAscMongalDosh, checkMoonMongalDosh, MoonShineName, favList} = require('../module/PartnerModel');
 
 PartnerRouter.get("/partner_pref", async (req, res) => {
     var data = req.query;
@@ -892,6 +892,42 @@ PartnerRouter.get('/partner_match_marks', async (req, res) => {
       total_marks: tot_match_marks
     })
   }
+});
+
+PartnerRouter.get('/get_fav_list', async (req, res) => {
+  var data = req.query;
+  // console.log(data);
+  var res_dt = await favList(data.own_id,data.partner_id);
+  console.log(res_dt);
+  // res_dt = await EncryptDataToSend(res_dt);
+  res.send(res_dt)
+
+});
+
+PartnerRouter.post('/update_fav_list', async (req, res) => {
+  var data = req.body;
+  console.log(data);
+  datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+  // data = Buffer.from(data.data, "base64").toString();
+  // data = JSON.parse(data);
+
+  select = `id,own_id,partner_id`,
+  table_name = `td_favourite_list`,
+  whr = `own_id = '${data.field_own_id}' AND partner_id = '${data.field_partner_id}'`,
+  order = null;
+  var res_dt = await db_Select(select, table_name, whr, order);
+
+  table_name = `td_favourite_list`,
+  fields = res_dt.suc > 0 && res_dt.msg.length > 0 ?
+            `flag = '${data.field_flag}', modified_by = '${data.user_name}', modified_dt = '${datetime}'`
+            : "(own_id, partner_id, flag, created_by, created_dt)", 
+  values = `('${data.field_own_id}', '${data.field_partner_id}', '${data.field_flag}', '${data.user_name}', '${datetime}' )`,
+  whr = res_dt.suc > 0 && res_dt.msg.length > 0 ? `id = ${res_dt.msg[0].id}` : null,
+  flag = res_dt.suc > 0 && res_dt.msg.length > 0 ? 1 : 0;
+  order = null;
+  var res_dt = await db_Insert(table_name, fields, values, whr, flag, order);
+  res.send(res_dt);
 })
 
 module.exports = {PartnerRouter}

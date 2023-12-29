@@ -512,7 +512,18 @@ const MoonShineName = (position) => {
   var MoonShine_dt = await db_Select(select, table_name, whr, order);
   resolve(MoonShine_dt)
   });
-}
+};
+
+const favList = (own_id,partner_id) => {
+  return new Promise (async (resolve, reject) => {
+    var select = `IF(count(id) > 0, flag, 'N') flag`,
+    table_name = `td_favourite_list`,
+    whr = `own_id = '${own_id}' AND partner_id = '${partner_id}'`,
+    order = null;
+    var fav_dt = await db_Select(select, table_name, whr, order);
+    resolve(fav_dt)
+  });
+};
 
 module.exports = {
   partner_match,
@@ -527,5 +538,6 @@ module.exports = {
   SunshineNumberMatch,
   checkMoonMongalDosh,
   checkAscMongalDosh,
-  MoonShineName
+  MoonShineName,
+  favList
 };
