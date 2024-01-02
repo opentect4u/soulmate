@@ -896,7 +896,7 @@ PartnerRouter.get('/partner_match_marks', async (req, res) => {
 
 PartnerRouter.get('/get_fav_list', async (req, res) => {
   var data = req.query;
-  // console.log(data);
+  console.log(data);
   var res_dt = await favList(data.own_id,data.partner_id);
   console.log(res_dt);
   // res_dt = await EncryptDataToSend(res_dt);
