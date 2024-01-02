@@ -516,7 +516,7 @@ const MoonShineName = (position) => {
 
 const favList = (own_id,partner_id) => {
   return new Promise (async (resolve, reject) => {
-    var select = `IF(count(id) > 0, flag, 'N') flag`,
+    var select = `IF(id > 0, flag, 'N') flag`,
     table_name = `td_favourite_list`,
     whr = `own_id = '${own_id}' AND partner_id = '${partner_id}'`,
     order = null;
