@@ -150,6 +150,7 @@ const { db_Insert } = require('../module/MasterModule');
 
 KycRouter.get("/single_pic_delete", async (req, res) => {
   var data = req.query
+  // console.log(data);
   var table_name = 'td_user_profile_image',
   whr = `id=${data.id}`
   var res_dt = await db_Delete(table_name,whr)

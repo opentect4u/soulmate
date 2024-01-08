@@ -5,7 +5,7 @@ const express = require('express'),
    location = require("../location.json");
 
 // const { promises } = require('nodemailer/lib/xoauth2');
-const { db_Select, EncryptDataToSend, db_Insert} = require('../module/MasterModule');
+const { db_Select, EncryptDataToSend, db_Insert, db_Delete} = require('../module/MasterModule');
 const { user_groom_loc, user_basic_info, user_hobbies } = require('../module/ProfileModule');
 const { partner_match, RashiMatch, NumberMatchWithDate, JotokMatch, ElementMatch, MongalMatch, MoonshineMatch, calculateElementMarks, CalculateMongalMarks,  SunshineNumberMatch, checkAscMongalDosh, checkMoonMongalDosh, MoonShineName, favList} = require('../module/PartnerModel');
 
@@ -338,7 +338,7 @@ PartnerRouter.get("/partner_match_old", async (req, res) => {
 PartnerRouter.get("/partner_match", async (req, res) => {
   var result = [], result_dt;
   var data = req.query;
-  console.log(data);
+  // console.log(data);
   // var select = "a.id, a.user_id, a.age_frm, a.age_to, a.marital_status, a.mother_tounge, a.religion, a.city_id location, a.country_id, a.state_id ,b.profile_id, b.gender, b.dob, b.jotok_rasi_id, b.rasi_id, b.kundali_file_name, b.gender own_gender, b.country_id own_country, b.state_id own_state, b.city_id own_city",
   //   table_name = "td_user_profile b LEFT JOIN td_user_partner_pref a ON b.id=a.user_id",
   //   whr = `b.id=${data.user_id}`,
@@ -896,7 +896,7 @@ PartnerRouter.get('/partner_match_marks', async (req, res) => {
 
 PartnerRouter.get('/get_fav_list', async (req, res) => {
   var data = req.query;
-  console.log(data);
+  // console.log(data);
   var res_dt = await favList(data.own_id,data.partner_id);
   console.log(res_dt);
   // res_dt = await EncryptDataToSend(res_dt);
@@ -906,7 +906,7 @@ PartnerRouter.get('/get_fav_list', async (req, res) => {
 
 PartnerRouter.post('/update_fav_list', async (req, res) => {
   var data = req.body;
-  console.log(data);
+  // console.log(data);
   datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
   // data = Buffer.from(data.data, "base64").toString();
@@ -928,6 +928,79 @@ PartnerRouter.post('/update_fav_list', async (req, res) => {
   order = null;
   var res_dt = await db_Insert(table_name, fields, values, whr, flag, order);
   res.send(res_dt);
-})
+});
+
+PartnerRouter.get("/delete_fav_list", async (req, res) => {
+  var data = req.query
+  console.log(data);
+  var table_name = `td_favourite_list`,
+  whr = `own_id = '${data.own_id}' AND partner_id = '${data.partner_id}'`
+  var res_dt = await db_Delete(table_name,whr)
+  res.send(res_dt)
+});
+
+PartnerRouter.get("/add_wishlist", async (req, res) => {
+  var result = [], result_dt;
+  var data = req.query;
+
+  var select = "a.partner_id id, b.kundali_file_name",
+  table_name = "td_favourite_list a, td_user_profile b",
+  whr = `a.partner_id=b.id AND a.own_id =${data.own_id} AND a.flag = 'Y'`,
+  order = 'order by partner_id' ;
+  var res_dt = await db_Select(select, table_name, whr, order);
+
+  if(res_dt.suc > 0 && res_dt.msg.length > 0){
+    for(let rdt of res_dt.msg){
+      try{
+        var groom_loc = await user_groom_loc({user_id:rdt.id});
+        // console.log(groom_loc);
+        var basic_info = await user_basic_info({user_id:rdt.id});
+        var hobbies = await user_hobbies({user_id:rdt.id});
+
+        if(basic_info.suc > 0 && basic_info.msg.length > 0){
+          try{
+            var partner_moon_mangal_marks = await checkMoonMongalDosh(basic_info.msg[0].kundali_file_name),
+              partner_asc_mangal_marks = await checkAscMongalDosh(basic_info.msg[0].kundali_file_name);
+  
+            var Mongol_dosha = partner_moon_mangal_marks + partner_asc_mangal_marks;
+          }catch(err){
+            console.log(err);
+          }
+
+          var result_partner = {
+            groom_location : {
+              "value" : groom_loc.msg
+            },
+            basic_information : {
+              "value" : basic_info.msg
+            },
+            hobbies : {
+              "value" :  hobbies.msg
+            },
+            sun_shine_rashi_match: 0,
+            numeric_match: 0,
+            jotok_marks: 0,
+            astro_match_marks: 0,
+            elementValues: [],
+            mongal_dasha: Mongol_dosha,
+            jotok_match: 0, 
+            elementMarks: 0,
+            mongal_marks: 0,
+            moonShineMatch: 0,
+            SunShineMatch: 0
+          }
+          result.push(result_partner)
+        }
+      }catch(err){
+        console.log('ERR ID', rdt.id);
+        console.log(err);
+      }
+    }
+    result_dt = {suc: 1, msg: result}
+  }else{
+    result_dt = {suc: 0, msg: []}
+  }
+  res.send(result_dt)
+});
 
 module.exports = {PartnerRouter}
