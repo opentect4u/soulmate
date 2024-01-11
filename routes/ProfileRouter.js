@@ -5,6 +5,7 @@ const express = require("express"),
   path = require("path");
   fs = require('fs');
   const request = require('request');
+  const bcrypt = require('bcrypt')
 
 const { fileExtLimiter } = require("../middleware/fileExtLimiter");
 const { fileSizeLimiter } = require("../middleware/fileSizeLimiter");
@@ -82,7 +83,7 @@ ProfileRouter.post("/user_contact_details", async(req, res)=>{
 
 data = Buffer.from(data.data, "base64").toString();
 data = JSON.parse(data);
-console.log(data);
+// console.log(data);
 var select = 'email_id',
 table_name = "td_user_profile",
 whr = `id = ${data.user_id}`,
@@ -204,7 +205,7 @@ ProfileRouter.post("/user_groom_loc", async (req, res) => {
     whr = `id = ${data.user_id}`,
     order = null;
   var chk_dt = await db_Select(select, table_name, whr, order);
-  console.log(chk_dt);
+  // console.log(chk_dt);
 
   var table_name = "td_user_profile",
     fields =
@@ -344,7 +345,7 @@ ProfileRouter.post("/user_hobbies", async (req, res) => {
 
   data = Buffer.from(data.data, "base64").toString();
   data = JSON.parse(data);
-  console.log(data);
+  // console.log(data);
 
   var hobbies_tb_data = [
     {
@@ -390,7 +391,7 @@ ProfileRouter.post("/user_hobbies", async (req, res) => {
         await db_Delete(dt.table_name, `user_id = ${data.user_id} AND ${dt.field_name} NOT IN(${a})`)
       }
     }catch(err){
-      console.log(err);
+      // console.log(err);
     }
     for (let hdt of data[dt.input_field]) {
       try{
@@ -413,7 +414,7 @@ ProfileRouter.post("/user_hobbies", async (req, res) => {
           flag = chk_dt.suc > 0 && chk_dt.msg.length > 0 ? 1 : 0;
         res_dt = await db_Insert(table_name, fields, values, whr, flag);
       }catch(err){
-        console.log(err);
+        // console.log(err);
       }
     }
   }
@@ -422,7 +423,7 @@ ProfileRouter.post("/user_hobbies", async (req, res) => {
 
 ProfileRouter.get("/profile_pic", async (req, res) => {
   var data = req.query;
-  console.log(data);
+  // console.log(data);
   var select = "id, file_path",
     table_name = "td_user_profile",
     whr = data.user_id > 0 ? `id = ${data.user_id}` : null,
@@ -526,7 +527,7 @@ ProfileRouter.get("/check_mobile_no", async (req, res) => {
       result = res_dt
     }
   }catch(err){
-    console.log(err);
+    // console.log(err);
     result = {suc: 0, msg: "No phone number found"}
   }
   res.send(result);
@@ -574,7 +575,7 @@ ProfileRouter.post("/send_otp", async (req, res) => {
     datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss")
     data = Buffer.from(data.data, "base64").toString();
     data = JSON.parse(data);
-    console.log(data);
+    // console.log(data);
   
     var select = "id",
     table_name = "td_user_hobbies",
@@ -608,7 +609,7 @@ ProfileRouter.post("/send_otp", async (req, res) => {
     
     var verifyEmail = await SendVerifyEmail(otp,data.email_id,data.profile_id,data.user_name);
     // console.log(verifyEmail);
-    console.log(otp,data.email_id,data.profile_id,data.user_name);
+    // console.log(otp,data.email_id,data.profile_id,data.user_name);
     if(verifyEmail.suc > 0){
       // res.send({suc:1, msg:'OTP has been Sent to Email', otp: Buffer.from(otp.toString(), 'utf8').toString('base64')})
       res.send({suc:1, msg:'OTP has been Sent to your registered email id', otp: await Encrypt(otp.toString())});
@@ -642,17 +643,48 @@ ProfileRouter.post("/search_email", async(req, res) => {
   }
 });
 
-ProfileRouter.post("/forget_email", async (req, res) => {
-  var data = req.body;
-  // data = Buffer.from(data.data, "base64").toString();
-  // data = JSON.parse(data);
-  var ForgetEmail = await SendForgetPwdEmail(data.email_id,data.profile_id,data.user_name);
-  if(ForgetEmail.suc > 0){
-    res.send({suc:1, msg: 'Email sent successfully'})
-  }else {
-    res.send({suc:0, msg: 'Email not sent'})
-  }
-});
+// ProfileRouter.post("/forget_email", async (req, res) => {
+//   var data = req.body;
+//   console.log(data);
+  
+//   var select = "user_name,email_id",
+//   table_name = "md_user_login",
+//   whr = `email_id='${data.email_id}'`,
+//   order = null;
+//   var chk_dt = await db_Select(select, table_name, whr, order);
+//   console.log(chk_dt);
+
+// if(chk_dt.suc > 0){
+//   var ForgetEmail = await SendForgetPwdEmail(data.email_id,chk_dt.msg[0].user_name);
+//   console.log(ForgetEmail);
+//   // console.log(data.email_id,chk_dt.msg[0].user_name);
+//   if(ForgetEmail.suc > 0){
+//     res.send({suc:1, msg: 'Email sent successfully'})
+//   }else {
+//     res.send({suc:0, msg: 'Email not sent'})
+//   }
+// }else{
+//   res.send({suc:0, msg: 'No user found'})
+// }
+ 
+// });
+
+// ProfileRouter.post("/update_forget_pass", async (req, res) => {
+//   var data = req.body;
+//   data = Buffer.from(data.data, "base64").toString();
+//   data = JSON.parse(data);
+//   console.log(data);
+
+//   var pass = bcrypt.hashSync(data.pass, 10);
+//     var table_name =`md_user_login`,
+//         fields = `password = '${pass}'`,
+//         whr = `email_id = '${data.email_id}'`,
+//         flag = 1;
+//         var forget_pass = await db_Insert(table_name, fields, null, whr, flag)
+//         result = forget_pass
+//         console.log(result);
+//   res.send(result)
+// })
 
 ProfileRouter.post("/payment_email", async (req, res) => {
   var data = req.body;

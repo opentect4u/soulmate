@@ -3,6 +3,8 @@ nodemailer = require('nodemailer');
 const request = require('request');
 const pdf = require('html-pdf');
 const fileUpload = require('express-fileupload');
+const crypto = require('crypto');
+const { Encrypt } = require('./MasterModule');
 
 // Use express-fileupload middleware
 // app.use(fileUpload());
@@ -631,8 +633,9 @@ const ContactUserEmail = (id,profilelId,userName,frm_email,to_email) => {
   })
 };
 
-const SendForgetPwdEmail = (emailId,profilelId,userName) => {
-  return new Promise((resolve, reject) => {
+const SendForgetPwdEmail = (emailId,userName) => {
+  console.log(emailId,userName);
+  return new Promise(async (resolve, reject) => {
       const transporter = nodemailer.createTransport({
       host: 'email-smtp.ap-south-1.amazonaws.com',
       port: 587,
@@ -646,6 +649,14 @@ const SendForgetPwdEmail = (emailId,profilelId,userName) => {
       rejectUnauthorized: true
   }
       });
+      // Get the current date and time
+      var currentDate = new Date().toLocaleString();
+      var encDate = await Encrypt(currentDate)
+
+      var encEmail = await Encrypt(emailId)
+      // const resetLink = `http://localhost:4200/#/forgetpassword/${encodeURIComponent(encEmail)}`
+      const resetLink = `http://localhost:4200/#/forgetpassword/${encodeURIComponent(encEmail)}#${encodeURIComponent(encDate)}`
+
       const mailOptions = {
           from: 'info@mysoulmate.co.in',
           to: `${emailId}`,
@@ -729,12 +740,12 @@ const SendForgetPwdEmail = (emailId,profilelId,userName) => {
               
           <div style="border-radius:0; background: #fff; padding:48px 15px; text-align: left; min-height: 450px; border-radius:0 0 50px 50px;">
               <h2 style="font-weight: 300; color: #344161; font-size: 17px; margin-bottom: 35px;">Dear ${userName},</h2>
-              <p style="font-size: 17px;  margin-bottom: 35px; margin-top: 0;  line-height: 32px;">We have received a request to reset the password for your Mysoulmate account with profile ID <b>${profilelId}</b>.</p>
+              <p style="font-size: 17px;  margin-bottom: 35px; margin-top: 0;  line-height: 32px;">We have received a request to reset the password for your Mysoulmate account.</p>
               
-              <p style="font-size: 17px;  margin-bottom: 35px; margin-top: 0;  line-height: 32px;">You can reset the password by clicking the link below.</p>
+              <p style="font-size: 17px;  margin-bottom: 35px; margin-top: 0;  line-height: 32px;">You can reset the password by clicking the link below ${resetLink}</p>
 
            
-              <p style="font-size: 17px; margin-bottom: 35px;  margin-top: 0; line-height: 32px;">If you didnot request to reset password,please let us know immediately by replying to this mail ${emailId}.</p>
+              <p style="font-size: 17px; margin-bottom: 35px;  margin-top: 0; line-height: 32px;">If you didnot request to reset password,please let us know immediately by replying to this mail info@mysoulmate.co.in.</p>
               
               <p style="font-size: 17px; margin-bottom: 35px;  margin-top: 0; line-height: 32px;">Expire the link after 24 hrs.</p>
 
@@ -773,9 +784,11 @@ const SendForgetPwdEmail = (emailId,profilelId,userName) => {
       
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
+          console.log(error);
             console.error('Error sending email:', error);
             resolve({suc:0, msg: error})
         } else {
+          console.log(info);
             console.log('Email sent:', info.response);
             resolve({suc:1, msg: 'Email sent successfully'})
         }
