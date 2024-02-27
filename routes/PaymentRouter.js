@@ -13,8 +13,8 @@ const { reqEncrypt, reqDecrypt } = require('../module/ccavutil');
 // var client_fail_redirect_url = 'http://soulmate.opentech4u.co.in/#/paymentGetway',
 // client_suc_redirect_url = 'http://soulmate.opentech4u.co.in/#/paymentResponse';
 
-var client_fail_redirect_url = 'https://mysoulmate.co.in/#/paymentGetway',
-client_suc_redirect_url = 'https://mysoulmate.co.in/#/paymentResponse',
+var client_fail_redirect_url = 'https://mysoulmate.co.in/#/user/paymentGetway',
+client_suc_redirect_url = 'https://mysoulmate.co.in/#/user/paymentResponse',
 redirect_url = 'https://api.mysoulmate.co.in/payRes';
 
 PaymentRouter.post('/encReqData', async (req, res) => {
