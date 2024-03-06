@@ -16,7 +16,7 @@ const {fileSizeLimiter} = require('./middleware/fileSizeLimiter');
 const {fileExtLimiter} = require('./middleware/fileExtLimiter');
 
 
-const { db_Insert, db_Select, ElementoryField } = require("./module/MasterModule");
+const { db_Insert, db_Select, ElementoryField, WriteLogFile } = require("./module/MasterModule");
 const { MasterRouter, getNakhatra } = require("./routes/MasterRouter");
 const { ProfileRouter } = require("./routes/ProfileRouter");
 const { rashiRouter, addKundaliUser } = require("./routes/RasiRouter");
@@ -138,6 +138,31 @@ setInterval(() => {
     throw new Error(err);
   }
 }, 1000 * 30);
+
+setInterval(async () => {
+  var now_time = dateFormat(new Date(), 'HH:MM')
+  try{
+    if(now_time == '23:59'){
+      var res_dt = await db_Select('id, u_name, pay_flag, plan_id, plan_act_dt, plan_exp_dt', 'td_user_profile', `plan_id > 0 AND plan_act_dt is NOT null AND plan_exp_dt is not null AND plan_exp_dt = DATE(now())`, 'ORDER BY plan_exp_dt')
+      if(res_dt.suc > 0){
+        if(res_dt.msg.length > 0){
+          var now_date = dateFormat(new Date(), 'yyyy-mm-dd')
+          for(let dt of res_dt.msg){
+            if(now_date <= dateFormat(dt.plan_exp_dt, 'yyyy-mm-dd')){
+              await db_Insert('td_user_profile', `pay_flag = 'N', plan_id = 0, plan_act_dt = null, plan_exp_dt = null`, null, `id = ${dt.id}`, 1)
+            }
+          }
+        }
+      }
+    }
+  }catch(err){
+    var txt = `[${dateFormat(new Date(), "dd-mmm-yy HH:MM:ss")}] : <<[TIME]>> ${now_time} \n`;
+    txt = txt + `[${dateFormat(new Date(), "dd-mmm-yy HH:MM:ss")}] : <<[MESSAGE]>> TRYING TO EXICUTE EXPIRY FUNCTION \n`
+    txt = txt + `[${dateFormat(new Date(), "dd-mmm-yy HH:MM:ss")}] : <<[ERROR]>> ${err} \n`
+    txt = txt + `----------------------------------------------------------------------- \n`
+    WriteLogFile(txt)
+  }
+}, 9000)
 
 // setInterval(async () => {
 //   try {

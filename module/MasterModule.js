@@ -317,4 +317,12 @@ const updateViewFlag = (id) => {
     })
 }
 
-module.exports = { db_Select, db_Insert, db_Delete, db_Check, EncryptDataToSend,GenPassword, globalValues, SunshineMatch, NumberMatch, ElementoryField, MongalField, MoonShineNotMatchField, getAccessTokenMaster, checkFieldsValue, getOrderMaxId , updateStatus, updateViewFlag, Encrypt}
+const WriteLogFile = (text) => {
+    try{
+        fs.appendFileSync(path.join('assets', "log/log.txt"), text);
+    }catch(err){
+        console.log(err);
+    }
+}
+
+module.exports = { db_Select, db_Insert, db_Delete, db_Check, EncryptDataToSend,GenPassword, globalValues, SunshineMatch, NumberMatch, ElementoryField, MongalField, MoonShineNotMatchField, getAccessTokenMaster, checkFieldsValue, getOrderMaxId , updateStatus, updateViewFlag, Encrypt, WriteLogFile}
