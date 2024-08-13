@@ -25,4 +25,16 @@ const subscription_dtls = (data) => {
     });
 };
 
-module.exports = {subscription_dtls}
+const discount_text_dtls = (data) => {
+    return new Promise (async(resolve, reject) => {
+        var select = "id,discount_text,active_flag",
+        table_name = 'md_discount_text',
+        whr = data.id > 0 ? `id =${data.id}` : '',
+        order = null;
+        var res_dt = await db_Select(select, table_name, whr, order);
+        console.log(res_dt);
+        resolve(res_dt);
+        }
+)};
+
+module.exports = {subscription_dtls,discount_text_dtls}
