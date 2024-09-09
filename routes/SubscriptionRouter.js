@@ -14,6 +14,7 @@ subscriptionRouter.get("/get_subscription_dtls", async (req, res) => {
 
 subscriptionRouter.get("/get_discount_text_dtls", async (req, res) => {
     var data = req.query;
+    console.log(data);
     var res_dt = await discount_text_dtls(data);
     res_dt = await EncryptDataToSend(res_dt);
     res.send(res_dt)
